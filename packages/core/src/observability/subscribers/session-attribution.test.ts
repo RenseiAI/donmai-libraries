@@ -96,6 +96,32 @@ describe('registerSessionAttributionSubscriber', () => {
     expect(rec.provider?.family).toBe('sandbox')
   })
 
+  it('agent-tool-use event-borne sessionId overrides static context sessionId', async () => {
+    // Cross-process providers (Go daemon) emit hook events from a context
+    // where the platform's env vars don't match — the event itself carries
+    // the authoritative sessionId. Verify the subscriber prefers it.
+    const bus = new HookBus()
+    const { sink } = registerSessionAttributionSubscriber(bus, {
+      context: { ...staticContext, sessionId: 'sess-from-env' },
+    })
+
+    await bus.emit({
+      kind: 'post-tool-use',
+      provider: { id: 'claude', family: 'runtime', version: 'v1' },
+      sessionId: 'sess-from-daemon',
+      toolUseId: 'tu_1',
+      toolName: 'Read',
+      toolOutput: 'ok',
+      durationMs: 5,
+      isError: false,
+    })
+
+    const rec = (sink as InMemoryAttributionSink).records[0]
+    expect(rec.session.sessionId).toBe('sess-from-daemon')
+    // Other session fields inherit from the static context
+    expect(rec.session.issueId).toBe('REN-9999')
+  })
+
   it('scope-resolved record has no provider field', async () => {
     const bus = new HookBus()
     const { sink } = registerSessionAttributionSubscriber(bus, { context: staticContext })

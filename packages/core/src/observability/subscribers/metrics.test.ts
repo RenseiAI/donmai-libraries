@@ -186,6 +186,80 @@ describe('registerMetricsSubscriber', () => {
     expect(counters.some((n) => n.includes('verb_errors'))).toBe(true)
   })
 
+  it('fires tool_uses_started counter on pre-tool-use', async () => {
+    const bus = new HookBus()
+    const counters: Array<[string, MetricLabels]> = []
+    const mockBackend: MetricsBackend = {
+      counter: (name, labels) => { counters.push([name, labels]) },
+      histogram: () => {},
+      gauge: () => {},
+    }
+
+    registerMetricsSubscriber(bus, { backend: mockBackend })
+    await bus.emit({
+      kind: 'pre-tool-use',
+      provider: { id: 'claude', family: 'runtime', version: 'v1' },
+      sessionId: 'sess_42',
+      toolUseId: 'tu_1',
+      toolName: 'Bash',
+      toolInput: {},
+      toolCategory: 'general',
+    })
+
+    const hit = counters.find(([n]) => n.includes('tool_uses_started'))
+    expect(hit).toBeDefined()
+    expect(hit?.[1]).toMatchObject({ tool_name: 'Bash', tool_category: 'general' })
+  })
+
+  it('fires tool_uses_completed counter + duration histogram on post-tool-use', async () => {
+    const bus = new HookBus()
+    const counters: Array<[string, MetricLabels]> = []
+    const histograms: Array<[string, MetricLabels, number]> = []
+    const mockBackend: MetricsBackend = {
+      counter: (name, labels) => { counters.push([name, labels]) },
+      histogram: (name, labels, value) => { histograms.push([name, labels, value]) },
+      gauge: () => {},
+    }
+
+    registerMetricsSubscriber(bus, { backend: mockBackend })
+    await bus.emit({
+      kind: 'post-tool-use',
+      provider: { id: 'claude', family: 'runtime', version: 'v1' },
+      sessionId: 'sess_42',
+      toolUseId: 'tu_1',
+      toolName: 'Read',
+      toolOutput: 'ok',
+      durationMs: 17,
+      isError: false,
+    })
+
+    expect(counters.some(([n]) => n.includes('tool_uses_completed'))).toBe(true)
+    const histHit = histograms.find(([n]) => n.includes('tool_use_duration_ms'))
+    expect(histHit?.[2]).toBe(17)
+  })
+
+  it('fires tool_use_errors counter on tool-use-error', async () => {
+    const bus = new HookBus()
+    const counters: string[] = []
+    const mockBackend: MetricsBackend = {
+      counter: (name) => { counters.push(name) },
+      histogram: () => {},
+      gauge: () => {},
+    }
+
+    registerMetricsSubscriber(bus, { backend: mockBackend })
+    await bus.emit({
+      kind: 'tool-use-error',
+      provider: { id: 'claude', family: 'runtime', version: 'v1' },
+      sessionId: 'sess_42',
+      toolUseId: 'tu_2',
+      toolName: 'Bash',
+      error: 'permission denied',
+    })
+
+    expect(counters.some((n) => n.includes('tool_use_errors'))).toBe(true)
+  })
+
   it('fires gauge on scope-resolved', async () => {
     const bus = new HookBus()
     const gauges: Array<[string, MetricLabels, number]> = []
@@ -249,12 +323,13 @@ describe('registerMetricsSubscriber', () => {
     unsubscribe()
   })
 
-  it('fires metrics for all 9 event kinds without errors', async () => {
+  it('fires metrics for all 12 event kinds without errors', async () => {
     const bus = new HookBus()
     const consoleSpy = vi.spyOn(console, 'error').mockImplementation(() => {})
     const b = new PrometheusTextBackend()
     registerMetricsSubscriber(bus, { backend: b })
 
+    const runtimeRef: ProviderRef = { id: 'claude', family: 'runtime', version: 'v1' }
     await bus.emit({ kind: 'pre-activate', provider: makeRef() })
     await bus.emit({ kind: 'post-activate', provider: makeRef(), durationMs: 10 })
     await bus.emit({ kind: 'pre-deactivate', provider: makeRef(), reason: 'test' })
@@ -262,6 +337,9 @@ describe('registerMetricsSubscriber', () => {
     await bus.emit({ kind: 'pre-verb', provider: makeRef(), verb: 'v', args: {} })
     await bus.emit({ kind: 'post-verb', provider: makeRef(), verb: 'v', result: {}, durationMs: 5 })
     await bus.emit({ kind: 'verb-error', provider: makeRef(), verb: 'v', error: new Error('e') })
+    await bus.emit({ kind: 'pre-tool-use', provider: runtimeRef, sessionId: 'sess_1', toolUseId: 'tu_1', toolName: 'Read', toolInput: {} })
+    await bus.emit({ kind: 'post-tool-use', provider: runtimeRef, sessionId: 'sess_1', toolUseId: 'tu_1', toolName: 'Read', toolOutput: '', durationMs: 7, isError: false })
+    await bus.emit({ kind: 'tool-use-error', provider: runtimeRef, sessionId: 'sess_1', toolUseId: 'tu_2', toolName: 'Bash', error: 'denied' })
     await bus.emit({ kind: 'capability-mismatch', provider: makeRef(), declared: {}, observed: {} })
     await bus.emit({ kind: 'scope-resolved', chosen: [], rejected: [] })
 

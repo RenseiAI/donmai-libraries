@@ -275,6 +275,39 @@ function emitEventMetrics(
       break
     }
 
+    case 'pre-tool-use': {
+      const labels: MetricLabels = {
+        provider_id: event.provider.id,
+        family: event.provider.family,
+        tool_name: event.toolName,
+        tool_category: event.toolCategory ?? 'unspecified',
+      }
+      backend.counter(`${prefix}_tool_uses_started`, labels)
+      break
+    }
+
+    case 'post-tool-use': {
+      const labels: MetricLabels = {
+        provider_id: event.provider.id,
+        family: event.provider.family,
+        tool_name: event.toolName,
+        is_error: String(event.isError),
+      }
+      backend.counter(`${prefix}_tool_uses_completed`, labels)
+      backend.histogram(`${prefix}_tool_use_duration_ms`, labels, event.durationMs)
+      break
+    }
+
+    case 'tool-use-error': {
+      const labels: MetricLabels = {
+        provider_id: event.provider.id,
+        family: event.provider.family,
+        tool_name: event.toolName,
+      }
+      backend.counter(`${prefix}_tool_use_errors`, labels)
+      break
+    }
+
     case 'capability-mismatch': {
       const labels: MetricLabels = {
         provider_id: event.provider.id,

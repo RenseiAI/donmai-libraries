@@ -102,6 +102,36 @@ function eventToRecord(event: ProviderHookEvent): AuditRecord {
       }
       break
 
+    case 'pre-tool-use':
+      base.payload = {
+        sessionId: event.sessionId,
+        toolUseId: event.toolUseId,
+        toolName: event.toolName,
+        toolCategory: event.toolCategory,
+        toolInputType: typeof event.toolInput,
+      }
+      break
+
+    case 'post-tool-use':
+      base.payload = {
+        sessionId: event.sessionId,
+        toolUseId: event.toolUseId,
+        toolName: event.toolName,
+        durationMs: event.durationMs,
+        isError: event.isError,
+        toolOutputLength: event.toolOutput.length,
+      }
+      break
+
+    case 'tool-use-error':
+      base.payload = {
+        sessionId: event.sessionId,
+        toolUseId: event.toolUseId,
+        toolName: event.toolName,
+        error: event.error,
+      }
+      break
+
     case 'capability-mismatch':
       base.payload = { declared: event.declared, observed: event.observed }
       break

@@ -39,7 +39,7 @@ describe('registerAuditLogSubscriber', () => {
     expect(path).toBe('/tmp/test-audit.ndjson')
   })
 
-  it('writes records for all 9 event kinds', async () => {
+  it('writes records for all 12 event kinds', async () => {
     const bus = new HookBus()
     const written: AuditRecord[] = []
 
@@ -48,6 +48,7 @@ describe('registerAuditLogSubscriber', () => {
       _writer: (record) => { written.push(record) },
     })
 
+    const runtimeRef: ProviderRef = { id: 'claude', family: 'runtime', version: 'v1' }
     const events: ProviderHookEvent[] = [
       { kind: 'pre-activate', provider: makeRef() },
       { kind: 'post-activate', provider: makeRef(), durationMs: 50 },
@@ -56,6 +57,9 @@ describe('registerAuditLogSubscriber', () => {
       { kind: 'pre-verb', provider: makeRef(), verb: 'provision', args: {} },
       { kind: 'post-verb', provider: makeRef(), verb: 'provision', result: {}, durationMs: 10 },
       { kind: 'verb-error', provider: makeRef(), verb: 'provision', error: new Error('fail') },
+      { kind: 'pre-tool-use', provider: runtimeRef, sessionId: 'sess_1', toolUseId: 'tu_1', toolName: 'Read', toolInput: { file_path: 'a.ts' } },
+      { kind: 'post-tool-use', provider: runtimeRef, sessionId: 'sess_1', toolUseId: 'tu_1', toolName: 'Read', toolOutput: 'contents', durationMs: 4, isError: false },
+      { kind: 'tool-use-error', provider: runtimeRef, sessionId: 'sess_1', toolUseId: 'tu_2', toolName: 'Bash', error: 'permission denied' },
       { kind: 'capability-mismatch', provider: makeRef(), declared: {}, observed: {} },
       { kind: 'scope-resolved', chosen: [makeRef()], rejected: [] },
     ]
@@ -64,10 +68,44 @@ describe('registerAuditLogSubscriber', () => {
       await bus.emit(ev)
     }
 
-    expect(written).toHaveLength(9)
+    expect(written).toHaveLength(12)
     const kinds = written.map((r) => r.kind)
     expect(kinds).toContain('pre-activate')
+    expect(kinds).toContain('pre-tool-use')
+    expect(kinds).toContain('post-tool-use')
+    expect(kinds).toContain('tool-use-error')
     expect(kinds).toContain('scope-resolved')
+  })
+
+  it('post-tool-use record includes toolName/durationMs/isError + correlation id', async () => {
+    const bus = new HookBus()
+    const written: AuditRecord[] = []
+
+    registerAuditLogSubscriber(bus, {
+      logPath: '/tmp/test-audit.ndjson',
+      _writer: (r) => { written.push(r) },
+    })
+
+    await bus.emit({
+      kind: 'post-tool-use',
+      provider: { id: 'claude', family: 'runtime', version: 'v1' },
+      sessionId: 'sess_42',
+      toolUseId: 'tu_abc',
+      toolName: 'Bash',
+      toolOutput: 'ok',
+      durationMs: 123,
+      isError: false,
+    })
+
+    expect(written).toHaveLength(1)
+    expect(written[0].kind).toBe('post-tool-use')
+    expect(written[0].payload).toMatchObject({
+      sessionId: 'sess_42',
+      toolUseId: 'tu_abc',
+      toolName: 'Bash',
+      durationMs: 123,
+      isError: false,
+    })
   })
 
   it('post-activate record includes durationMs in payload', async () => {

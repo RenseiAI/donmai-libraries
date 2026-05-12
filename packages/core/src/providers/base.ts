@@ -380,10 +380,51 @@ export type ProviderHookEvent =
   | { kind: 'pre-deactivate'; provider: ProviderRef; reason: string }
   | { kind: 'post-deactivate'; provider: ProviderRef }
 
-  // Family-specific verb invocation
+  // Family-specific verb invocation — PROVIDER-method-level operations
+  // (e.g. sandbox.provision, workarea.acquire, runtime.runSession).
   | { kind: 'pre-verb'; provider: ProviderRef; verb: string; args: unknown }
   | { kind: 'post-verb'; provider: ProviderRef; verb: string; result: unknown; durationMs: number }
   | { kind: 'verb-error'; provider: ProviderRef; verb: string; error: Error }
+
+  // Agent-runtime tool-call invocation — AGENT-level tool calls inside a
+  // running AgentRuntime session (e.g. Read, Bash, mcp__af_code_search_symbols).
+  // Distinct from pre-verb/post-verb above (those are provider-method level).
+  // Session-scoped (sessionId is non-optional) and correlation-keyed by
+  // toolUseId so consumers can pair pre/post for the same call.
+  //
+  // Added 2026-05-12 per ADR-2026-05-12-cross-process-hook-bus-bridge — these
+  // are the kinds REN-1184 in-session memory injection and the Context
+  // satellite consume. Out-of-process providers (Go daemon, future RPC
+  // providers) emit equivalent events via a platform-side bridge owned by
+  // the daemon→platform ingest route; the bus contract is identical from
+  // a subscriber's view.
+  | {
+      kind: 'pre-tool-use'
+      provider: ProviderRef
+      sessionId: string
+      toolUseId: string
+      toolName: string
+      toolInput: unknown
+      toolCategory?: string
+    }
+  | {
+      kind: 'post-tool-use'
+      provider: ProviderRef
+      sessionId: string
+      toolUseId: string
+      toolName: string
+      toolOutput: string
+      durationMs: number
+      isError: boolean
+    }
+  | {
+      kind: 'tool-use-error'
+      provider: ProviderRef
+      sessionId: string
+      toolUseId: string
+      toolName: string
+      error: string
+    }
 
   // Capability discrepancy
   | { kind: 'capability-mismatch'; provider: ProviderRef; declared: unknown; observed: unknown }

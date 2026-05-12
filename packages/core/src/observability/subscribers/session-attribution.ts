@@ -103,7 +103,18 @@ function eventToAttribution(
   session: HookSessionContext,
 ): AttributionRecord {
   const ts = new Date().toISOString()
-  const record: AttributionRecord = { ts, kind: event.kind, session }
+
+  // Agent-tool-use events (added 2026-05-12) carry their own sessionId on the
+  // event payload — this is authoritative for cross-process providers that
+  // can't rely on the host process's env vars (the Go daemon emits via a
+  // platform-side bridge whose env doesn't match the runner's). Prefer the
+  // event-borne sessionId when present.
+  const effectiveSession: HookSessionContext =
+    'sessionId' in event && typeof event.sessionId === 'string' && event.sessionId
+      ? { ...session, sessionId: event.sessionId }
+      : session
+
+  const record: AttributionRecord = { ts, kind: event.kind, session: effectiveSession }
 
   if ('provider' in event && event.provider) {
     record.provider = {
