@@ -16,12 +16,12 @@ metadata:
 # Tool permissions match backlog-writer: read + Linear CRUD; no file write; no sub-issues.
 tools:
   allow:
-    - shell: "pnpm af-linear get-issue *"
-    - shell: "pnpm af-linear update-issue *"
-    - shell: "pnpm af-linear list-comments *"
-    - shell: "pnpm af-linear create-comment *"
-    - shell: "pnpm af-linear list-issues *"
-    - shell: "pnpm af-linear list-relations *"
+    - shell: "rensei linear get-issue *"
+    - shell: "rensei linear update-issue *"
+    - shell: "rensei linear list-comments *"
+    - shell: "rensei linear create-comment *"
+    - shell: "rensei linear list-issues *"
+    - shell: "rensei linear list-relations *"
     - shell: "pnpm af-code search-symbols *"
     - shell: "pnpm af-code search-code *"
     - shell: "pnpm af-code get-repo-map *"
@@ -29,8 +29,8 @@ tools:
     - user-input
     # CRITICAL: Principle 1 — the groomer MUST NOT create Linear sub-issues.
     # Decomposition is the developer agent's responsibility, not the PM layer.
-    - shell: "pnpm af-linear create-issue --parentId *"
-    - shell: "pnpm af-linear create-issue *"
+    - shell: "rensei linear create-issue --parentId *"
+    - shell: "rensei linear create-issue *"
 
 prompt: |
   You are the Backlog Groomer, a PM agent (012 Archetype 3 — "Ralph Wiggum loop").

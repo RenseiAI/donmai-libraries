@@ -303,7 +303,7 @@ export function buildBaseInstructionsFromShared(
     hasCodeIntelligence = false,
     codeIntelEnforced = false,
     useToolPlugins = false,
-    linearCli = 'pnpm af-linear',
+    linearCli = 'rensei linear',
     systemPromptAppend,
   } = options
 

@@ -134,9 +134,9 @@ Look for:
 ### On QA Pass
 
 ```bash
-pnpm af-linear update-issue [issue-id] --state "Delivered"
+rensei linear update-issue [issue-id] --state "Delivered"
 
-pnpm af-linear create-comment [issue-id] \
+rensei linear create-comment [issue-id] \
   --body "## QA Passed (Native Build)
 
 - Build succeeds (no compiler errors or warnings)
@@ -150,7 +150,7 @@ pnpm af-linear create-comment [issue-id] \
 
 ```bash
 # Keep status as Finished (do not transition)
-pnpm af-linear create-comment [issue-id] \
+rensei linear create-comment [issue-id] \
   --body "## QA Failed (Native Build)
 
 ### Issues Found

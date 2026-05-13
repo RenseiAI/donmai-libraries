@@ -21,16 +21,16 @@ model: haiku
 
 tools:
   allow:
-    - shell: "pnpm af-linear list-issues *"
-    - shell: "pnpm af-linear create-issue *"
-    - shell: "pnpm af-linear create-comment *"
+    - shell: "rensei linear list-issues *"
+    - shell: "rensei linear create-issue *"
+    - shell: "rensei linear create-comment *"
     - shell: "gh run list *"
     - shell: "gh run view *"
     # CI log access via GitHub Actions:
     # - shell: "gh api repos/:owner/:repo/actions/runs *"
   disallow:
     # Principle 1 enforcement: bug-report/improvement issues are standalone, never sub-issues.
-    - shell: "pnpm af-linear create-issue --parentId *"
+    - shell: "rensei linear create-issue --parentId *"
     - user-input
 
 prompt: |
@@ -76,7 +76,7 @@ prompt: |
   For each cluster, search Linear for an existing issue:
 
   ```
-  pnpm af-linear list-issues --query "source:ci <test-name-or-step-name>" --limit 20
+  rensei linear list-issues --query "source:ci <test-name-or-step-name>" --limit 20
   ```
 
   If a matching issue exists:
@@ -91,7 +91,7 @@ prompt: |
 
   For **flaky tests** and **slow steps** (use label `bug`):
   ```
-  pnpm af-linear create-issue \
+  rensei linear create-issue \
     --title "<signal type>: <test/step name> [<workflow>]" \
     --team "<TEAM_NAME>" \
     --state "Backlog" \
@@ -119,7 +119,7 @@ prompt: |
 
   For **optimization opportunities** (use label `chore`):
   ```
-  pnpm af-linear create-issue \
+  rensei linear create-issue \
     --title "CI optimization: <step name> could use caching [<workflow>]" \
     --team "<TEAM_NAME>" \
     --state "Backlog" \

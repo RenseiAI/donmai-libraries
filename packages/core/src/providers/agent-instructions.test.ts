@@ -385,11 +385,11 @@ describe('buildBaseInstructionsFromShared', () => {
     expect(result).toContain('pnpm af-linear')
   })
 
-  it('defaults linearCli to pnpm af-linear', () => {
+  it('defaults linearCli to rensei linear', () => {
     const result = buildBaseInstructionsFromShared('# Safety', {
       useToolPlugins: false,
     })
-    expect(result).toContain('pnpm af-linear')
+    expect(result).toContain('rensei linear')
   })
 
   it('appends systemPromptAppend content', () => {

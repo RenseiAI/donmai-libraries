@@ -9,7 +9,7 @@ tools:
   allow:
     - shell: "gh pr *"
     - shell: "git push origin --delete *"
-    - shell: "pnpm af-linear *"
+    - shell: "rensei linear *"
   disallow:
     - user-input
 

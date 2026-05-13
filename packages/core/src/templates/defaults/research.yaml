@@ -7,7 +7,7 @@ metadata:
 
 tools:
   allow:
-    - shell: "pnpm af-linear *"
+    - shell: "rensei linear *"
   disallow:
     - user-input
 
@@ -46,11 +46,11 @@ prompt: |
   This prevents development agents from guessing at API endpoints, missing exhaustive checks,
   or forgetting cross-package dependencies — each of which causes a full refinement cycle.
 
-  IMPORTANT: To update the issue, you MUST use the Linear CLI (`pnpm af-linear`).
+  IMPORTANT: To update the issue, you MUST use the Linear CLI (`rensei linear`).
   Do NOT use ToolSearch to find or load Linear MCP tools — they are blocked.
   For long descriptions, write content to a temp file and use --description-file:
     1. Write description to /tmp/description.md using the Write tool
-    2. Run: pnpm af-linear update-issue {{identifier}} --description-file /tmp/description.md
+    2. Run: rensei linear update-issue {{identifier}} --description-file /tmp/description.md
   {{> partials/code-intelligence-instructions}}{{> partials/cli-instructions}}
   {{#if mentionContext}}
 

@@ -143,7 +143,7 @@ describe('createAutonomousCanUseTool — existing rules', () => {
   it('blocks Linear MCP tools', async () => {
     const result = await callTool(canUseTool, 'mcp__claude_ai_Linear__get_issue', {})
     expect(result.behavior).toBe('deny')
-    expect((result as { message: string }).message).toContain('pnpm af-linear')
+    expect((result as { message: string }).message).toContain('rensei linear')
   })
 
   it('blocks rm of filesystem root', async () => {

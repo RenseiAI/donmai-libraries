@@ -38,7 +38,7 @@ export interface AutonomousSystemPromptOptions {
   codeIntelEnforced?: boolean
   /** Whether MCP tool plugins are active (vs CLI fallback) */
   useToolPlugins?: boolean
-  /** Linear CLI command path (default: 'pnpm af-linear') */
+  /** Linear CLI command path (default: 'rensei linear'; OSS substitutes 'af linear') */
   linearCli?: string
   /** Custom instructions to append (from RepositoryConfig.systemPrompt) */
   systemPromptAppend?: string
@@ -64,7 +64,7 @@ export function buildAutonomousSystemPrompt(
     hasCodeIntelligence,
     codeIntelEnforced = false,
     useToolPlugins = false,
-    linearCli = 'pnpm af-linear',
+    linearCli = 'rensei linear',
     systemPromptAppend,
   } = options
 

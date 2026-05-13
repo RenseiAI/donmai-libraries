@@ -20,7 +20,7 @@ Orchestrates sub-issue execution for parent issues with children. Operates in a 
 ## Step 1: Fetch Sub-Issue Graph
 
 ```bash
-pnpm af-linear list-sub-issues {PARENT_IDENTIFIER}
+rensei linear list-sub-issues {PARENT_IDENTIFIER}
 ```
 
 Returns JSON with:
@@ -111,7 +111,7 @@ After each batch of sub-agents completes:
 After each completion wave, update the parent issue:
 
 ```bash
-pnpm af-linear create-comment {PARENT_ID} --body "## Coordination Progress
+rensei linear create-comment {PARENT_ID} --body "## Coordination Progress
 
 ### Completed
 - [x] SUB-101: {title}
@@ -156,7 +156,7 @@ When all sub-issues are complete:
 
 3. **Update statuses**:
    ```bash
-   pnpm af-linear update-issue {PARENT_ID} --state Finished
+   rensei linear update-issue {PARENT_ID} --state Finished
    ```
 
 ## Failure Handling
@@ -174,7 +174,7 @@ When all sub-issues are complete:
 On resume (crash recovery), the coordinator:
 
 1. Read `TaskList` to see task statuses
-2. Check sub-issue statuses via: `pnpm af-linear list-sub-issues {PARENT_ID}`
+2. Check sub-issue statuses via: `rensei linear list-sub-issues {PARENT_ID}`
 3. Reconcile: mark tasks completed if Linear shows sub-issue as Finished
 4. Continue from where it left off
 

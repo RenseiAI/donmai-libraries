@@ -21,9 +21,9 @@ model: haiku
 
 tools:
   allow:
-    - shell: "pnpm af-linear list-issues *"
-    - shell: "pnpm af-linear create-issue *"
-    - shell: "pnpm af-linear create-comment *"
+    - shell: "rensei linear list-issues *"
+    - shell: "rensei linear create-issue *"
+    - shell: "rensei linear create-comment *"
     - shell: "pnpm af-code search-code *"
     - shell: "pnpm af-code search-symbols *"
     # Audit chain access via observability/hook-bus seam (006 Seam 6):
@@ -31,7 +31,7 @@ tools:
     # - shell: "pnpm af-audit get-chain *"
   disallow:
     # Principle 1 enforcement: bug-report issues are standalone, never sub-issues.
-    - shell: "pnpm af-linear create-issue --parentId *"
+    - shell: "rensei linear create-issue --parentId *"
     - user-input
 
 prompt: |
@@ -76,11 +76,11 @@ prompt: |
   For each anomaly cluster, search Linear for an existing issue:
 
   ```
-  pnpm af-linear list-issues --query "source:audit <chain-id-or-actor-pattern>" --limit 20
+  rensei linear list-issues --query "source:audit <chain-id-or-actor-pattern>" --limit 20
   ```
 
   If a matching issue exists:
-  - Use `pnpm af-linear create-comment <ISSUE_ID>` to post a comment with the updated
+  - Use `rensei linear create-comment <ISSUE_ID>` to post a comment with the updated
     occurrence count and latest event timestamp.
   - Do NOT create a duplicate issue.
 
@@ -91,7 +91,7 @@ prompt: |
   **MANDATORY: Do NOT use --parentId. Bug-report issues are standalone, not sub-issues.**
 
   ```
-  pnpm af-linear create-issue \
+  rensei linear create-issue \
     --title "Audit anomaly: <anomaly type> in <chain-id or actor>" \
     --team "<TEAM_NAME>" \
     --state "Backlog" \

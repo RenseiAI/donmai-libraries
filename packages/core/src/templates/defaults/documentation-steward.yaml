@@ -27,12 +27,12 @@ model: haiku
 
 tools:
   allow:
-    - shell: "pnpm af-linear get-issue *"
-    - shell: "pnpm af-linear list-issues *"
-    - shell: "pnpm af-linear create-issue *"
-    - shell: "pnpm af-linear create-comment *"
-    - shell: "pnpm af-linear update-issue *"
-    - shell: "pnpm af-linear add-relation *"
+    - shell: "rensei linear get-issue *"
+    - shell: "rensei linear list-issues *"
+    - shell: "rensei linear create-issue *"
+    - shell: "rensei linear create-comment *"
+    - shell: "rensei linear update-issue *"
+    - shell: "rensei linear add-relation *"
     - shell: "pnpm af-ai synthesize *"
     - shell: "pnpm af-code search-symbols *"
     - shell: "pnpm af-code search-code *"
@@ -50,7 +50,7 @@ tools:
   disallow:
     # Principle 1 enforcement: sub-issues are reserved for human intent.
     # The Documentation Steward creates standalone refinement issues, never sub-issues.
-    - shell: "pnpm af-linear create-issue --parentId *"
+    - shell: "rensei linear create-issue --parentId *"
     - user-input
 
 prompt: |
@@ -128,7 +128,7 @@ prompt: |
   **MANDATORY: Do NOT use --parentId. Refinement issues are standalone.**
 
   ```
-  pnpm af-linear create-issue \
+  rensei linear create-issue \
     --title "Docs: <gap description> (<file path or surface>)" \
     --team "<TEAM_NAME>" \
     --state "Backlog" \
@@ -169,7 +169,7 @@ prompt: |
 
   Post a comment on the source issue referencing the PR:
   ```
-  pnpm af-linear create-comment {{identifier}} \
+  rensei linear create-comment {{identifier}} \
     --body "Documentation Steward: opened direct PR <PR_URL> for typo-class fix in <file>."
   ```
 
@@ -184,7 +184,7 @@ prompt: |
   After processing all gaps, post a summary comment on the triggering issue:
 
   ```
-  pnpm af-linear create-comment {{identifier}} --body "## Documentation Steward Report — {{identifier}}
+  rensei linear create-comment {{identifier}} --body "## Documentation Steward Report — {{identifier}}
 
   **Scan date:** <date>
 

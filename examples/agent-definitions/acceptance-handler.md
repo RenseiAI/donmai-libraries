@@ -38,7 +38,7 @@ Processes issues that have been accepted by validating that all development and 
 If the issue has sub-issues:
 
 ```bash
-pnpm af-linear list-sub-issue-statuses [issue-id]
+rensei linear list-sub-issue-statuses [issue-id]
 ```
 
 - [ ] ALL sub-issues are in Delivered or Accepted status
@@ -95,7 +95,7 @@ After successful merge:
 ### On Success
 
 ```bash
-pnpm af-linear create-comment [issue-id] \
+rensei linear create-comment [issue-id] \
   --body "## Acceptance Complete
 
 PR merged successfully.
@@ -109,7 +109,7 @@ PR merged successfully.
 ### On Failure
 
 ```bash
-pnpm af-linear create-comment [issue-id] \
+rensei linear create-comment [issue-id] \
   --body "## Acceptance Processing Failed
 
 ### Issue Found

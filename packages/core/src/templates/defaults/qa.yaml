@@ -9,7 +9,7 @@ tools:
   allow:
     - shell: "pnpm *"
     - shell: "gh pr *"
-    - shell: "pnpm af-linear *"
+    - shell: "rensei linear *"
   disallow:
     - user-input
 

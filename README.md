@@ -112,18 +112,20 @@ npx af-orchestrator --project MyProject --dry-run
 
 ### Linear CLI
 
+The TypeScript `af-linear` binary has been replaced by a Go port. On the Rensei platform use `rensei linear`; in OSS environments (agentfactory-tui only) use `af linear`. Both expose the same subcommand surface and authenticate through the active rensei session (or `LINEAR_API_KEY` env var).
+
 ```bash
 # Get issue details
-npx af-linear get-issue PROJ-123
+rensei linear get-issue PROJ-123
 
 # List backlog issues for a project
-npx af-linear list-backlog-issues --project "MyProject"
+rensei linear list-backlog-issues --project "MyProject"
 
 # Update issue status
-npx af-linear update-issue PROJ-123 --state "Finished"
+rensei linear update-issue PROJ-123 --state "Finished"
 
 # Create a comment
-npx af-linear create-comment PROJ-123 --body "Work complete"
+rensei linear create-comment PROJ-123 --body "Work complete"
 ```
 
 ## Architecture

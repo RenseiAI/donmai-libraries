@@ -20,13 +20,13 @@ model: sonnet
 
 tools:
   allow:
-    - shell: "pnpm af-linear get-issue *"
-    - shell: "pnpm af-linear list-issues *"
-    - shell: "pnpm af-linear list-comments *"
-    - shell: "pnpm af-linear create-issue *"
-    - shell: "pnpm af-linear create-comment *"
-    - shell: "pnpm af-linear update-issue *"
-    - shell: "pnpm af-linear add-relation *"
+    - shell: "rensei linear get-issue *"
+    - shell: "rensei linear list-issues *"
+    - shell: "rensei linear list-comments *"
+    - shell: "rensei linear create-issue *"
+    - shell: "rensei linear create-comment *"
+    - shell: "rensei linear update-issue *"
+    - shell: "rensei linear add-relation *"
     - shell: "gh pr view *"
     - shell: "gh pr diff *"
     - shell: "git log *"
@@ -35,7 +35,7 @@ tools:
   disallow:
     # Principle 1 enforcement: sub-issues are reserved for human intent.
     # The Outcome Auditor creates standalone follow-up issues, never sub-issues.
-    - shell: "pnpm af-linear create-issue --parentId *"
+    - shell: "rensei linear create-issue --parentId *"
     - user-input
 
 prompt: |
@@ -47,7 +47,7 @@ prompt: |
   ## Step 1 — List recently accepted issues
 
   ```
-  pnpm af-linear list-issues --project {{identifier}} --status Accepted --limit 20
+  rensei linear list-issues --project {{identifier}} --status Accepted --limit 20
   ```
 
   ## Step 2 — For each accepted issue
@@ -56,12 +56,12 @@ prompt: |
 
   a. Read the issue:
      ```
-     pnpm af-linear get-issue <ISSUE_ID>
+     rensei linear get-issue <ISSUE_ID>
      ```
 
   b. Read any comments (check for deferred work notices, "we'll do X later"):
      ```
-     pnpm af-linear list-comments <ISSUE_ID>
+     rensei linear list-comments <ISSUE_ID>
      ```
 
   c. Find the merged PR for this issue. Look for a PR whose title or branch name
@@ -94,7 +94,7 @@ prompt: |
   **MANDATORY: Do NOT use --parentId. Follow-up issues are standalone, not sub-issues.**
 
   ```
-  pnpm af-linear create-issue \
+  rensei linear create-issue \
     --title "Follow-up: <gap description> (from <SOURCE_ID>)" \
     --team "<TEAM_NAME>" \
     --state "Backlog" \
@@ -103,17 +103,17 @@ prompt: |
 
   If the gap blocks further use of the source feature, add a blocks relation:
   ```
-  pnpm af-linear add-relation <FOLLOW_UP_ID> <SOURCE_ID> --type blocks
+  rensei linear add-relation <FOLLOW_UP_ID> <SOURCE_ID> --type blocks
   ```
 
   Then tag the source issue with audit:has-followups:
   ```
-  pnpm af-linear update-issue <SOURCE_ID> --labels "audit:has-followups"
+  rensei linear update-issue <SOURCE_ID> --labels "audit:has-followups"
   ```
 
   Post a comment on the source issue summarising the gap and referencing the follow-up:
   ```
-  pnpm af-linear create-comment <SOURCE_ID> --body "Audit: gap detected — follow-up issue <FOLLOW_UP_ID> created. Gap: <brief description>"
+  rensei linear create-comment <SOURCE_ID> --body "Audit: gap detected — follow-up issue <FOLLOW_UP_ID> created. Gap: <brief description>"
   ```
 
   ## Step 4 — For each clean issue (no gaps)
@@ -121,8 +121,8 @@ prompt: |
   Tag with audit:clean and post confirmation comment:
 
   ```
-  pnpm af-linear update-issue <SOURCE_ID> --labels "audit:clean"
-  pnpm af-linear create-comment <SOURCE_ID> --body "Audit pass: no gaps detected. All acceptance criteria verified against merged PR."
+  rensei linear update-issue <SOURCE_ID> --labels "audit:clean"
+  rensei linear create-comment <SOURCE_ID> --body "Audit pass: no gaps detected. All acceptance criteria verified against merged PR."
   ```
 
   ## Output

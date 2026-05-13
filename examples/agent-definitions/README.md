@@ -99,7 +99,7 @@ Run unit tests: `{{test_commands.unit}}`
 
 ## Linear Updates
 
-Use `{{af_linear}}` instead of `pnpm af-linear` for all Linear operations.
+Use `{{af_linear}}` instead of the default `rensei linear` for all Linear operations.
 ```
 
 The body uses Handlebars interpolation — `{{build_commands.verify}}` is replaced with the
@@ -147,7 +147,7 @@ tools:
   allow:
     - shell: "cargo *"
     - shell: "gh pr *"
-    - shell: "pnpm af-linear *"
+    - shell: "rensei linear *"
   disallow:
     - user-input
 prompt: |

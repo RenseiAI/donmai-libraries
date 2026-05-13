@@ -138,11 +138,12 @@ export function createAutonomousCanUseTool(enforcement?: CodeIntelEnforcementCon
       return { behavior: 'allow', updatedInput: input }
     }
 
-    // MCP tools: block Linear (agents must use `pnpm af-linear` CLI instead)
+    // MCP tools: block Linear (agents must use `rensei linear` CLI — or
+    // `af linear` in OSS environments without the rensei binary)
     if (toolName.startsWith('mcp__') && toolName.includes('Linear')) {
       return {
         behavior: 'deny',
-        message: 'Linear MCP tools are not available. Use `pnpm af-linear` CLI instead. See CLAUDE.md for the full command reference.',
+        message: 'Linear MCP tools are not available. Use `rensei linear` CLI (or `af linear` in OSS environments) instead. See CLAUDE.md for the full command reference.',
       }
     }
 
@@ -287,7 +288,7 @@ export class ClaudeProvider implements AgentProvider {
         disallowedTools: config.autonomous
           ? [
               'AskUserQuestion',
-              // Block Linear MCP tools — agents must use `pnpm af-linear` CLI.
+              // Block Linear MCP tools — agents must use `rensei linear` CLI.
               // disallowedTools is a hard block at the SDK level, more reliable
               // than canUseTool which may race with MCP tool execution.
               'mcp__claude_ai_Linear__get_issue',
@@ -330,7 +331,7 @@ export class ClaudeProvider implements AgentProvider {
               codeIntelToolNames: config.mcpToolNames?.filter(n => n.includes('af_code_')),
               codeIntelEnforced: config.codeIntelligenceEnforcement?.enforceUsage ?? false,
               useToolPlugins: (config.mcpToolNames ?? []).length > 0,
-              linearCli: 'pnpm af-linear',
+              linearCli: 'rensei linear',
               systemPromptAppend: config.systemPromptAppend,
             })
           : { type: 'preset' as const, preset: 'claude_code' as const },

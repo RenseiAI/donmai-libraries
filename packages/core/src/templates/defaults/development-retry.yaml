@@ -10,7 +10,7 @@ tools:
     - shell: "git commit *"
     - shell: "git push *"
     - shell: "gh pr *"
-    - shell: "pnpm af-linear *"
+    - shell: "rensei linear *"
     - shell: "git diff *"
     - shell: "git log *"
   disallow:

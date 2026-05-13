@@ -224,12 +224,12 @@ describe('buildAutonomousSystemPrompt', () => {
       expect(result).toContain('create-blocker')
     })
 
-    it('defaults linearCli to pnpm af-linear', () => {
+    it('defaults linearCli to rensei linear', () => {
       const result = buildAutonomousSystemPrompt({
         ...BASE_OPTIONS,
         useToolPlugins: false,
       })
-      expect(result).toContain('pnpm af-linear')
+      expect(result).toContain('rensei linear')
     })
   })
 

@@ -24,14 +24,14 @@ model: sonnet
 
 tools:
   allow:
-    - shell: "pnpm af-linear get-issue *"
-    - shell: "pnpm af-linear list-issues *"
-    - shell: "pnpm af-linear list-comments *"
-    - shell: "pnpm af-linear list-relations *"
-    - shell: "pnpm af-linear create-issue *"
-    - shell: "pnpm af-linear create-comment *"
-    - shell: "pnpm af-linear update-issue *"
-    - shell: "pnpm af-linear add-relation *"
+    - shell: "rensei linear get-issue *"
+    - shell: "rensei linear list-issues *"
+    - shell: "rensei linear list-comments *"
+    - shell: "rensei linear list-relations *"
+    - shell: "rensei linear create-issue *"
+    - shell: "rensei linear create-comment *"
+    - shell: "rensei linear update-issue *"
+    - shell: "rensei linear add-relation *"
     - shell: "pnpm af-code search-symbols *"
     - shell: "pnpm af-code search-code *"
     - shell: "pnpm af-ai assess *"
@@ -41,7 +41,7 @@ tools:
   disallow:
     # Principle 1 enforcement: sub-issues are reserved for human intent.
     # The GA-Readiness Assessor creates standalone blocker issues, never sub-issues.
-    - shell: "pnpm af-linear create-issue --parentId *"
+    - shell: "rensei linear create-issue --parentId *"
     - user-input
 
 prompt: |
@@ -60,8 +60,8 @@ prompt: |
   ## Step 1 — Read the feature epic
 
   ```
-  pnpm af-linear get-issue {{identifier}}
-  pnpm af-linear list-issues --label "{{identifier}}" --status Accepted
+  rensei linear get-issue {{identifier}}
+  rensei linear list-issues --label "{{identifier}}" --status Accepted
   ```
 
   Read the feature epic to understand the scope, acceptance criteria, and
@@ -73,8 +73,8 @@ prompt: |
 
   a. Read the issue and its acceptance criteria:
      ```
-     pnpm af-linear get-issue <ISSUE_ID>
-     pnpm af-linear list-comments <ISSUE_ID>
+     rensei linear get-issue <ISSUE_ID>
+     rensei linear list-comments <ISSUE_ID>
      ```
 
   b. Find the merged PR for this issue:
@@ -90,7 +90,7 @@ prompt: |
 
   d. For each AC gap, create a blocker issue:
      ```
-     pnpm af-linear create-issue \
+     rensei linear create-issue \
        --title "GA-Blocker: <gap description> (from <ISSUE_ID>)" \
        --team "<TEAM_NAME>" \
        --state "Backlog" \
@@ -99,7 +99,7 @@ prompt: |
 
      Then add a blocks relation so the gap blocks the feature from going GA:
      ```
-     pnpm af-linear add-relation <BLOCKER_ID> {{identifier}} --type blocks
+     rensei linear add-relation <BLOCKER_ID> {{identifier}} --type blocks
      ```
 
   ## Step 3 — Architectural Intelligence Drift Check
@@ -122,12 +122,12 @@ prompt: |
 
   **If `hasCriticalDrift` is true**, create a blocker issue:
   ```
-  pnpm af-linear create-issue \
+  rensei linear create-issue \
     --title "GA-Blocker: Architectural drift detected in {{identifier}}" \
     --team "<TEAM_NAME>" \
     --state "Backlog" \
     --description "Architectural Intelligence reports critical drift for feature {{identifier}}.\n\nDrift summary: <summary from assess output>\nDeviations:\n<list each high-severity deviation with its description>\n\nResolve these architectural divergences before GA."
-  pnpm af-linear add-relation <BLOCKER_ID> {{identifier}} --type blocks
+  rensei linear add-relation <BLOCKER_ID> {{identifier}} --type blocks
   ```
 
   If assess is not yet available, note this in the report and skip this check.
@@ -150,12 +150,12 @@ prompt: |
 
   **If observability is absent or insufficient**, create a blocker issue:
   ```
-  pnpm af-linear create-issue \
+  rensei linear create-issue \
     --title "GA-Blocker: Missing observability for {{identifier}}" \
     --team "<TEAM_NAME>" \
     --state "Backlog" \
     --description "Feature {{identifier}} is missing observability instrumentation.\n\nAffected paths: <list paths without hooks>\nExpected: HookBus emissions, metrics recording, or audit trail entries.\nRequired before GA: observability is needed for production incident response."
-  pnpm af-linear add-relation <BLOCKER_ID> {{identifier}} --type blocks
+  rensei linear add-relation <BLOCKER_ID> {{identifier}} --type blocks
   ```
 
   ## Step 5 — Security Review Status (TODO placeholder)
@@ -177,7 +177,7 @@ prompt: |
   Post a structured comment on the feature epic summarising all findings:
 
   ```
-  pnpm af-linear create-comment {{identifier}} --body "## GA-Readiness Report — {{identifier}}
+  rensei linear create-comment {{identifier}} --body "## GA-Readiness Report — {{identifier}}
 
   **Assessment date:** $(date -u +%Y-%m-%dT%H:%M:%SZ)
   **Status:** <READY | NOT READY — <N> blockers found>

@@ -123,7 +123,7 @@ describe('Strategy-Aware Template Selection', () => {
         cycleCount: 4,
         failureSummary: 'Multiple subsystems failing independently',
         team: 'Engineering',
-        linearCli: 'pnpm af-linear',
+        linearCli: 'rensei linear',
         packageManager: 'pnpm',
       }
 
@@ -132,7 +132,7 @@ describe('Strategy-Aware Template Selection', () => {
       expect(result).toContain('FAILED QA 4 times')
       expect(result).toContain('DECOMPOSE')
       expect(result).toContain('Multiple subsystems failing independently')
-      expect(result).toContain('pnpm af-linear create-issue')
+      expect(result).toContain('rensei linear create-issue')
     })
 
     it('renders development-retry template with previous failure reasons', () => {
@@ -230,8 +230,8 @@ describe('Strategy-Aware Template Selection', () => {
     it('falls back to base template tool permissions when strategy not found', () => {
       const perms = registry.getToolPermissions('refinement', 'nonexistent')
       expect(perms).toBeDefined()
-      // Base refinement template has pnpm af-linear
-      expect(perms!.some(p => p.includes('pnpm'))).toBe(true)
+      // Base refinement template allows `rensei linear *`
+      expect(perms!.some(p => p.includes('rensei linear'))).toBe(true)
     })
   })
 

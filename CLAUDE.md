@@ -81,53 +81,61 @@ Without these keys, agents still get full BM25 keyword search, symbol search, re
 
 ## Linear CLI (CRITICAL)
 
-**Use `pnpm af-linear` for ALL Linear operations. Do NOT use Linear MCP tools.**
+**Use `rensei linear` for ALL Linear operations. Do NOT use Linear MCP tools.**
 
-The Linear CLI wraps the `@renseiai/plugin-linear` SDK and outputs JSON to stdout. All agents must use this CLI instead of MCP tools for Linear interactions.
+The Linear CLI is the Go port of the legacy `rensei linear` surface — same subcommands, same flags, same JSON-on-stdout contract — now wired through the rensei platform's CLI proxy so the org's connected Linear OAuth credential is used automatically. All agents must use this CLI instead of MCP tools for Linear interactions.
 
-> **Tool plugins (Claude provider only):** When agents run via the orchestrator with the Claude provider, they receive typed `af_linear_*` tools (e.g., `af_linear_get_issue`, `af_linear_create_comment`) as in-process MCP tools instead of using the CLI via Bash. These tools call the same `runLinear()` function — same behavior, no subprocess overhead. Non-Claude providers and human users continue using `pnpm af-linear` as before. See `docs/providers.md` for details.
+> **Binary choice:**
+> - On the Rensei platform (rensei-tui installed): `rensei linear …`
+> - OSS / agentfactory-tui only: `af linear …` (identical subcommand surface)
+>
+> Agent runtimes typically have `rensei` in PATH. The legacy `rensei linear` script has been removed.
+
+> **Required env vars (agents do NOT rely on interactive `rensei project activate`):** seed the agent environment with the explicit values you need — `LINEAR_TEAM_NAME` for `create-issue`, plus per-invocation flags (`--team`, `--project`, `--state`, `--labels`). Defaults set by interactive `activate` are not present in agent shells.
+
+> **Tool plugins (Claude provider only):** When agents run via the orchestrator with the Claude provider, they receive typed `af_linear_*` tools (e.g., `af_linear_get_issue`, `af_linear_create_comment`) as in-process MCP tools instead of using the CLI via Bash. These tools call the same `runLinear()` function — same behavior, no subprocess overhead. Non-Claude providers and human users use `rensei linear` as documented above. See `docs/providers.md` for details.
 
 ### Commands
 
 ```bash
 # Issue operations
-pnpm af-linear get-issue <id>
-pnpm af-linear create-issue --title "Title" --team "TeamName" [--description "..."] [--project "..."] [--labels "Label1,Label2"] [--state "Backlog"] [--parentId "..."]
-pnpm af-linear update-issue <id> [--title "..."] [--description "..."] [--state "..."] [--labels "..."]
+rensei linear get-issue <id>
+rensei linear create-issue --title "Title" --team "TeamName" [--description "..."] [--project "..."] [--labels "Label1,Label2"] [--state "Backlog"] [--parentId "..."]
+rensei linear update-issue <id> [--title "..."] [--description "..."] [--state "..."] [--labels "..."]
 
 # Comments
-pnpm af-linear list-comments <issue-id>
-pnpm af-linear create-comment <issue-id> --body "Comment text"
+rensei linear list-comments <issue-id>
+rensei linear create-comment <issue-id> --body "Comment text"
 
 # File-based flags (for long content that exceeds CLI arg limits)
 # Write content to a temp file, then pass the path:
-pnpm af-linear update-issue <id> --description-file /tmp/description.md
-pnpm af-linear create-issue --title "Title" --team "Team" --description-file /tmp/description.md
-pnpm af-linear create-comment <issue-id> --body-file /tmp/comment.md
+rensei linear update-issue <id> --description-file /tmp/description.md
+rensei linear create-issue --title "Title" --team "Team" --description-file /tmp/description.md
+rensei linear create-comment <issue-id> --body-file /tmp/comment.md
 
 # Relations
-pnpm af-linear add-relation <issue-id> <related-issue-id> --type <related|blocks|duplicate>
-pnpm af-linear list-relations <issue-id>
-pnpm af-linear remove-relation <relation-id>
+rensei linear add-relation <issue-id> <related-issue-id> --type <related|blocks|duplicate>
+rensei linear list-relations <issue-id>
+rensei linear remove-relation <relation-id>
 
 # Sub-issues (for coordination)
-pnpm af-linear list-sub-issues <parent-issue-id>
-pnpm af-linear list-sub-issue-statuses <parent-issue-id>
-pnpm af-linear update-sub-issue <id> [--state "Finished"] [--comment "Done"]
+rensei linear list-sub-issues <parent-issue-id>
+rensei linear list-sub-issue-statuses <parent-issue-id>
+rensei linear update-sub-issue <id> [--state "Finished"] [--comment "Done"]
 
 # Issue listing (flexible filters)
-pnpm af-linear list-issues [--project "..."] [--status "..."] [--label "..."] [--priority 2] [--assignee "me"] [--team "..."] [--limit 50] [--order-by "createdAt"] [--query "search text"]
+rensei linear list-issues [--project "..."] [--status "..."] [--label "..."] [--priority 2] [--assignee "me"] [--team "..."] [--limit 50] [--order-by "createdAt"] [--query "search text"]
 
 # Blocking checks
-pnpm af-linear check-blocked <issue-id>
-pnpm af-linear list-backlog-issues --project "ProjectName"
-pnpm af-linear list-unblocked-backlog --project "ProjectName"
+rensei linear check-blocked <issue-id>
+rensei linear list-backlog-issues --project "ProjectName"
+rensei linear list-unblocked-backlog --project "ProjectName"
 
 # Deployment
-pnpm af-linear check-deployment <pr-number> [--format json|markdown]
+rensei linear check-deployment <pr-number> [--format json|markdown]
 
 # Blocker creation
-pnpm af-linear create-blocker <source-issue-id> --title "Title" [--description "..."] [--team "..."] [--project "..."] [--assignee "user@email.com"]
+rensei linear create-blocker <source-issue-id> --title "Title" [--description "..."] [--team "..."] [--project "..."] [--assignee "user@email.com"]
 ```
 
 ### Key Rules

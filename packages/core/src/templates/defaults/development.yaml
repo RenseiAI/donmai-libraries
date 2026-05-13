@@ -11,7 +11,7 @@ tools:
     - shell: "git commit *"
     - shell: "git push *"
     - shell: "gh pr *"
-    - shell: "pnpm af-linear *"
+    - shell: "rensei linear *"
   disallow:
     - user-input
 

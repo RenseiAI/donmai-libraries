@@ -3,7 +3,7 @@
  *
  * Validates that the backlog-creation template:
  *   1. Loads correctly from the built-in defaults registry.
- *   2. Explicitly disallows `pnpm af-linear create-issue --parentId *` (no sub-issues).
+ *   2. Explicitly disallows `rensei linear create-issue --parentId *` (no sub-issues).
  *   3. Contains haiku-executable scope discipline (≤100-line, 3-5 ACs, Fibonacci complexity).
  *   4. Migration: vague icebox input produces refined output or independent issues with blocks
  *      relations — never sub-issues.
@@ -30,7 +30,7 @@ function getDisallowList(registry: TemplateRegistry): ToolPermission[] {
 function render(registry: TemplateRegistry, identifier: string, extras: Record<string, unknown> = {}): string {
   const result = registry.renderPrompt('backlog-creation', {
     identifier,
-    linearCli: 'pnpm af-linear',
+    linearCli: 'rensei linear',
     packageManager: 'pnpm',
     ...extras,
   })
@@ -67,7 +67,7 @@ describe('backlog-writer (REN-1287)', () => {
   // AC2 – No-sub-issue allowlist enforcement
   // -------------------------------------------------------------------------
   describe('no-sub-issue allowlist enforcement (Principle 1)', () => {
-    it('disallows pnpm af-linear create-issue --parentId * in template disallow list', () => {
+    it('disallows rensei linear create-issue --parentId * in template disallow list', () => {
       const disallow = getDisallowList(registry)
       const hasParentIdBlock = disallow.some(
         p => typeof p !== 'string' && 'shell' in p && p.shell.includes('--parentId'),
@@ -75,13 +75,13 @@ describe('backlog-writer (REN-1287)', () => {
       expect(hasParentIdBlock, 'template must disallow create-issue --parentId').toBe(true)
     })
 
-    it('Codex approval bridge rejects pnpm af-linear create-issue --parentId SUP-99', () => {
+    it('Codex approval bridge rejects rensei linear create-issue --parentId SUP-99', () => {
       const { allow, disallow } = registry.getRawToolPermissions('backlog-creation')
       const adapter = new CodexToolPermissionAdapter()
       const config = adapter.buildPermissionConfig(allow, disallow)
 
       // Simulate what the Codex approval bridge does at runtime
-      const command = 'pnpm af-linear create-issue --parentId SUP-99 --title "Child issue"'
+      const command = 'rensei linear create-issue --parentId SUP-99 --title "Child issue"'
       const denied = config.deniedCommandPatterns.some(({ pattern }) => pattern.test(command))
       expect(denied, `"${command}" must be rejected by the deny patterns`).toBe(true)
     })
@@ -91,18 +91,18 @@ describe('backlog-writer (REN-1287)', () => {
       const adapter = new CodexToolPermissionAdapter()
       const config = adapter.buildPermissionConfig(allow, disallow)
 
-      const command = 'pnpm af-linear create-issue --parentId abc123'
+      const command = 'rensei linear create-issue --parentId abc123'
       const denied = config.deniedCommandPatterns.some(({ pattern }) => pattern.test(command))
       expect(denied).toBe(true)
     })
 
-    it('Codex approval bridge allows pnpm af-linear create-issue without --parentId', () => {
+    it('Codex approval bridge allows rensei linear create-issue without --parentId', () => {
       const { allow, disallow } = registry.getRawToolPermissions('backlog-creation')
       const adapter = new CodexToolPermissionAdapter()
       const config = adapter.buildPermissionConfig(allow, disallow)
 
       // Independent issue creation (no --parentId) is permitted
-      const command = 'pnpm af-linear create-issue --title "New feature" --team Engineering'
+      const command = 'rensei linear create-issue --title "New feature" --team Engineering'
       const denied = config.deniedCommandPatterns.some(({ pattern }) => pattern.test(command))
       expect(denied, 'create-issue without --parentId must NOT be denied').toBe(false)
     })
@@ -151,7 +151,7 @@ describe('backlog-writer (REN-1287)', () => {
     })
 
     it('prompt contains the hard rule against --parentId', () => {
-      const prompt = render(registry, 'REN-1287', { linearCli: 'pnpm af-linear' })
+      const prompt = render(registry, 'REN-1287', { linearCli: 'rensei linear' })
       expect(prompt).toMatch(/NEVER\s+create\s+Linear\s+sub.?issues/i)
       expect(prompt).toContain('--parentId')
     })
@@ -235,7 +235,7 @@ describe('backlog-writer (REN-1287)', () => {
       expect(registry.hasTemplate('backlog-creation')).toBe(true)
     })
 
-    it('tool allow-list still includes pnpm af-linear create-issue (minus --parentId)', () => {
+    it('tool allow-list still includes rensei linear create-issue (minus --parentId)', () => {
       const { allow } = registry.getRawToolPermissions('backlog-creation')
       const hasCreateIssue = allow.some(
         p => typeof p !== 'string' && 'shell' in p && p.shell.includes('create-issue'),

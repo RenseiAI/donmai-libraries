@@ -7,12 +7,12 @@ metadata:
 
 tools:
   allow:
-    - shell: "pnpm af-linear get-issue *"
-    - shell: "pnpm af-linear update-issue *"
-    - shell: "pnpm af-linear create-issue *"
-    - shell: "pnpm af-linear add-relation *"
-    - shell: "pnpm af-linear list-comments *"
-    - shell: "pnpm af-linear create-comment *"
+    - shell: "rensei linear get-issue *"
+    - shell: "rensei linear update-issue *"
+    - shell: "rensei linear create-issue *"
+    - shell: "rensei linear add-relation *"
+    - shell: "rensei linear list-comments *"
+    - shell: "rensei linear create-comment *"
     - shell: "pnpm af-code search-symbols *"
     - shell: "pnpm af-code search-code *"
     - shell: "pnpm af-code get-repo-map *"
@@ -21,7 +21,7 @@ tools:
     # CRITICAL: forbidden per 001 Principle 1 + 012 anti-pattern.
     # The backlog-writer MUST NOT create Linear sub-issues for
     # cost-efficiency decomposition. --parentId is reserved for human intent.
-    - shell: "pnpm af-linear create-issue --parentId *"
+    - shell: "rensei linear create-issue --parentId *"
 
 prompt: |
   You are the Backlog Writer. Your job is to make issues *cheaper to deliver*

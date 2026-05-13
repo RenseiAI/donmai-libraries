@@ -5,7 +5,7 @@
  *   1. Loads correctly from the built-in defaults registry.
  *   2. Hard caps: at most 5 issues per cycle enforced in prompt.
  *   3. Citation requirement: each issue must cite at least 3 specific failure cases.
- *   4. Disallows `pnpm af-linear create-issue --parentId *` (no sub-issues, Principle 1).
+ *   4. Disallows `rensei linear create-issue --parentId *` (no sub-issues, Principle 1).
  *   5. Tagging scheme: meta:improvement + subsystem:<name> prefix.
  *   6. Cron-trigger: prompt contains WORK_RESULT marker for completion signaling.
  *   7. Pattern clustering: corpus of known-failing sessions maps to a meta-issue.
@@ -36,7 +36,7 @@ function render(
 ): string {
   const result = registry.renderPrompt('improvement-loop', {
     identifier,
-    linearCli: 'pnpm af-linear',
+    linearCli: 'rensei linear',
     packageManager: 'pnpm',
     ...extras,
   })
@@ -116,7 +116,7 @@ describe('improvement-loop (REN-1299)', () => {
   // AC4 – No-sub-issue allowlist enforcement (Principle 1)
   // -------------------------------------------------------------------------
   describe('no-sub-issue allowlist enforcement (Principle 1)', () => {
-    it('disallows pnpm af-linear create-issue --parentId * in template disallow list', () => {
+    it('disallows rensei linear create-issue --parentId * in template disallow list', () => {
       const disallow = getDisallowList(registry)
       const hasParentIdBlock = disallow.some(
         (p) => typeof p !== 'string' && 'shell' in p && p.shell.includes('--parentId'),
@@ -124,29 +124,29 @@ describe('improvement-loop (REN-1299)', () => {
       expect(hasParentIdBlock, 'template must disallow create-issue --parentId').toBe(true)
     })
 
-    it('Codex approval bridge rejects pnpm af-linear create-issue --parentId REN-99', () => {
+    it('Codex approval bridge rejects rensei linear create-issue --parentId REN-99', () => {
       const { allow, disallow } = registry.getRawToolPermissions('improvement-loop')
       const adapter = new CodexToolPermissionAdapter()
       const config = adapter.buildPermissionConfig(allow, disallow)
 
-      const command = 'pnpm af-linear create-issue --parentId REN-99 --title "Child meta-issue"'
+      const command = 'rensei linear create-issue --parentId REN-99 --title "Child meta-issue"'
       const denied = config.deniedCommandPatterns.some(({ pattern }) => pattern.test(command))
       expect(denied, `"${command}" must be rejected by the deny patterns`).toBe(true)
     })
 
-    it('Codex approval bridge allows pnpm af-linear create-issue without --parentId', () => {
+    it('Codex approval bridge allows rensei linear create-issue without --parentId', () => {
       const { allow, disallow } = registry.getRawToolPermissions('improvement-loop')
       const adapter = new CodexToolPermissionAdapter()
       const config = adapter.buildPermissionConfig(allow, disallow)
 
       const command =
-        'pnpm af-linear create-issue --title "meta: prompt gap" --labels "meta:improvement,subsystem:qa-agent"'
+        'rensei linear create-issue --title "meta: prompt gap" --labels "meta:improvement,subsystem:qa-agent"'
       const denied = config.deniedCommandPatterns.some(({ pattern }) => pattern.test(command))
       expect(denied, 'create-issue without --parentId must NOT be denied').toBe(false)
     })
 
     it('prompt contains the hard rule against --parentId (NEVER / FORBIDDEN)', () => {
-      const prompt = render(registry, 'REN-1299', { linearCli: 'pnpm af-linear' })
+      const prompt = render(registry, 'REN-1299', { linearCli: 'rensei linear' })
       expect(prompt).toMatch(/NEVER|FORBIDDEN/i)
       expect(prompt).toContain('--parentId')
     })
@@ -211,7 +211,7 @@ describe('improvement-loop (REN-1299)', () => {
   // AC7 – Tool allow list includes all required Linear commands
   // -------------------------------------------------------------------------
   describe('tool allow list', () => {
-    it('includes pnpm af-linear list-issues', () => {
+    it('includes rensei linear list-issues', () => {
       const { allow } = registry.getRawToolPermissions('improvement-loop')
       const hasListIssues = allow.some(
         (p) => typeof p !== 'string' && 'shell' in p && p.shell.includes('list-issues'),
@@ -219,7 +219,7 @@ describe('improvement-loop (REN-1299)', () => {
       expect(hasListIssues, 'list-issues must be in allow list').toBe(true)
     })
 
-    it('includes pnpm af-linear get-issue', () => {
+    it('includes rensei linear get-issue', () => {
       const { allow } = registry.getRawToolPermissions('improvement-loop')
       const hasGetIssue = allow.some(
         (p) => typeof p !== 'string' && 'shell' in p && p.shell.includes('get-issue'),
@@ -227,7 +227,7 @@ describe('improvement-loop (REN-1299)', () => {
       expect(hasGetIssue, 'get-issue must be in allow list').toBe(true)
     })
 
-    it('includes pnpm af-linear create-issue', () => {
+    it('includes rensei linear create-issue', () => {
       const { allow } = registry.getRawToolPermissions('improvement-loop')
       const hasCreateIssue = allow.some(
         (p) => typeof p !== 'string' && 'shell' in p && p.shell.includes('create-issue'),
@@ -235,7 +235,7 @@ describe('improvement-loop (REN-1299)', () => {
       expect(hasCreateIssue, 'create-issue must be in allow list').toBe(true)
     })
 
-    it('includes pnpm af-linear list-comments', () => {
+    it('includes rensei linear list-comments', () => {
       const { allow } = registry.getRawToolPermissions('improvement-loop')
       const hasListComments = allow.some(
         (p) => typeof p !== 'string' && 'shell' in p && p.shell.includes('list-comments'),

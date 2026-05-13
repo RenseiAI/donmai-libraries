@@ -7,17 +7,17 @@ metadata:
 
 tools:
   allow:
-    - shell: "pnpm af-linear list-issues *"
-    - shell: "pnpm af-linear get-issue *"
-    - shell: "pnpm af-linear list-comments *"
-    - shell: "pnpm af-linear create-issue *"
-    - shell: "pnpm af-linear create-comment *"
+    - shell: "rensei linear list-issues *"
+    - shell: "rensei linear get-issue *"
+    - shell: "rensei linear list-comments *"
+    - shell: "rensei linear create-issue *"
+    - shell: "rensei linear create-comment *"
   disallow:
     - user-input
     # CRITICAL: forbidden per 001 Principle 1.
     # Improvement Loop MUST NOT create Linear sub-issues.
     # Each meta-issue is independent intent.
-    - shell: "pnpm af-linear create-issue --parentId *"
+    - shell: "rensei linear create-issue --parentId *"
 
 prompt: |
   You are the Improvement Loop. Your job is to find SYSTEM-LEVEL patterns

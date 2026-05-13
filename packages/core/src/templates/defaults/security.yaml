@@ -11,7 +11,7 @@ tools:
     - shell: "npx *"
     - shell: "semgrep *"
     - shell: "pip-audit *"
-    - shell: "pnpm af-linear *"
+    - shell: "rensei linear *"
   disallow:
     - user-input
 

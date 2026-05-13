@@ -12,7 +12,7 @@ tools:
     - shell: "cargo *"
     - shell: "go *"
     - shell: "gh pr *"
-    - shell: "pnpm af-linear *"
+    - shell: "rensei linear *"
   disallow:
     - user-input
 

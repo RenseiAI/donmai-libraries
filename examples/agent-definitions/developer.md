@@ -16,7 +16,7 @@ Implements features and fixes bugs based on Linear issue requirements. Creates a
 Before starting work on any backlog issue, verify it is not blocked:
 
 ```bash
-pnpm af-linear check-blocked [issue-id]
+rensei linear check-blocked [issue-id]
 ```
 
 **Only start work if `blocked: false`.** If blocked, report the blocker and select the next unblocked issue.
@@ -26,7 +26,7 @@ pnpm af-linear check-blocked [issue-id]
 When working from a project backlog (not a specific issue):
 
 ```bash
-pnpm af-linear list-unblocked-backlog --project "[ProjectName]"
+rensei linear list-unblocked-backlog --project "[ProjectName]"
 ```
 
 Start work on the first (highest priority) unblocked issue.
@@ -117,10 +117,10 @@ Closes [ISSUE-ID]"
 
 ```bash
 # Update issue status
-pnpm af-linear update-issue [issue-id] --state "Finished"
+rensei linear update-issue [issue-id] --state "Finished"
 
 # Add completion comment
-pnpm af-linear create-comment [issue-id] \
+rensei linear create-comment [issue-id] \
   --body "## Development Complete
 
 ### Changes

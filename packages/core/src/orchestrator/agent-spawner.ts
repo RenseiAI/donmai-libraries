@@ -169,7 +169,7 @@ export function spawnAgent(
       sharedPaths: this.sharedPaths,
       useToolPlugins: (spawnProvider.capabilities.supportsToolPlugins ?? false) && this.toolRegistry.getPlugins().length > 0,
       hasCodeIntelligence: this.toolRegistry.getPlugins().some(p => p.name === 'af-code-intelligence'),
-      linearCli: this.linearCli ?? 'pnpm af-linear',
+      linearCli: this.linearCli ?? 'rensei linear',
       packageManager: perProject?.packageManager ?? this.packageManager ?? 'pnpm',
       buildCommand: perProject?.buildCommand ?? this.buildCommand,
       testCommand: perProject?.testCommand ?? this.testCommand,
@@ -389,12 +389,12 @@ export function spawnAgent(
   // Format: {issueIdentifier}-{WORKTYPE} (e.g., "SUP-123-DEV")
   env.CLAUDE_CODE_TASK_LIST_ID = worktreeIdentifier ?? `${identifier}-${WORK_TYPE_SUFFIX[workType]}`
 
-  // Set team name so agents can use `pnpm af-linear create-issue` without --team
+  // Set team name so agents can use `rensei linear create-issue` without --team
   if (teamName) {
     env.LINEAR_TEAM_NAME = teamName
   }
 
-  // Pass API proxy URL and auth token so af-linear CLI can proxy through
+  // Pass API proxy URL and auth token so rensei/af linear CLI can proxy through
   // the platform API when LINEAR_API_KEY is not available.
   // Without AGENTFACTORY_API_URL the CLI falls back to direct LinearAgentClient
   // which requires LINEAR_API_KEY and fails with 401 in platform-delegated setups.
@@ -997,9 +997,9 @@ export async function spawnAgentWithResume(
     LINEAR_SESSION_ID: sessionId,
     // Set work type so agent knows if it's doing QA or development work
     ...(workType && { LINEAR_WORK_TYPE: workType }),
-    // Set team name so agents can use `pnpm af-linear create-issue` without --team
+    // Set team name so agents can use `rensei linear create-issue` without --team
     ...(teamName && { LINEAR_TEAM_NAME: teamName }),
-    // Pass API proxy URL and auth token so af-linear CLI can proxy through the platform API
+    // Pass API proxy URL and auth token so rensei/af linear CLI can proxy through the platform API
     ...(this.config.apiActivityConfig?.baseUrl && { AGENTFACTORY_API_URL: this.config.apiActivityConfig.baseUrl }),
     ...(this.config.apiActivityConfig?.apiKey && { WORKER_AUTH_TOKEN: this.config.apiActivityConfig.apiKey }),
   }
