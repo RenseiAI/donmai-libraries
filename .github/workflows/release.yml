@@ -90,43 +90,43 @@ jobs:
       # 7. create-app (no internal runtime deps)
       - name: Publish @renseiai/plugin-linear to npm
         if: steps.check.outputs.should_publish == 'true'
-        run: pnpm --filter @renseiai/plugin-linear publish --no-git-checks --provenance --access public
+        run: .github/scripts/publish-if-needed.sh @renseiai/plugin-linear "$RELEASE_VERSION" --provenance --access public
 
       - name: Publish @renseiai/agentfactory-code-intelligence to npm
         if: steps.check.outputs.should_publish == 'true'
-        run: pnpm --filter @renseiai/agentfactory-code-intelligence publish --no-git-checks --provenance --access public
+        run: .github/scripts/publish-if-needed.sh @renseiai/agentfactory-code-intelligence "$RELEASE_VERSION" --provenance --access public
 
       - name: Publish @renseiai/architectural-intelligence to npm
         if: steps.check.outputs.should_publish == 'true'
-        run: pnpm --filter @renseiai/architectural-intelligence publish --no-git-checks --provenance --access public
+        run: .github/scripts/publish-if-needed.sh @renseiai/architectural-intelligence "$RELEASE_VERSION" --provenance --access public
 
       - name: Publish @renseiai/agentfactory to npm
         if: steps.check.outputs.should_publish == 'true'
-        run: pnpm --filter @renseiai/agentfactory publish --no-git-checks --provenance --access public
+        run: .github/scripts/publish-if-needed.sh @renseiai/agentfactory "$RELEASE_VERSION" --provenance --access public
 
       - name: Publish @renseiai/agentfactory-server to npm
         if: steps.check.outputs.should_publish == 'true'
-        run: pnpm --filter @renseiai/agentfactory-server publish --no-git-checks --provenance --access public
+        run: .github/scripts/publish-if-needed.sh @renseiai/agentfactory-server "$RELEASE_VERSION" --provenance --access public
 
       - name: Publish @renseiai/agentfactory-cli to npm
         if: steps.check.outputs.should_publish == 'true'
-        run: pnpm --filter @renseiai/agentfactory-cli publish --no-git-checks --provenance --access public
+        run: .github/scripts/publish-if-needed.sh @renseiai/agentfactory-cli "$RELEASE_VERSION" --provenance --access public
 
       - name: Publish @renseiai/agentfactory-nextjs to npm
         if: steps.check.outputs.should_publish == 'true'
-        run: pnpm --filter @renseiai/agentfactory-nextjs publish --no-git-checks --provenance --access public
+        run: .github/scripts/publish-if-needed.sh @renseiai/agentfactory-nextjs "$RELEASE_VERSION" --provenance --access public
 
       - name: Publish @renseiai/agentfactory-dashboard to npm
         if: steps.check.outputs.should_publish == 'true'
-        run: pnpm --filter @renseiai/agentfactory-dashboard publish --no-git-checks --provenance --access public
+        run: .github/scripts/publish-if-needed.sh @renseiai/agentfactory-dashboard "$RELEASE_VERSION" --provenance --access public
 
       - name: Publish @renseiai/agentfactory-mcp-server to npm
         if: steps.check.outputs.should_publish == 'true'
-        run: pnpm --filter @renseiai/agentfactory-mcp-server publish --no-git-checks --provenance --access public
+        run: .github/scripts/publish-if-needed.sh @renseiai/agentfactory-mcp-server "$RELEASE_VERSION" --provenance --access public
 
       - name: Publish @renseiai/create-agentfactory-app to npm
         if: steps.check.outputs.should_publish == 'true'
-        run: pnpm --filter @renseiai/create-agentfactory-app publish --no-git-checks --provenance --access public
+        run: .github/scripts/publish-if-needed.sh @renseiai/create-agentfactory-app "$RELEASE_VERSION" --provenance --access public
 
       # Publish to GitHub Packages
       - name: Setup Node.js for GitHub Packages
@@ -143,61 +143,61 @@ jobs:
 
       - name: Publish @renseiai/plugin-linear to GitHub Packages
         if: steps.check.outputs.should_publish == 'true'
-        run: pnpm --filter @renseiai/plugin-linear publish --no-git-checks
+        run: .github/scripts/publish-if-needed.sh @renseiai/plugin-linear "$RELEASE_VERSION"
         env:
           NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Publish @renseiai/agentfactory-code-intelligence to GitHub Packages
         if: steps.check.outputs.should_publish == 'true'
-        run: pnpm --filter @renseiai/agentfactory-code-intelligence publish --no-git-checks
+        run: .github/scripts/publish-if-needed.sh @renseiai/agentfactory-code-intelligence "$RELEASE_VERSION"
         env:
           NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Publish @renseiai/architectural-intelligence to GitHub Packages
         if: steps.check.outputs.should_publish == 'true'
-        run: pnpm --filter @renseiai/architectural-intelligence publish --no-git-checks
+        run: .github/scripts/publish-if-needed.sh @renseiai/architectural-intelligence "$RELEASE_VERSION"
         env:
           NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Publish @renseiai/agentfactory to GitHub Packages
         if: steps.check.outputs.should_publish == 'true'
-        run: pnpm --filter @renseiai/agentfactory publish --no-git-checks
+        run: .github/scripts/publish-if-needed.sh @renseiai/agentfactory "$RELEASE_VERSION"
         env:
           NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Publish @renseiai/agentfactory-server to GitHub Packages
         if: steps.check.outputs.should_publish == 'true'
-        run: pnpm --filter @renseiai/agentfactory-server publish --no-git-checks
+        run: .github/scripts/publish-if-needed.sh @renseiai/agentfactory-server "$RELEASE_VERSION"
         env:
           NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Publish @renseiai/agentfactory-cli to GitHub Packages
         if: steps.check.outputs.should_publish == 'true'
-        run: pnpm --filter @renseiai/agentfactory-cli publish --no-git-checks
+        run: .github/scripts/publish-if-needed.sh @renseiai/agentfactory-cli "$RELEASE_VERSION"
         env:
           NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Publish @renseiai/agentfactory-nextjs to GitHub Packages
         if: steps.check.outputs.should_publish == 'true'
-        run: pnpm --filter @renseiai/agentfactory-nextjs publish --no-git-checks
+        run: .github/scripts/publish-if-needed.sh @renseiai/agentfactory-nextjs "$RELEASE_VERSION"
         env:
           NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Publish @renseiai/agentfactory-dashboard to GitHub Packages
         if: steps.check.outputs.should_publish == 'true'
-        run: pnpm --filter @renseiai/agentfactory-dashboard publish --no-git-checks
+        run: .github/scripts/publish-if-needed.sh @renseiai/agentfactory-dashboard "$RELEASE_VERSION"
         env:
           NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Publish @renseiai/agentfactory-mcp-server to GitHub Packages
         if: steps.check.outputs.should_publish == 'true'
-        run: pnpm --filter @renseiai/agentfactory-mcp-server publish --no-git-checks
+        run: .github/scripts/publish-if-needed.sh @renseiai/agentfactory-mcp-server "$RELEASE_VERSION"
         env:
           NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Publish @renseiai/create-agentfactory-app to GitHub Packages
         if: steps.check.outputs.should_publish == 'true'
-        run: pnpm --filter @renseiai/create-agentfactory-app publish --no-git-checks
+        run: .github/scripts/publish-if-needed.sh @renseiai/create-agentfactory-app "$RELEASE_VERSION"
         env:
           NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
