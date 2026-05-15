@@ -65,6 +65,7 @@ export function registerFleetTools(server: McpServer): void {
           providerSessionId: null,
           worktreePath: '',
           status: 'pending',
+          trackerProvider: 'linear',
           priority: args.priority ?? 3,
           promptContext: args.description,
           workType: args.workType ?? 'development',

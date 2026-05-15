@@ -357,6 +357,7 @@ export function createRealDependencies(
           providerSessionId: null,
           worktreePath: '',
           status: 'pending',
+          trackerProvider: 'linear',
           workerId: null,
           queuedAt: now,
           priority: 3,

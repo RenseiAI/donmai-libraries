@@ -30,6 +30,7 @@ function makeSessionInput() {
     providerSessionId: null,
     worktreePath: '/tmp/worktree',
     status: 'pending' as const,
+    trackerProvider: 'linear' as const,
   }
 }
 

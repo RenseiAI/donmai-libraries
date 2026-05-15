@@ -159,7 +159,9 @@ function migrateSessionState(raw: AgentSessionState): AgentSessionState {
  */
 export async function storeSessionState(
   sessionId: string,
-  state: Omit<AgentSessionState, 'trackerSessionId' | 'createdAt' | 'updatedAt'>
+  state: Omit<AgentSessionState, 'trackerSessionId' | 'createdAt' | 'updatedAt' | 'trackerProvider'> & {
+    trackerProvider?: AgentSessionState['trackerProvider']
+  }
 ): Promise<AgentSessionState> {
   if (!isRedisConfigured()) {
     log.warn('Redis not configured, session state will not be persisted')

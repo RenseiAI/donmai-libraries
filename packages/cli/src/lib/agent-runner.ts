@@ -262,6 +262,7 @@ async function reconnectSession(issueId: string): Promise<void> {
     providerSessionId: session.providerSessionId,
     worktreePath: session.worktreePath,
     status: session.status,
+    trackerProvider: session.trackerProvider,
     workerId: session.workerId,
     queuedAt: session.queuedAt,
     claimedAt: session.claimedAt,
