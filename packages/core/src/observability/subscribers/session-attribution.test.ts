@@ -107,7 +107,7 @@ describe('registerSessionAttributionSubscriber', () => {
 
     await bus.emit({
       kind: 'post-tool-use',
-      provider: { id: 'claude', family: 'runtime', version: 'v1' },
+      provider: { id: 'claude', family: 'agent-runtime', version: 'v1' },
       sessionId: 'sess-from-daemon',
       toolUseId: 'tu_1',
       toolName: 'Read',

@@ -198,7 +198,7 @@ describe('registerMetricsSubscriber', () => {
     registerMetricsSubscriber(bus, { backend: mockBackend })
     await bus.emit({
       kind: 'pre-tool-use',
-      provider: { id: 'claude', family: 'runtime', version: 'v1' },
+      provider: { id: 'claude', family: 'agent-runtime', version: 'v1' },
       sessionId: 'sess_42',
       toolUseId: 'tu_1',
       toolName: 'Bash',
@@ -224,7 +224,7 @@ describe('registerMetricsSubscriber', () => {
     registerMetricsSubscriber(bus, { backend: mockBackend })
     await bus.emit({
       kind: 'post-tool-use',
-      provider: { id: 'claude', family: 'runtime', version: 'v1' },
+      provider: { id: 'claude', family: 'agent-runtime', version: 'v1' },
       sessionId: 'sess_42',
       toolUseId: 'tu_1',
       toolName: 'Read',
@@ -250,7 +250,7 @@ describe('registerMetricsSubscriber', () => {
     registerMetricsSubscriber(bus, { backend: mockBackend })
     await bus.emit({
       kind: 'tool-use-error',
-      provider: { id: 'claude', family: 'runtime', version: 'v1' },
+      provider: { id: 'claude', family: 'agent-runtime', version: 'v1' },
       sessionId: 'sess_42',
       toolUseId: 'tu_2',
       toolName: 'Bash',
@@ -329,7 +329,7 @@ describe('registerMetricsSubscriber', () => {
     const b = new PrometheusTextBackend()
     registerMetricsSubscriber(bus, { backend: b })
 
-    const runtimeRef: ProviderRef = { id: 'claude', family: 'runtime', version: 'v1' }
+    const runtimeRef: ProviderRef = { id: 'claude', family: 'agent-runtime', version: 'v1' }
     await bus.emit({ kind: 'pre-activate', provider: makeRef() })
     await bus.emit({ kind: 'post-activate', provider: makeRef(), durationMs: 10 })
     await bus.emit({ kind: 'pre-deactivate', provider: makeRef(), reason: 'test' })

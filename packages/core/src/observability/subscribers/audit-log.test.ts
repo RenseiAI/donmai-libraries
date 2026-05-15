@@ -48,7 +48,7 @@ describe('registerAuditLogSubscriber', () => {
       _writer: (record) => { written.push(record) },
     })
 
-    const runtimeRef: ProviderRef = { id: 'claude', family: 'runtime', version: 'v1' }
+    const runtimeRef: ProviderRef = { id: 'claude', family: 'agent-runtime', version: 'v1' }
     const events: ProviderHookEvent[] = [
       { kind: 'pre-activate', provider: makeRef() },
       { kind: 'post-activate', provider: makeRef(), durationMs: 50 },
@@ -88,7 +88,7 @@ describe('registerAuditLogSubscriber', () => {
 
     await bus.emit({
       kind: 'post-tool-use',
-      provider: { id: 'claude', family: 'runtime', version: 'v1' },
+      provider: { id: 'claude', family: 'agent-runtime', version: 'v1' },
       sessionId: 'sess_42',
       toolUseId: 'tu_abc',
       toolName: 'Bash',
