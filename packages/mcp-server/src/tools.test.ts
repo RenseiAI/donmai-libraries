@@ -48,7 +48,8 @@ function captureTools(): Map<string, ToolHandler> {
 
 function makeSession(overrides: Record<string, unknown> = {}) {
   return {
-    linearSessionId: 'ses-123',
+    trackerSessionId: 'ses-123',
+    trackerProvider: 'linear',
     issueId: 'issue-abc',
     issueIdentifier: 'SUP-100',
     providerSessionId: null,
@@ -96,7 +97,7 @@ describe('submit-task', () => {
   it('creates a pending session and returns task info', async () => {
     const handler = tools.get('submit-task')!
     vi.mocked(storeSessionState).mockResolvedValue({
-      linearSessionId: 'mcp-123-issue-1',
+      trackerSessionId: 'mcp-123-issue-1', trackerProvider: 'linear',
       issueId: 'issue-1',
       status: 'pending',
       priority: 2,
@@ -117,7 +118,7 @@ describe('submit-task', () => {
   it('defaults to development work type and priority 3', async () => {
     const handler = tools.get('submit-task')!
     vi.mocked(storeSessionState).mockResolvedValue({
-      linearSessionId: 'mcp-123-issue-2',
+      trackerSessionId: 'mcp-123-issue-2', trackerProvider: 'linear',
       issueId: 'issue-2',
       status: 'pending',
       priority: 3,
@@ -151,7 +152,7 @@ describe('get-task-status', () => {
     const result = await handler({ taskId: 'ses-123' })
     const data = parseResult(result)
 
-    expect(data.linearSessionId).toBe('ses-123')
+    expect(data.trackerSessionId).toBe('ses-123')
     expect(result.isError).toBeUndefined()
   })
 
@@ -181,7 +182,7 @@ describe('get-task-status', () => {
 describe('list-fleet', () => {
   it('returns all sessions when no filter', async () => {
     const handler = tools.get('list-fleet')!
-    const sessions = [makeSession(), makeSession({ linearSessionId: 'ses-456' })]
+    const sessions = [makeSession(), makeSession({ trackerSessionId: 'ses-456' })]
     vi.mocked(getAllSessions).mockResolvedValue(sessions as never)
 
     const result = await handler({})
@@ -206,7 +207,7 @@ describe('list-fleet', () => {
   it('respects limit parameter', async () => {
     const handler = tools.get('list-fleet')!
     const sessions = Array.from({ length: 30 }, (_, i) =>
-      makeSession({ linearSessionId: `ses-${i}` }),
+      makeSession({ trackerSessionId: `ses-${i}` }),
     )
     vi.mocked(getAllSessions).mockResolvedValue(sessions as never)
 
@@ -220,7 +221,7 @@ describe('list-fleet', () => {
   it('defaults limit to 20', async () => {
     const handler = tools.get('list-fleet')!
     const sessions = Array.from({ length: 25 }, (_, i) =>
-      makeSession({ linearSessionId: `ses-${i}` }),
+      makeSession({ trackerSessionId: `ses-${i}` }),
     )
     vi.mocked(getAllSessions).mockResolvedValue(sessions as never)
 

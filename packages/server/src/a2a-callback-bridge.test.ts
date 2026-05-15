@@ -315,7 +315,8 @@ describe('createA2aCallbackBridge', () => {
 
       for (const [sessionStatus, expectedA2a] of statusMappings) {
         mockedGetSessionState.mockResolvedValueOnce({
-          linearSessionId: sessionId,
+          trackerSessionId: sessionId,
+        trackerProvider: 'linear',
           issueId: 'a2a-external',
           providerSessionId: null,
           worktreePath: '/tmp/test',
@@ -373,7 +374,8 @@ describe('createA2aCallbackBridge', () => {
       const sessionId = taskMap.getSessionId(task.id)!
 
       mockedGetSessionState.mockResolvedValueOnce({
-        linearSessionId: sessionId,
+        trackerSessionId: sessionId,
+        trackerProvider: 'linear',
         issueId: 'a2a-external',
         providerSessionId: null,
         worktreePath: '/tmp/test',
@@ -402,7 +404,8 @@ describe('createA2aCallbackBridge', () => {
       const sessionId = taskMap.getSessionId(task.id)!
 
       mockedGetSessionState.mockResolvedValueOnce({
-        linearSessionId: sessionId,
+        trackerSessionId: sessionId,
+        trackerProvider: 'linear',
         issueId: 'a2a-external',
         providerSessionId: null,
         worktreePath: '/tmp/test',
@@ -423,7 +426,8 @@ describe('createA2aCallbackBridge', () => {
       const sessionId = taskMap.getSessionId(task.id)!
 
       mockedGetSessionState.mockResolvedValueOnce({
-        linearSessionId: sessionId,
+        trackerSessionId: sessionId,
+        trackerProvider: 'linear',
         issueId: 'a2a-external',
         providerSessionId: null,
         worktreePath: '/tmp/test',
@@ -469,7 +473,8 @@ describe('createA2aCallbackBridge', () => {
 
       // Get
       mockedGetSessionState.mockResolvedValueOnce({
-        linearSessionId: sessionId,
+        trackerSessionId: sessionId,
+        trackerProvider: 'linear',
         issueId: 'a2a-external',
         providerSessionId: null,
         worktreePath: '/tmp/test',
@@ -483,7 +488,8 @@ describe('createA2aCallbackBridge', () => {
 
       // Cancel
       mockedGetSessionState.mockResolvedValueOnce({
-        linearSessionId: sessionId,
+        trackerSessionId: sessionId,
+        trackerProvider: 'linear',
         issueId: 'a2a-external',
         providerSessionId: null,
         worktreePath: '/tmp/test',

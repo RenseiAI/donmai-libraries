@@ -33,7 +33,7 @@ function toPublicStatus(status: AgentSessionState['status']): PublicSessionStatu
 async function findSessionByPublicId(publicId: string): Promise<AgentSessionState | null> {
   const allSessions = await getAllSessions()
   for (const session of allSessions) {
-    if (hashSessionId(session.linearSessionId) === publicId) {
+    if (hashSessionId(session.trackerSessionId) === publicId) {
       return session
     }
   }
@@ -79,7 +79,7 @@ export function createPublicSessionActivitiesHandler() {
       }
 
       const afterCursor = request.nextUrl.searchParams.get('after') ?? undefined
-      const activities = getActivities(session.linearSessionId, afterCursor)
+      const activities = getActivities(session.trackerSessionId, afterCursor)
       const cursor = activities.length > 0
         ? activities[activities.length - 1].id
         : (afterCursor || undefined)

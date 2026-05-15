@@ -137,7 +137,8 @@ function makeWorker(overrides: Partial<WorkerInfo> = {}): WorkerInfo {
 
 function makeSession(overrides: Partial<AgentSessionState> = {}): AgentSessionState {
   return {
-    linearSessionId: 'sess-1',
+    trackerSessionId: 'sess-1',
+    trackerProvider: 'linear',
     issueId: 'issue-1',
     issueIdentifier: 'SUP-100',
     providerSessionId: null,
@@ -507,8 +508,8 @@ describe('PatrolLoop', () => {
     })
 
     it('continues checking other sessions when one fails', async () => {
-      const session1 = makeSession({ linearSessionId: 'sess-1' })
-      const session2 = makeSession({ linearSessionId: 'sess-2' })
+      const session1 = makeSession({ trackerSessionId: 'sess-1' })
+      const session2 = makeSession({ trackerSessionId: 'sess-2' })
       mockGetSessionsByStatus.mockResolvedValue([session1, session2])
       mockListWorkers.mockResolvedValue([makeWorker()])
 

@@ -46,7 +46,8 @@ describe('session-storage', () => {
 
       const result = await storeSessionState('session-1', makeSessionInput())
 
-      expect(result.linearSessionId).toBe('session-1')
+      expect(result.trackerSessionId).toBe('session-1')
+      expect(result.trackerProvider).toBe('linear')
       expect(result.issueId).toBe('issue-1')
       expect(result.createdAt).toBeGreaterThan(0)
       expect(result.updatedAt).toBeGreaterThan(0)
@@ -56,11 +57,12 @@ describe('session-storage', () => {
     it('stores serialized state in Redis with TTL', async () => {
       const result = await storeSessionState('session-2', makeSessionInput())
 
-      expect(result.linearSessionId).toBe('session-2')
+      expect(result.trackerSessionId).toBe('session-2')
       expect(mockRedisSet).toHaveBeenCalledWith(
         'agent:session:session-2',
         expect.objectContaining({
-          linearSessionId: 'session-2',
+          trackerSessionId: 'session-2',
+          trackerProvider: 'linear',
           issueId: 'issue-1',
           status: 'pending',
         }),
@@ -71,7 +73,8 @@ describe('session-storage', () => {
     it('preserves createdAt from existing session', async () => {
       const existingCreatedAt = 1000000
       mockRedisGet.mockResolvedValue({
-        linearSessionId: 'session-3',
+        trackerSessionId: 'session-3',
+        trackerProvider: 'linear',
         issueId: 'issue-1',
         providerSessionId: null,
         worktreePath: '/tmp/worktree',
@@ -84,6 +87,15 @@ describe('session-storage', () => {
 
       expect(result.createdAt).toBe(existingCreatedAt)
       expect(result.updatedAt).not.toBe(existingCreatedAt)
+    })
+
+    it('accepts explicit trackerProvider override', async () => {
+      const result = await storeSessionState('session-gh', {
+        ...makeSessionInput(),
+        trackerProvider: 'github_issues',
+      })
+
+      expect(result.trackerProvider).toBe('github_issues')
     })
   })
 
@@ -102,7 +114,8 @@ describe('session-storage', () => {
 
     it('returns parsed session state from Redis', async () => {
       const stored = {
-        linearSessionId: 'session-1',
+        trackerSessionId: 'session-1',
+        trackerProvider: 'linear',
         issueId: 'issue-1',
         issueIdentifier: 'SUP-123',
         providerSessionId: null,
@@ -117,6 +130,28 @@ describe('session-storage', () => {
 
       expect(result).toEqual(stored)
       expect(mockRedisGet).toHaveBeenCalledWith('agent:session:session-1')
+    })
+
+    it('migrates legacy linearSessionId field on read', async () => {
+      const legacy = {
+        linearSessionId: 'session-legacy',
+        issueId: 'issue-1',
+        issueIdentifier: 'SUP-123',
+        providerSessionId: null,
+        worktreePath: '/tmp/worktree',
+        status: 'running',
+        createdAt: 1000000,
+        updatedAt: 1000001,
+      }
+      mockRedisGet.mockResolvedValue(legacy)
+
+      const result = await getSessionState('session-legacy')
+
+      expect(result).not.toBeNull()
+      expect(result!.trackerSessionId).toBe('session-legacy')
+      expect(result!.trackerProvider).toBe('linear')
+      // deprecated alias still present for backward compat
+      expect(result!.linearSessionId).toBe('session-legacy')
     })
   })
 
@@ -135,7 +170,8 @@ describe('session-storage', () => {
 
     it('updates status and updatedAt timestamp', async () => {
       const existing = {
-        linearSessionId: 'session-1',
+        trackerSessionId: 'session-1',
+        trackerProvider: 'linear',
         issueId: 'issue-1',
         providerSessionId: null,
         worktreePath: '/tmp/worktree',
@@ -171,7 +207,8 @@ describe('session-storage', () => {
 
     it('updates provider session ID', async () => {
       const existing = {
-        linearSessionId: 'session-1',
+        trackerSessionId: 'session-1',
+        trackerProvider: 'linear',
         issueId: 'issue-1',
         providerSessionId: null,
         worktreePath: '/tmp/worktree',

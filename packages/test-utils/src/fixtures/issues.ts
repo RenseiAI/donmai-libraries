@@ -28,7 +28,8 @@ export function makeQueuedWork(overrides: Record<string, unknown> = {}) {
 
 export function makeSessionState(overrides: Record<string, unknown> = {}) {
   return {
-    linearSessionId: 'session-1',
+    trackerSessionId: 'session-1',
+    trackerProvider: 'linear',
     issueId: 'issue-1',
     issueIdentifier: 'SUP-123',
     providerSessionId: null,

@@ -201,7 +201,7 @@ export function createSessionStatusPostHandler(config?: RouteConfig) {
 
         // Emit a response activity to close the Linear agent session.
         // Linear auto-transitions sessions to "complete" based on response activities.
-        if (config && session.linearSessionId && session.organizationId) {
+        if (config && session.trackerSessionId && session.organizationId) {
           try {
             const linearClient = await config.linearClient.getClient(session.organizationId)
             const message = status === 'completed'
@@ -210,19 +210,19 @@ export function createSessionStatusPostHandler(config?: RouteConfig) {
                 ? 'Agent encountered an error during execution.'
                 : 'Agent was stopped.'
             await linearClient.createAgentActivity({
-              agentSessionId: session.linearSessionId,
+              agentSessionId: session.trackerSessionId,
               content: { type: 'response', body: message },
               ephemeral: false,
             })
             log.info('Emitted completion response activity to close Linear session', {
               sessionId,
-              linearSessionId: session.linearSessionId,
+              trackerSessionId: session.trackerSessionId,
               status,
             })
           } catch (err) {
             log.warn('Failed to emit completion response activity', {
               sessionId,
-              linearSessionId: session.linearSessionId,
+              trackerSessionId: session.trackerSessionId,
               error: err,
             })
           }

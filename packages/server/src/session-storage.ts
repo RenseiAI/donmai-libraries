@@ -32,8 +32,24 @@ export type AgentSessionStatus =
  * Agent session state stored in Redis for distributed access
  */
 export interface AgentSessionState {
-  /** Linear session ID (from webhook) */
-  linearSessionId: string
+  /**
+   * Tracker-agnostic session ID (from webhook or self-dispatch).
+   * For Linear sessions this is the Linear AgentSession ID;
+   * for GitHub Issues sessions it is a UUID assigned at dispatch time.
+   */
+  trackerSessionId: string
+  /**
+   * Issue tracker provider that owns this session.
+   * Defaults to 'linear' when reading legacy Redis data written before REN-1517.
+   */
+  trackerProvider: string
+  /**
+   * @deprecated Use `trackerSessionId` instead.
+   * Kept for one major version to allow zero-downtime rolling upgrades
+   * against Redis data written by pre-REN-1517 workers.
+   * Will be removed in the next major release.
+   */
+  linearSessionId?: string
   /** Linear issue ID */
   issueId: string
   /** Issue identifier (e.g., SUP-123) */
@@ -109,40 +125,65 @@ const SESSION_TTL_SECONDS = 24 * 60 * 60
 /**
  * Build the KV key for a session
  */
-function buildSessionKey(linearSessionId: string): string {
-  return `${SESSION_KEY_PREFIX}${linearSessionId}`
+function buildSessionKey(sessionId: string): string {
+  return `${SESSION_KEY_PREFIX}${sessionId}`
+}
+
+/**
+ * Migrate legacy Redis data written before REN-1517.
+ *
+ * Pre-REN-1517 workers stored sessions with `linearSessionId` as the primary
+ * field. This helper promotes the value to `trackerSessionId` / `trackerProvider`
+ * so all code can use the new shape uniformly.  The raw `linearSessionId` field
+ * is left in place so it can still satisfy the deprecated optional.
+ */
+function migrateSessionState(raw: AgentSessionState): AgentSessionState {
+  if (!raw.trackerSessionId && raw.linearSessionId) {
+    return {
+      ...raw,
+      trackerSessionId: raw.linearSessionId,
+      trackerProvider: raw.trackerProvider ?? 'linear',
+    }
+  }
+  if (!raw.trackerProvider) {
+    return { ...raw, trackerProvider: 'linear' }
+  }
+  return raw
 }
 
 /**
  * Store agent session state in Redis
  *
- * @param linearSessionId - The Linear session ID from webhook
+ * @param sessionId - The tracker session ID (Linear AgentSession ID or self-dispatched UUID)
  * @param state - The session state to store
  */
 export async function storeSessionState(
-  linearSessionId: string,
-  state: Omit<AgentSessionState, 'linearSessionId' | 'createdAt' | 'updatedAt'>
+  sessionId: string,
+  state: Omit<AgentSessionState, 'trackerSessionId' | 'createdAt' | 'updatedAt'>
 ): Promise<AgentSessionState> {
   if (!isRedisConfigured()) {
     log.warn('Redis not configured, session state will not be persisted')
     const now = Date.now()
     return {
       ...state,
-      linearSessionId,
+      trackerSessionId: sessionId,
+      trackerProvider: state.trackerProvider ?? 'linear',
       createdAt: now,
       updatedAt: now,
     }
   }
 
   const now = Date.now()
-  const key = buildSessionKey(linearSessionId)
+  const key = buildSessionKey(sessionId)
 
   // Check for existing session to preserve createdAt
-  const existing = await redisGet<AgentSessionState>(key)
+  const rawExisting = await redisGet<AgentSessionState>(key)
+  const existing = rawExisting ? migrateSessionState(rawExisting) : null
 
   const sessionState: AgentSessionState = {
     ...state,
-    linearSessionId,
+    trackerSessionId: sessionId,
+    trackerProvider: state.trackerProvider ?? 'linear',
     createdAt: existing?.createdAt ?? now,
     updatedAt: now,
   }
@@ -150,7 +191,7 @@ export async function storeSessionState(
   await redisSet(key, sessionState, SESSION_TTL_SECONDS)
 
   log.info('Stored session state', {
-    linearSessionId,
+    sessionId,
     issueId: state.issueId,
     status: state.status,
     hasProviderSessionId: !!state.providerSessionId,
@@ -162,23 +203,24 @@ export async function storeSessionState(
 /**
  * Retrieve agent session state from Redis
  *
- * @param linearSessionId - The Linear session ID
+ * @param sessionId - The tracker session ID
  * @returns The session state or null if not found
  */
 export async function getSessionState(
-  linearSessionId: string
+  sessionId: string
 ): Promise<AgentSessionState | null> {
   if (!isRedisConfigured()) {
     log.debug('Redis not configured, cannot retrieve session state')
     return null
   }
 
-  const key = buildSessionKey(linearSessionId)
-  const state = await redisGet<AgentSessionState>(key)
+  const key = buildSessionKey(sessionId)
+  const raw = await redisGet<AgentSessionState>(key)
+  const state = raw ? migrateSessionState(raw) : null
 
   if (state) {
     log.debug('Retrieved session state', {
-      linearSessionId,
+      sessionId,
       issueId: state.issueId,
       status: state.status,
     })
@@ -191,11 +233,11 @@ export async function getSessionState(
  * Update the provider session ID for a session
  * Called when the Claude init event is received with the session ID
  *
- * @param linearSessionId - The Linear session ID
+ * @param sessionId - The tracker session ID
  * @param providerSessionId - The Provider CLI session ID
  */
 export async function updateProviderSessionId(
-  linearSessionId: string,
+  sessionId: string,
   providerSessionId: string
 ): Promise<boolean> {
   if (!isRedisConfigured()) {
@@ -203,13 +245,13 @@ export async function updateProviderSessionId(
     return false
   }
 
-  const existing = await getSessionState(linearSessionId)
+  const existing = await getSessionState(sessionId)
   if (!existing) {
-    log.warn('Session not found for provider session ID update', { linearSessionId })
+    log.warn('Session not found for provider session ID update', { sessionId })
     return false
   }
 
-  const key = buildSessionKey(linearSessionId)
+  const key = buildSessionKey(sessionId)
   const now = Date.now()
 
   const updated: AgentSessionState = {
@@ -220,7 +262,7 @@ export async function updateProviderSessionId(
 
   await redisSet(key, updated, SESSION_TTL_SECONDS)
 
-  log.info('Updated provider session ID', { linearSessionId, providerSessionId })
+  log.info('Updated provider session ID', { sessionId, providerSessionId })
 
   return true
 }
@@ -228,11 +270,11 @@ export async function updateProviderSessionId(
 /**
  * Update session status
  *
- * @param linearSessionId - The Linear session ID
+ * @param sessionId - The tracker session ID
  * @param status - The new status
  */
 export async function updateSessionStatus(
-  linearSessionId: string,
+  sessionId: string,
   status: AgentSessionState['status']
 ): Promise<boolean> {
   if (!isRedisConfigured()) {
@@ -240,13 +282,13 @@ export async function updateSessionStatus(
     return false
   }
 
-  const existing = await getSessionState(linearSessionId)
+  const existing = await getSessionState(sessionId)
   if (!existing) {
-    log.warn('Session not found for status update', { linearSessionId })
+    log.warn('Session not found for status update', { sessionId })
     return false
   }
 
-  const key = buildSessionKey(linearSessionId)
+  const key = buildSessionKey(sessionId)
   const now = Date.now()
 
   const updated: AgentSessionState = {
@@ -257,7 +299,7 @@ export async function updateSessionStatus(
 
   await redisSet(key, updated, SESSION_TTL_SECONDS)
 
-  log.info('Updated session status', { linearSessionId, status })
+  log.info('Updated session status', { sessionId, status })
 
   return true
 }
@@ -265,11 +307,11 @@ export async function updateSessionStatus(
 /**
  * Update session cost data (tokens and USD)
  *
- * @param linearSessionId - The Linear session ID
+ * @param sessionId - The tracker session ID
  * @param costData - Cost fields to persist
  */
 export async function updateSessionCostData(
-  linearSessionId: string,
+  sessionId: string,
   costData: { totalCostUsd?: number; inputTokens?: number; outputTokens?: number }
 ): Promise<boolean> {
   if (!isRedisConfigured()) {
@@ -277,13 +319,13 @@ export async function updateSessionCostData(
     return false
   }
 
-  const existing = await getSessionState(linearSessionId)
+  const existing = await getSessionState(sessionId)
   if (!existing) {
-    log.warn('Session not found for cost update', { linearSessionId })
+    log.warn('Session not found for cost update', { sessionId })
     return false
   }
 
-  const key = buildSessionKey(linearSessionId)
+  const key = buildSessionKey(sessionId)
   const now = Date.now()
 
   const updated: AgentSessionState = {
@@ -303,12 +345,12 @@ export async function updateSessionCostData(
       existing.totalCostUsd ?? 0,
       costData.totalCostUsd
     ).catch((err) => {
-      log.error('Fleet quota onCostUpdated failed', { linearSessionId, error: err })
+      log.error('Fleet quota onCostUpdated failed', { sessionId, error: err })
     })
   }
 
   log.info('Updated session cost data', {
-    linearSessionId,
+    sessionId,
     totalCostUsd: updated.totalCostUsd,
   })
 
@@ -319,23 +361,23 @@ export async function updateSessionCostData(
  * Reset a session for re-queuing after orphan cleanup
  * Clears workerId and resets status to pending so a new worker can claim it
  *
- * @param linearSessionId - The Linear session ID
+ * @param sessionId - The tracker session ID
  */
 export async function resetSessionForRequeue(
-  linearSessionId: string
+  sessionId: string
 ): Promise<boolean> {
   if (!isRedisConfigured()) {
     log.warn('Redis not configured, cannot reset session')
     return false
   }
 
-  const existing = await getSessionState(linearSessionId)
+  const existing = await getSessionState(sessionId)
   if (!existing) {
-    log.warn('Session not found for reset', { linearSessionId })
+    log.warn('Session not found for reset', { sessionId })
     return false
   }
 
-  const key = buildSessionKey(linearSessionId)
+  const key = buildSessionKey(sessionId)
   const now = Date.now()
 
   const updated: AgentSessionState = {
@@ -349,7 +391,7 @@ export async function resetSessionForRequeue(
   await redisSet(key, updated, SESSION_TTL_SECONDS)
 
   log.info('Reset session for requeue', {
-    linearSessionId,
+    sessionId,
     previousWorkerId: existing.workerId,
   })
 
@@ -359,18 +401,18 @@ export async function resetSessionForRequeue(
 /**
  * Delete session state from KV
  *
- * @param linearSessionId - The Linear session ID
+ * @param sessionId - The tracker session ID
  * @returns Whether the deletion was successful
  */
-export async function deleteSessionState(linearSessionId: string): Promise<boolean> {
+export async function deleteSessionState(sessionId: string): Promise<boolean> {
   if (!isRedisConfigured()) {
     return false
   }
 
-  const key = buildSessionKey(linearSessionId)
+  const key = buildSessionKey(sessionId)
   const result = await redisDel(key)
 
-  log.info('Deleted session state', { linearSessionId })
+  log.info('Deleted session state', { sessionId })
 
   return result > 0
 }
@@ -403,7 +445,8 @@ export async function getSessionStateByIssue(
   let fallback: AgentSessionState | null = null
 
   for (const key of keys) {
-    const state = await redisGet<AgentSessionState>(key)
+    const raw = await redisGet<AgentSessionState>(key)
+    const state = raw ? migrateSessionState(raw) : null
     if (state?.issueId === issueId) {
       // Prefer active sessions — return immediately if found
       if (activeStatuses.includes(state.status)) {
@@ -426,32 +469,32 @@ export async function getSessionStateByIssue(
 /**
  * Mark a session as claimed by a worker
  *
- * @param linearSessionId - The Linear session ID
+ * @param sessionId - The tracker session ID
  * @param workerId - The worker claiming the session
  */
 export async function claimSession(
-  linearSessionId: string,
+  sessionId: string,
   workerId: string
 ): Promise<boolean> {
   if (!isRedisConfigured()) {
     return false
   }
 
-  const existing = await getSessionState(linearSessionId)
+  const existing = await getSessionState(sessionId)
   if (!existing) {
-    log.warn('Session not found for claim', { linearSessionId })
+    log.warn('Session not found for claim', { sessionId })
     return false
   }
 
   if (existing.status !== 'pending') {
     log.warn('Session not in pending status', {
-      linearSessionId,
+      sessionId,
       status: existing.status,
     })
     return false
   }
 
-  const key = buildSessionKey(linearSessionId)
+  const key = buildSessionKey(sessionId)
   const now = Date.now()
 
   const updated: AgentSessionState = {
@@ -464,7 +507,7 @@ export async function claimSession(
 
   await redisSet(key, updated, SESSION_TTL_SECONDS)
 
-  log.info('Session claimed', { linearSessionId, workerId })
+  log.info('Session claimed', { sessionId, workerId })
 
   return true
 }
@@ -472,12 +515,12 @@ export async function claimSession(
 /**
  * Update session with worker info when work starts
  *
- * @param linearSessionId - The Linear session ID
+ * @param sessionId - The tracker session ID
  * @param workerId - The worker processing the session
  * @param worktreePath - Path to the git worktree
  */
 export async function startSession(
-  linearSessionId: string,
+  sessionId: string,
   workerId: string,
   worktreePath: string
 ): Promise<boolean> {
@@ -485,13 +528,13 @@ export async function startSession(
     return false
   }
 
-  const existing = await getSessionState(linearSessionId)
+  const existing = await getSessionState(sessionId)
   if (!existing) {
-    log.warn('Session not found for start', { linearSessionId })
+    log.warn('Session not found for start', { sessionId })
     return false
   }
 
-  const key = buildSessionKey(linearSessionId)
+  const key = buildSessionKey(sessionId)
   const now = Date.now()
 
   const updated: AgentSessionState = {
@@ -504,7 +547,7 @@ export async function startSession(
 
   await redisSet(key, updated, SESSION_TTL_SECONDS)
 
-  log.info('Session started', { linearSessionId, workerId, worktreePath })
+  log.info('Session started', { sessionId, workerId, worktreePath })
 
   return true
 }
@@ -523,9 +566,9 @@ export async function getAllSessions(): Promise<AgentSessionState[]> {
     const sessions: AgentSessionState[] = []
 
     for (const key of keys) {
-      const state = await redisGet<AgentSessionState>(key)
-      if (state) {
-        sessions.push(state)
+      const raw = await redisGet<AgentSessionState>(key)
+      if (raw) {
+        sessions.push(migrateSessionState(raw))
       }
     }
 
@@ -554,13 +597,13 @@ export async function getSessionsByStatus(
  * Transfer session ownership to a new worker
  * Used when a worker re-registers after disconnection and gets a new ID
  *
- * @param linearSessionId - The Linear session ID
+ * @param sessionId - The tracker session ID
  * @param newWorkerId - The new worker ID to assign
  * @param oldWorkerId - The previous worker ID (for validation)
  * @returns Whether the transfer was successful
  */
 export async function transferSessionOwnership(
-  linearSessionId: string,
+  sessionId: string,
   newWorkerId: string,
   oldWorkerId: string
 ): Promise<{ transferred: boolean; reason?: string }> {
@@ -568,7 +611,7 @@ export async function transferSessionOwnership(
     return { transferred: false, reason: 'Redis not configured' }
   }
 
-  const existing = await getSessionState(linearSessionId)
+  const existing = await getSessionState(sessionId)
   if (!existing) {
     return { transferred: false, reason: 'Session not found' }
   }
@@ -576,7 +619,7 @@ export async function transferSessionOwnership(
   // Validate that the old worker ID matches (security check)
   if (existing.workerId && existing.workerId !== oldWorkerId) {
     log.warn('Session ownership transfer rejected - worker ID mismatch', {
-      linearSessionId,
+      sessionId,
       expectedWorkerId: oldWorkerId,
       actualWorkerId: existing.workerId,
     })
@@ -586,7 +629,7 @@ export async function transferSessionOwnership(
     }
   }
 
-  const key = buildSessionKey(linearSessionId)
+  const key = buildSessionKey(sessionId)
   const now = Date.now()
 
   const updated: AgentSessionState = {
@@ -598,7 +641,7 @@ export async function transferSessionOwnership(
   await redisSet(key, updated, SESSION_TTL_SECONDS)
 
   log.info('Session ownership transferred', {
-    linearSessionId,
+    sessionId,
     oldWorkerId,
     newWorkerId,
   })

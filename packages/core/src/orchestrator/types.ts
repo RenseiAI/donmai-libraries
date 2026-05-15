@@ -218,7 +218,7 @@ export interface OrchestratorEvents {
   onAgentIncomplete?: (agent: AgentProcess) => void
   onIssueSelected?: (issue: OrchestratorIssue) => void
   /** Called when provider session ID is captured from init event */
-  onProviderSessionId?: (linearSessionId: string, providerSessionId: string) => void | Promise<void>
+  onProviderSessionId?: (sessionId: string, providerSessionId: string) => void | Promise<void>
   /** Called when an activity is emitted for an agent (used for timeout tracking) */
   onActivityEmitted?: (agent: AgentProcess, activityType: string) => void
 }

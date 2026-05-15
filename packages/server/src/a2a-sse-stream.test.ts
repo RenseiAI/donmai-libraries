@@ -477,7 +477,8 @@ describe('PollingSessionEventSource', () => {
       callCount++
       if (callCount === 1) {
         return {
-          linearSessionId: 'session-1',
+          trackerSessionId: 'session-1',
+          trackerProvider: 'linear',
           issueId: 'issue-1',
           providerSessionId: null,
           worktreePath: '/tmp/test',
@@ -487,7 +488,8 @@ describe('PollingSessionEventSource', () => {
         }
       }
       return {
-        linearSessionId: 'session-1',
+        trackerSessionId: 'session-1',
+        trackerProvider: 'linear',
         issueId: 'issue-1',
         providerSessionId: null,
         worktreePath: '/tmp/test',

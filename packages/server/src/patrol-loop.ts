@@ -252,7 +252,7 @@ export class PatrolLoop {
 
           // Check for nudge success: session no longer stuck but has previous nudges
           if (!signals.isStuck) {
-            const prevRecord = await getRemediationRecord(session.linearSessionId)
+            const prevRecord = await getRemediationRecord(session.trackerSessionId)
             if (prevRecord && prevRecord.nudgeCount > 0 && !prevRecord.escalated) {
               await this.publishNudgeEvent(
                 'nudge-succeeded',
@@ -266,7 +266,7 @@ export class PatrolLoop {
 
           // Record stuck session
           result.stuckSessions.push({
-            sessionId: session.linearSessionId,
+            sessionId: session.trackerSessionId,
             workerId: session.workerId ?? '',
             signals,
           })
@@ -275,7 +275,7 @@ export class PatrolLoop {
           if (this.callbacks.onStuckDetected) {
             try {
               await this.callbacks.onStuckDetected(
-                session.linearSessionId,
+                session.trackerSessionId,
                 signals
               )
             } catch (err) {
@@ -284,7 +284,7 @@ export class PatrolLoop {
           }
 
           // Get remediation history and decide next action
-          const record = await getRemediationRecord(session.linearSessionId)
+          const record = await getRemediationRecord(session.trackerSessionId)
           const decision = decideRemediation(
             record,
             signals,
@@ -295,7 +295,7 @@ export class PatrolLoop {
           if (!decision) continue
 
           // Fill in session/worker IDs
-          decision.sessionId = session.linearSessionId
+          decision.sessionId = session.trackerSessionId
           decision.workerId = session.workerId ?? ''
 
           // Execute the remediation action
@@ -304,7 +304,7 @@ export class PatrolLoop {
 
           // Record the action in storage
           await recordRemediationAction(
-            session.linearSessionId,
+            session.trackerSessionId,
             session.issueId,
             session.issueIdentifier ?? session.issueId.slice(0, 8),
             decision.action
@@ -341,7 +341,7 @@ export class PatrolLoop {
         } catch (err) {
           const errorMsg = err instanceof Error ? err.message : String(err)
           result.errors.push({
-            context: `stuck-detection:${session.linearSessionId}`,
+            context: `stuck-detection:${session.trackerSessionId}`,
             error: errorMsg,
           })
         }
@@ -423,18 +423,18 @@ export class PatrolLoop {
       await deregisterWorker(workerId)
     }
 
-    await releaseClaim(session.linearSessionId)
+    await releaseClaim(session.trackerSessionId)
 
     // Release issue lock if held by this session
     const lock = await getIssueLock(session.issueId)
-    if (lock && lock.sessionId === session.linearSessionId) {
+    if (lock && lock.sessionId === session.trackerSessionId) {
       await releaseIssueLock(session.issueId)
     }
 
-    await resetSessionForRequeue(session.linearSessionId)
+    await resetSessionForRequeue(session.trackerSessionId)
 
     const work: QueuedWork = {
-      sessionId: session.linearSessionId,
+      sessionId: session.trackerSessionId,
       issueId: session.issueId,
       issueIdentifier: session.issueIdentifier ?? session.issueId.slice(0, 8),
       priority: Math.max(1, (session.priority || 3) - 1),
@@ -446,7 +446,7 @@ export class PatrolLoop {
 
     await dispatchWork(work)
     log.info('Restart completed — session re-queued', {
-      sessionId: session.linearSessionId,
+      sessionId: session.trackerSessionId,
       workerId,
     })
   }
@@ -458,17 +458,17 @@ export class PatrolLoop {
   private async executeReassign(
     session: import('./session-storage.js').AgentSessionState
   ): Promise<void> {
-    await releaseClaim(session.linearSessionId)
+    await releaseClaim(session.trackerSessionId)
 
     const lock = await getIssueLock(session.issueId)
-    if (lock && lock.sessionId === session.linearSessionId) {
+    if (lock && lock.sessionId === session.trackerSessionId) {
       await releaseIssueLock(session.issueId)
     }
 
-    await resetSessionForRequeue(session.linearSessionId)
+    await resetSessionForRequeue(session.trackerSessionId)
 
     const work: QueuedWork = {
-      sessionId: session.linearSessionId,
+      sessionId: session.trackerSessionId,
       issueId: session.issueId,
       issueIdentifier: session.issueIdentifier ?? session.issueId.slice(0, 8),
       priority: Math.max(1, (session.priority || 3) - 1),
@@ -480,7 +480,7 @@ export class PatrolLoop {
 
     await dispatchWork(work)
     log.info('Reassign completed — session re-queued for different worker', {
-      sessionId: session.linearSessionId,
+      sessionId: session.trackerSessionId,
     })
   }
 
@@ -493,7 +493,7 @@ export class PatrolLoop {
     session: import('./session-storage.js').AgentSessionState
   ): Promise<void> {
     log.warn('Escalating to human', {
-      sessionId: session.linearSessionId,
+      sessionId: session.trackerSessionId,
       issueIdentifier: session.issueIdentifier,
       reason: decision.reason,
     })
@@ -539,7 +539,7 @@ export class PatrolLoop {
     if (quotas.length === 0) return
 
     const activeSessions = await getSessionsByStatus(['running', 'claimed'])
-    const activeIds = new Set(activeSessions.map((s) => s.linearSessionId))
+    const activeIds = new Set(activeSessions.map((s) => s.trackerSessionId))
 
     let totalRemoved = 0
     for (const quota of quotas) {
@@ -571,7 +571,7 @@ export class PatrolLoop {
     try {
       await this.eventBus.publish({
         type,
-        sessionId: session.linearSessionId,
+        sessionId: session.trackerSessionId,
         issueId: session.issueId,
         issueIdentifier: session.issueIdentifier ?? '',
         workerId: session.workerId ?? '',

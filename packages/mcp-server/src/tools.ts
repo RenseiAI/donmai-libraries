@@ -59,8 +59,8 @@ export function registerFleetTools(server: McpServer): void {
     },
     async (args) => {
       try {
-        const linearSessionId = `mcp-${Date.now()}-${args.issueId}`
-        const session = await storeSessionState(linearSessionId, {
+        const sessionId = `mcp-${Date.now()}-${args.issueId}`
+        const session = await storeSessionState(sessionId, {
           issueId: args.issueId,
           providerSessionId: null,
           worktreePath: '',
@@ -77,7 +77,7 @@ export function registerFleetTools(server: McpServer): void {
               text: JSON.stringify(
                 {
                   submitted: true,
-                  taskId: session.linearSessionId,
+                  taskId: session.trackerSessionId,
                   issueId: session.issueId,
                   status: session.status,
                   priority: session.priority,
@@ -209,7 +209,7 @@ export function registerFleetTools(server: McpServer): void {
                 type: 'text' as const,
                 text: JSON.stringify(
                   {
-                    taskId: session.linearSessionId,
+                    taskId: session.trackerSessionId,
                     issueId: session.issueId,
                     issueIdentifier: session.issueIdentifier,
                     status: session.status,
@@ -302,7 +302,7 @@ export function registerFleetTools(server: McpServer): void {
             content: [
               {
                 type: 'text' as const,
-                text: `Error: Task "${session.linearSessionId}" is in status "${session.status}". Prompts can only be forwarded to running or claimed sessions.`,
+                text: `Error: Task "${session.trackerSessionId}" is in status "${session.status}". Prompts can only be forwarded to running or claimed sessions.`,
               },
             ],
             isError: true,
@@ -319,7 +319,7 @@ export function registerFleetTools(server: McpServer): void {
 
         const streamId = await publishUrgent(agentId, {
           type: 'directive',
-          sessionId: session.linearSessionId,
+          sessionId: session.trackerSessionId,
           payload: args.message,
           createdAt: Date.now(),
         })
@@ -332,7 +332,7 @@ export function registerFleetTools(server: McpServer): void {
                 {
                   forwarded: true,
                   streamId,
-                  taskId: session.linearSessionId,
+                  taskId: session.trackerSessionId,
                   issueId: session.issueId,
                   sessionStatus: session.status,
                 },
@@ -379,14 +379,14 @@ export function registerFleetTools(server: McpServer): void {
             content: [
               {
                 type: 'text' as const,
-                text: `Error: Task "${session.linearSessionId}" is in status "${session.status}" and cannot be stopped. Only pending, claimed, or running tasks can be stopped.`,
+                text: `Error: Task "${session.trackerSessionId}" is in status "${session.status}" and cannot be stopped. Only pending, claimed, or running tasks can be stopped.`,
               },
             ],
             isError: true,
           }
         }
 
-        const updated = await updateSessionStatus(session.linearSessionId, 'stopped')
+        const updated = await updateSessionStatus(session.trackerSessionId, 'stopped')
 
         if (!updated) {
           return {
@@ -402,7 +402,7 @@ export function registerFleetTools(server: McpServer): void {
               text: JSON.stringify(
                 {
                   stopped: true,
-                  taskId: session.linearSessionId,
+                  taskId: session.trackerSessionId,
                   issueId: session.issueId,
                   previousStatus: session.status,
                   newStatus: 'stopped',

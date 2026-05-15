@@ -103,14 +103,14 @@ export function createSessionProgressHandler(config: RouteConfig) {
         const linearClient = await config.linearClient.getClient(session.organizationId)
 
         await linearClient.createAgentActivity({
-          agentSessionId: session.linearSessionId,
+          agentSessionId: session.trackerSessionId,
           content: { type: 'response', body: formattedMessage },
           ephemeral: false,
         })
 
         log.info('Progress activity posted', {
           sessionId,
-          linearSessionId: session.linearSessionId,
+          trackerSessionId: session.trackerSessionId,
           milestone,
           messageLength: message.length,
         })
@@ -124,7 +124,7 @@ export function createSessionProgressHandler(config: RouteConfig) {
         log.error('Failed to post progress activity to Linear', {
           error: errorMessage,
           sessionId,
-          linearSessionId: session.linearSessionId,
+          trackerSessionId: session.trackerSessionId,
           milestone,
         })
         return NextResponse.json({

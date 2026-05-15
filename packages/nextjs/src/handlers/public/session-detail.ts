@@ -72,12 +72,12 @@ async function toPublicSessionDetail(
 
   let isParked = false
   if (session.status === 'pending') {
-    const inQueue = await isSessionInQueue(session.linearSessionId)
+    const inQueue = await isSessionInQueue(session.trackerSessionId)
     isParked = !inQueue
   }
 
   return {
-    id: hashSessionId(session.linearSessionId),
+    id: hashSessionId(session.trackerSessionId),
     identifier: session.issueIdentifier || 'Unknown',
     status: toPublicStatus(session.status, isParked),
     workType: session.workType || 'development',
@@ -111,7 +111,7 @@ async function findSessionByPublicId(
   const allSessions = await getAllSessions()
 
   for (const session of allSessions) {
-    if (hashSessionId(session.linearSessionId) === publicId) {
+    if (hashSessionId(session.trackerSessionId) === publicId) {
       return session
     }
   }

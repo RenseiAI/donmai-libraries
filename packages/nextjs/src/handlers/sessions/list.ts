@@ -10,6 +10,9 @@ const log = createLogger('api/sessions')
 
 export interface AgentSessionResponse {
   id: string
+  /** Tracker-agnostic session ID. Use this field going forward. */
+  trackerSessionId: string
+  /** @deprecated Use `trackerSessionId`. Kept for one-major backward compat. */
   linearSessionId: string
   issueId: string
   identifier: string
@@ -27,8 +30,9 @@ export interface AgentSessionResponse {
 
 function toResponse(session: AgentSessionState): AgentSessionResponse {
   return {
-    id: session.linearSessionId,
-    linearSessionId: session.linearSessionId,
+    id: session.trackerSessionId,
+    trackerSessionId: session.trackerSessionId,
+    linearSessionId: session.trackerSessionId,
     issueId: session.issueId,
     identifier: session.issueIdentifier || session.issueId.slice(0, 8),
     providerSessionId: session.providerSessionId || undefined,

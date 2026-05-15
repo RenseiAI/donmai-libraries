@@ -307,9 +307,9 @@ export function createWebhookOrchestrator(
             }
             hooks?.onAgentStopped?.(agent)
           },
-          onProviderSessionId: async (linearSessionId: string, providerSessionId: string) => {
-            log.info('Provider session ID captured', { linearSessionId, providerSessionId })
-            await updateProviderSessionId(linearSessionId, providerSessionId)
+          onProviderSessionId: async (sessionId: string, providerSessionId: string) => {
+            log.info('Provider session ID captured', { sessionId, providerSessionId })
+            await updateProviderSessionId(sessionId, providerSessionId)
           },
         }
       )

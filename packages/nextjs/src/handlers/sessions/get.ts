@@ -15,8 +15,9 @@ interface RouteParams {
 
 function toResponse(session: AgentSessionState): AgentSessionResponse {
   return {
-    id: session.linearSessionId,
-    linearSessionId: session.linearSessionId,
+    id: session.trackerSessionId,
+    trackerSessionId: session.trackerSessionId,
+    linearSessionId: session.trackerSessionId,
     issueId: session.issueId,
     identifier: session.issueIdentifier || session.issueId.slice(0, 8),
     providerSessionId: session.providerSessionId || undefined,

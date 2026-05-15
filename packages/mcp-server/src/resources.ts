@@ -79,7 +79,7 @@ export function registerFleetResources(server: McpServer): void {
     async (uri, variables) => {
       const id = Array.isArray(variables.id) ? variables.id[0] : variables.id
 
-      // Try to find the session by linearSessionId first, then fall back to issue ID
+      // Try to find the session by trackerSessionId first, then fall back to issue ID
       let session = await getSessionState(id)
       if (!session) {
         session = await getSessionStateByIssue(id)

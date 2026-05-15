@@ -863,7 +863,7 @@ export async function runWorker(
               worktreePath: agent.worktreePath,
             })
           },
-          onProviderSessionId: (_linearSessionId: string, providerSessionId: string) => {
+          onProviderSessionId: (_sessionId: string, providerSessionId: string) => {
             agentLog.debug('Provider session captured', { providerSessionId })
             reportStatus(work.sessionId, 'running', {
               providerSessionId,

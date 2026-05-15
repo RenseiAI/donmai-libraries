@@ -36,7 +36,8 @@ function makeSession(
   overrides: Partial<AgentSessionState> = {}
 ): AgentSessionState {
   return {
-    linearSessionId: 'sess-1',
+    trackerSessionId: 'sess-1',
+    trackerProvider: 'linear',
     issueId: 'issue-1',
     providerSessionId: null,
     worktreePath: '/tmp/wt',
@@ -127,7 +128,7 @@ describe('evaluateReadiness', () => {
     const worker = makeWorkerInfo({ id: 'wkr_abc', capacity: 3, activeSessions: ['sess-stuck'] })
     const sessions = [
       makeSession({
-        linearSessionId: 'sess-stuck',
+        trackerSessionId: 'sess-stuck',
         status: 'claimed',
         workerId: 'wkr_abc',
         claimedAt: 500_000,

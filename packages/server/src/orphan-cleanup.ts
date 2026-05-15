@@ -91,7 +91,7 @@ export async function findOrphanedSessions(): Promise<AgentSessionState[]> {
     const sessionAge = Date.now() - session.updatedAt
     if (sessionAge < ORPHAN_THRESHOLD_MS) {
       log.debug('Session recently updated, skipping orphan check', {
-        sessionId: session.linearSessionId,
+        sessionId: session.trackerSessionId,
         ageMs: sessionAge,
       })
       continue
@@ -100,7 +100,7 @@ export async function findOrphanedSessions(): Promise<AgentSessionState[]> {
     // If session has no worker assigned, it's orphaned
     if (!session.workerId) {
       log.debug('Session has no worker assigned', {
-        sessionId: session.linearSessionId,
+        sessionId: session.trackerSessionId,
         status: session.status,
       })
       orphaned.push(session)
@@ -110,7 +110,7 @@ export async function findOrphanedSessions(): Promise<AgentSessionState[]> {
     // If the assigned worker is no longer active, session is orphaned
     if (!activeWorkerIds.has(session.workerId)) {
       log.debug('Session worker is no longer active', {
-        sessionId: session.linearSessionId,
+        sessionId: session.trackerSessionId,
         workerId: session.workerId,
         status: session.status,
       })
@@ -146,19 +146,19 @@ export async function findZombiePendingSessions(): Promise<AgentSessionState[]> 
     if (age < ZOMBIE_PENDING_THRESHOLD_MS) continue
 
     // Check if session is in the global work queue
-    const inQueue = await isSessionInQueue(session.linearSessionId)
+    const inQueue = await isSessionInQueue(session.trackerSessionId)
     if (inQueue) continue
 
     // Check if session is parked in the issue-pending queue
     const parked = await isSessionParkedForIssue(
       session.issueId,
-      session.linearSessionId
+      session.trackerSessionId
     )
     if (parked) continue
 
     // Session is pending but not in any queue — it's a zombie
     log.warn('Found zombie pending session', {
-      sessionId: session.linearSessionId,
+      sessionId: session.trackerSessionId,
       issueIdentifier: session.issueIdentifier,
       ageMinutes: Math.round(age / 60_000),
     })
@@ -201,14 +201,14 @@ export async function cleanupOrphanedSessions(
         const issueIdentifier = session.issueIdentifier || session.issueId.slice(0, 8)
 
         log.info('Re-queuing orphaned session', {
-          sessionId: session.linearSessionId,
+          sessionId: session.trackerSessionId,
           issueIdentifier,
           previousWorker: session.workerId,
           previousStatus: session.status,
         })
 
         // Release any existing claim
-        await releaseClaim(session.linearSessionId)
+        await releaseClaim(session.trackerSessionId)
 
         // Release the issue lock if held by this orphaned session.
         // Without this, dispatchWork() below would fail to acquire the lock
@@ -216,23 +216,23 @@ export async function cleanupOrphanedSessions(
         // lock's 2-hour TTL expires, since the session is reset to 'pending'
         // which the stale-lock cleanup doesn't consider terminal.
         const existingLock = await getIssueLock(session.issueId)
-        if (existingLock && existingLock.sessionId === session.linearSessionId) {
+        if (existingLock && existingLock.sessionId === session.trackerSessionId) {
           log.info('Releasing issue lock held by orphaned session', {
-            sessionId: session.linearSessionId,
+            sessionId: session.trackerSessionId,
             issueId: session.issueId,
           })
           await releaseIssueLock(session.issueId)
         }
 
         // Reset session for requeue (clears workerId so new worker can claim)
-        await resetSessionForRequeue(session.linearSessionId)
+        await resetSessionForRequeue(session.trackerSessionId)
 
         // Re-queue the work with higher priority
         // IMPORTANT: Preserve workType to prevent incorrect status transitions
         // NOTE: Do NOT preserve providerSessionId - the old session may be corrupted
         // from the crash that caused the orphan. Starting fresh is safer.
         const work: QueuedWork = {
-          sessionId: session.linearSessionId,
+          sessionId: session.trackerSessionId,
           issueId: session.issueId,
           issueIdentifier,
           priority: Math.max(1, (session.priority || 3) - 1), // Boost priority
@@ -248,7 +248,7 @@ export async function cleanupOrphanedSessions(
         if (dispatchResult.dispatched || dispatchResult.parked) {
           result.requeued++
           result.details.push({
-            sessionId: session.linearSessionId,
+            sessionId: session.trackerSessionId,
             issueIdentifier,
             action: 'requeued',
             worktreePath: session.worktreePath,
@@ -270,7 +270,7 @@ export async function cleanupOrphanedSessions(
         } else {
           result.failed++
           result.details.push({
-            sessionId: session.linearSessionId,
+            sessionId: session.trackerSessionId,
             issueIdentifier,
             action: 'failed',
             reason: 'Failed to queue work',
@@ -278,12 +278,12 @@ export async function cleanupOrphanedSessions(
         }
       } catch (err) {
         log.error('Failed to cleanup orphaned session', {
-          sessionId: session.linearSessionId,
+          sessionId: session.trackerSessionId,
           error: err,
         })
         result.failed++
         result.details.push({
-          sessionId: session.linearSessionId,
+          sessionId: session.trackerSessionId,
           issueIdentifier: session.issueIdentifier || 'unknown',
           action: 'failed',
           reason: err instanceof Error ? err.message : 'Unknown error',
@@ -304,22 +304,22 @@ export async function cleanupOrphanedSessions(
           const issueIdentifier = session.issueIdentifier || session.issueId.slice(0, 8)
 
           log.info('Re-dispatching zombie pending session', {
-            sessionId: session.linearSessionId,
+            sessionId: session.trackerSessionId,
             issueIdentifier,
           })
 
           // Release issue lock if held by this zombie session (same rationale as orphan cleanup)
           const existingLock = await getIssueLock(session.issueId)
-          if (existingLock && existingLock.sessionId === session.linearSessionId) {
+          if (existingLock && existingLock.sessionId === session.trackerSessionId) {
             log.info('Releasing issue lock held by zombie session', {
-              sessionId: session.linearSessionId,
+              sessionId: session.trackerSessionId,
               issueId: session.issueId,
             })
             await releaseIssueLock(session.issueId)
           }
 
           const work: QueuedWork = {
-            sessionId: session.linearSessionId,
+            sessionId: session.trackerSessionId,
             issueId: session.issueId,
             issueIdentifier,
             priority: Math.max(1, (session.priority || 3) - 1),
@@ -334,7 +334,7 @@ export async function cleanupOrphanedSessions(
           if (dispatchResult.dispatched || dispatchResult.parked) {
             result.requeued++
             result.details.push({
-              sessionId: session.linearSessionId,
+              sessionId: session.trackerSessionId,
               issueIdentifier,
               action: 'requeued',
               reason: 'Zombie pending session recovered',
@@ -351,7 +351,7 @@ export async function cleanupOrphanedSessions(
           } else {
             result.failed++
             result.details.push({
-              sessionId: session.linearSessionId,
+              sessionId: session.trackerSessionId,
               issueIdentifier,
               action: 'failed',
               reason: 'Failed to re-dispatch zombie session',
@@ -359,12 +359,12 @@ export async function cleanupOrphanedSessions(
           }
         } catch (err) {
           log.error('Failed to recover zombie session', {
-            sessionId: session.linearSessionId,
+            sessionId: session.trackerSessionId,
             error: err,
           })
           result.failed++
           result.details.push({
-            sessionId: session.linearSessionId,
+            sessionId: session.trackerSessionId,
             issueIdentifier: session.issueIdentifier || 'unknown',
             action: 'failed',
             reason: err instanceof Error ? err.message : 'Unknown error',

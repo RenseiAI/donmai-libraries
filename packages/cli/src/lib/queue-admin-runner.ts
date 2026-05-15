@@ -138,7 +138,9 @@ async function listSessions(): Promise<void> {
         status: string
         issueIdentifier?: string
         issueId: string
-        linearSessionId: string
+        trackerSessionId?: string
+        /** @deprecated use trackerSessionId */
+        linearSessionId?: string
         updatedAt: number
         workerId?: string
         workType?: string
@@ -154,9 +156,10 @@ async function listSessions(): Promise<void> {
           stopped: C.yellow,
         }
         const statusColor = statusColors[session.status] || ''
+        const sessionId = session.trackerSessionId ?? session.linearSessionId ?? 'unknown'
 
         console.log(`- ${session.issueIdentifier || session.issueId.slice(0, 8)} [${statusColor}${session.status}${C.reset}]`)
-        console.log(`  Session: ${session.linearSessionId.slice(0, 12)}...`)
+        console.log(`  Session: ${sessionId.slice(0, 12)}...`)
         if (session.workType) {
           console.log(`  WorkType: ${session.workType}`)
         }
@@ -371,7 +374,9 @@ async function resetWorkState(): Promise<void> {
   let sessionsReset = 0
   for (const key of sessionKeys) {
     const session = await redisGet<{
-      linearSessionId: string
+      trackerSessionId?: string
+      /** @deprecated use trackerSessionId */
+      linearSessionId?: string
       issueIdentifier?: string
       status: string
       workerId?: string
@@ -382,7 +387,8 @@ async function resetWorkState(): Promise<void> {
     if (!session) continue
 
     if (session.status === 'running' || session.status === 'claimed') {
-      console.log(`  Resetting: ${session.issueIdentifier || session.linearSessionId}`)
+      const sessionId = session.trackerSessionId ?? session.linearSessionId ?? 'unknown'
+      console.log(`  Resetting: ${session.issueIdentifier || sessionId}`)
       console.log(`    Status: ${session.status}, WorkerId: ${session.workerId || 'none'}`)
 
       const updated = {

@@ -73,7 +73,7 @@ async function findSession(issueId: string): Promise<AgentSessionState | null> {
 
   for (const session of sessions) {
     const matchesIdentifier = session.issueIdentifier?.toUpperCase() === normalizedInput
-    const matchesSessionId = session.linearSessionId.includes(issueId)
+    const matchesSessionId = session.trackerSessionId.includes(issueId)
 
     if (!matchesIdentifier && !matchesSessionId) continue
 
@@ -102,7 +102,7 @@ function formatSession(session: AgentSessionState): string {
   }
   const color = statusColors[session.status] ?? ''
   const identifier = session.issueIdentifier ?? session.issueId.slice(0, 8)
-  const sessionShort = session.linearSessionId.slice(0, 12)
+  const sessionShort = session.trackerSessionId.slice(0, 12)
   const worker = session.workerId ? ` worker:${session.workerId.slice(0, 8)}` : ''
   const workType = session.workType ? ` (${session.workType})` : ''
 
@@ -137,7 +137,7 @@ async function stopWork(issueId: string): Promise<void> {
     return
   }
 
-  const updated = await updateSessionStatus(session.linearSessionId, 'stopped')
+  const updated = await updateSessionStatus(session.trackerSessionId, 'stopped')
   if (updated) {
     console.log(`${C.green}Stop signal sent${C.reset} — worker will abort within ~5 seconds`)
   } else {
@@ -175,7 +175,7 @@ async function chatWithAgent(issueId: string, message: string): Promise<void> {
   try {
     const streamId = await publishUrgent(agentId, {
       type: 'directive',
-      sessionId: session.linearSessionId,
+      sessionId: session.trackerSessionId,
       payload: message,
       createdAt: Date.now(),
     })
@@ -202,7 +202,7 @@ async function showStatus(issueId: string): Promise<void> {
   console.log(`  Issue:       ${session.issueIdentifier ?? session.issueId}`)
   console.log(`  Status:      ${session.status}`)
   console.log(`  Work Type:   ${session.workType ?? 'development'}`)
-  console.log(`  Session:     ${session.linearSessionId}`)
+  console.log(`  Session:     ${session.trackerSessionId}`)
   console.log(`  Worker:      ${session.workerId ?? '(none)'}`)
   console.log(`  Provider:    ${session.provider ?? '(unknown)'}`)
   console.log(`  Worktree:    ${session.worktreePath}`)
@@ -278,10 +278,10 @@ async function reconnectSession(issueId: string): Promise<void> {
   })
 
   // Mark the old session as stopped so the worker picks up the new one
-  await updateSessionStatus(session.linearSessionId, 'stopped')
+  await updateSessionStatus(session.trackerSessionId, 'stopped')
 
   console.log(`${C.green}Reconnected${C.reset}`)
-  console.log(`  Old session: ${session.linearSessionId.slice(0, 12)}... (stopped)`)
+  console.log(`  Old session: ${session.trackerSessionId.slice(0, 12)}... (stopped)`)
   console.log(`  New session: ${newSessionId.slice(0, 12)}... (${session.status})`)
   console.log('')
   console.log(`The agent's Linear issue view will now show a fresh session.`)

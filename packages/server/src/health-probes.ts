@@ -85,7 +85,7 @@ export function evaluateReadiness(
     if (claimAge > claimStuckMs) {
       return {
         ok: false,
-        reason: `Session ${session.linearSessionId} stuck in claimed for ${Math.round(claimAge / 1000)}s`,
+        reason: `Session ${session.trackerSessionId} stuck in claimed for ${Math.round(claimAge / 1000)}s`,
         checkedAt: now,
       }
     }
