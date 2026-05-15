@@ -491,3 +491,25 @@ pnpm test         # Run all tests
 pnpm typecheck    # Type-check all packages
 pnpm clean        # Clean all dist directories
 ```
+
+## Publishing Hygiene
+
+Every package under `packages/*` ships to **public** npm (and GitHub Packages). Anything in a file listed under that package's `files` array — `README.md`, `LICENSE`, `dist/**`, etc. — becomes world-readable the moment a release tag is cut.
+
+**Before editing any `packages/*/README.md` or other file that ships in the published tarball, strip:**
+
+- **Linear ticket IDs** — `REN-XXXX`, `REN2-XX`, `SUP-XXXX`, etc. Linear is private.
+- **Private repo links** — anything under `RenseiAI/*-architecture`, `RenseiAI/rensei`, etc. returns 404 for public readers and signals the existence of private artifacts.
+- **Internal Slack / Notion / GDoc links**
+- **Commit SHAs that point to private branches**
+- **Internal email or org-only contact info**
+
+`v0.8.62` of `@renseiai/architectural-intelligence` shipped a README that leaked 8 `REN-XXXX` refs plus a link to the private `rensei-architecture` repo. Required a `v0.8.63` re-publish; the bad README still sits in npm's version-history view for that one version.
+
+When in doubt, grep before commit:
+
+```bash
+grep -nE 'REN-[0-9]|REN2-[0-9]|SUP-[0-9]|rensei-architecture|rensei-ops|RenseiAI/(rensei-)' packages/*/README.md
+```
+
+The same rule applies to any other public-registry assets (PyPI sdist, crates.io, Homebrew formulas, etc.) and to release notes that auto-attach to GitHub Releases when they're cut from a public repo.
