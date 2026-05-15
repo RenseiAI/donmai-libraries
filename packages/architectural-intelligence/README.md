@@ -1,8 +1,8 @@
 # @renseiai/architectural-intelligence
 
-System-level synthesis of patterns, conventions, decisions, and drift across a tenant's codebase.
+System-level synthesis of patterns, conventions, decisions, and drift across a codebase.
 
-Part of the [Rensei AgentFactory](https://github.com/RenseiAI/agentfactory) toolchain. Architecture reference: [`rensei-architecture/007-intelligence-services.md`](https://github.com/RenseiAI/rensei-architecture/blob/main/007-intelligence-services.md) § Architectural Intelligence.
+Part of the [Rensei AgentFactory](https://github.com/RenseiAI/agentfactory) toolchain.
 
 ## What it does
 
@@ -19,7 +19,7 @@ The package ships:
 | Capability | Entry points |
 |---|---|
 | Single-tenant local store | `SqliteArchitecturalIntelligence` |
-| Multi-tenant SaaS store | `PostgresArchitecturalIntelligence` (stub — REN-1322 will fill it in) |
+| Multi-tenant store (stub) | `PostgresArchitecturalIntelligence` |
 | Observation pipeline | `runObservationPass`, `attachPipelineSubscribers`, `readDiffObservations` |
 | Synthesis prompts (versioned registry) | `promptRegistry`, `currentPrompt`, `versionedPrompt` |
 | Eval / A/B test harness | `evaluatePrompt`, `compareABPrompts` |
@@ -73,14 +73,7 @@ The verb accepts a `changeRef` input and emits an `assessment` output (drift sco
 
 ## Status
 
-This package is part of the Rensei AgentFactory v0.8 series and is consumed at runtime by [`@renseiai/agentfactory`](https://www.npmjs.com/package/@renseiai/agentfactory) (orchestrator + context injection).
-
-- **REN-1315** — package skeleton + types ✓
-- **REN-1322** — Postgres impl (multi-tenant)
-- **REN-1323** — MCP tool exposure
-- **REN-1324** — observation pipeline ✓
-- **REN-1325** — synthesis prompt versioning + eval ✓
-- **REN-1326** — drift detection + workflow verb ✓
+Consumed at runtime by [`@renseiai/agentfactory`](https://www.npmjs.com/package/@renseiai/agentfactory) (orchestrator + context injection).
 
 ## License
 
