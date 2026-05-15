@@ -74,7 +74,7 @@ jobs:
       - name: Set package versions
         if: steps.check.outputs.should_publish == 'true'
         run: |
-          for pkg in packages/linear packages/code-intelligence packages/core packages/server packages/cli packages/nextjs packages/dashboard packages/mcp-server packages/create-app; do
+          for pkg in packages/linear packages/code-intelligence packages/architectural-intelligence packages/core packages/server packages/cli packages/nextjs packages/dashboard packages/mcp-server packages/create-app; do
             cd "$pkg"
             npm version "$RELEASE_VERSION" --no-git-tag-version --allow-same-version
             cd "$GITHUB_WORKSPACE"
@@ -95,6 +95,10 @@ jobs:
       - name: Publish @renseiai/agentfactory-code-intelligence to npm
         if: steps.check.outputs.should_publish == 'true'
         run: pnpm --filter @renseiai/agentfactory-code-intelligence publish --no-git-checks --provenance --access public
+
+      - name: Publish @renseiai/architectural-intelligence to npm
+        if: steps.check.outputs.should_publish == 'true'
+        run: pnpm --filter @renseiai/architectural-intelligence publish --no-git-checks --provenance --access public
 
       - name: Publish @renseiai/agentfactory to npm
         if: steps.check.outputs.should_publish == 'true'
@@ -146,6 +150,12 @@ jobs:
       - name: Publish @renseiai/agentfactory-code-intelligence to GitHub Packages
         if: steps.check.outputs.should_publish == 'true'
         run: pnpm --filter @renseiai/agentfactory-code-intelligence publish --no-git-checks
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Publish @renseiai/architectural-intelligence to GitHub Packages
+        if: steps.check.outputs.should_publish == 'true'
+        run: pnpm --filter @renseiai/architectural-intelligence publish --no-git-checks
         env:
           NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
