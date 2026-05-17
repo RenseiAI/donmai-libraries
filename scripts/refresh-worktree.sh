@@ -10,7 +10,12 @@
 #     so the primary clone where humans do most work is protected.
 #   - On "clear": hard-reset to upstream, remove untracked files, force deps
 #     install. The new conversation starts with a pristine worktree.
-#   - On "startup"/"resume": preserve dirty state (stash-rebase if behind).
+#   - On "startup"/"resume": if the worktree is dirty, SKIP the rebase entirely
+#     to preserve WIP. Never stash-then-rebase — `git stash` without
+#     `--include-untracked` silently leaves untracked files unstashed, and a
+#     conflicting stash-pop after rebase fails silently (||true), leaving WIP
+#     in `git stash list` while the working tree shows the rebased upstream
+#     state. Agents experience this as a silent revert.
 #   - Never leave a broken git state: conflicting rebases are aborted.
 #   - All diagnostics go to stdout so Claude sees them as session context.
 #
@@ -153,18 +158,14 @@ else
   elif [ "$BEHIND" = "0" ]; then
     add_status "rebase: up-to-date with $UPSTREAM"
   elif [ -n "$DIRTY" ]; then
-    if git stash push -q -m "refresh-worktree auto-stash" 2>/dev/null; then
-      if git rebase "$UPSTREAM" >/dev/null 2>&1; then
-        git stash pop -q 2>/dev/null || true
-        add_status "rebase: stashed, rebased $BEHIND commit(s) onto $UPSTREAM, restored"
-      else
-        git rebase --abort >/dev/null 2>&1 || true
-        git stash pop -q 2>/dev/null || true
-        add_status "rebase: conflict against $UPSTREAM — aborted, stash restored"
-      fi
-    else
-      add_status "rebase: $BEHIND commit(s) behind $UPSTREAM but stash failed — skipping"
-    fi
+    # WIP present (tracked edits and/or untracked new files). Skip the rebase
+    # entirely rather than stash/pop — `git stash` without --include-untracked
+    # silently leaves untracked files unstashed, and a conflicting stash-pop
+    # after rebase fails silently (||true), leaving the WIP in `git stash list`
+    # but the working tree showing the rebased upstream state. Agents see this
+    # as a silent revert. Safer to leave the worktree behind than to risk it.
+    DIRTY_LINE_COUNT="$(printf '%s\n' "$DIRTY" | wc -l | tr -d ' ')"
+    add_status "rebase: $BEHIND commit(s) behind $UPSTREAM but worktree has $DIRTY_LINE_COUNT dirty path(s) — skipping to preserve WIP"
   else
     if git rebase "$UPSTREAM" >/dev/null 2>&1; then
       add_status "rebase: rebased $BEHIND commit(s) onto $UPSTREAM"
@@ -229,5 +230,25 @@ echo "[refresh-worktree] $BRANCH"
 for line in "${STATUS_LINES[@]}"; do
   echo "  - $line"
 done
+
+# --- 6. Breadcrumb log -----------------------------------------------------
+# Append a single JSONL line per invocation so future incidents have a trail.
+# Best-effort; failures are non-fatal.
+LOG_DIR="$REPO/.dev-logs"
+LOG_FILE="$LOG_DIR/worktree-refresh.jsonl"
+if mkdir -p "$LOG_DIR" 2>/dev/null; then
+  TS="$(date -u +%Y-%m-%dT%H:%M:%SZ)"
+  HEAD_SHA="${CURRENT_SHA:-$(git rev-parse HEAD 2>/dev/null || echo '')}"
+  UP_SHA="${UPSTREAM_SHA:-$(git rev-parse "${UPSTREAM:-HEAD}" 2>/dev/null || echo '')}"
+  if [ -n "${DIRTY:-}" ]; then
+    DIRTY_COUNT_LOG="$(printf '%s\n' "$DIRTY" | wc -l | tr -d ' ')"
+  else
+    DIRTY_COUNT_LOG=0
+  fi
+  STATUS_JOINED="$(printf '%s; ' "${STATUS_LINES[@]:-}" | sed 's/; $//' | tr -d '\n' | sed 's/"/\\"/g')"
+  printf '{"ts":"%s","pid":%d,"source":"%s","branch":"%s","head":"%s","upstream":"%s","upstream_sha":"%s","dirty_paths":%s,"actions":"%s"}\n' \
+    "$TS" "$$" "${EVENT_SOURCE:-}" "$BRANCH" "$HEAD_SHA" "${UPSTREAM:-}" "$UP_SHA" "$DIRTY_COUNT_LOG" "$STATUS_JOINED" \
+    >> "$LOG_FILE" 2>/dev/null || true
+fi
 
 exit 0
