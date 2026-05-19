@@ -120,3 +120,11 @@ export { VoyageReranker } from './reranking/voyage-reranker.js'
 // Plugin
 export { codeIntelligencePlugin } from './plugin/code-intelligence-plugin.js'
 export type { FileReservationDelegate } from './plugin/file-reservation-delegate.js'
+
+// Architectural Intelligence plugin — in-session refetch of arch context
+export { createArchitecturalIntelligencePlugin } from './plugin/architectural-intelligence-plugin.js'
+export type {
+  ArchToolPlugin,
+  ArchToolPluginContext,
+  ArchitecturalIntelligencePluginConfig,
+} from './plugin/architectural-intelligence-plugin.js'

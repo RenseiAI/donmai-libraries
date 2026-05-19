@@ -87,6 +87,9 @@ importers:
         specifier: ^4.3.6
         version: 4.3.6
     devDependencies:
+      '@renseiai/architectural-intelligence':
+        specifier: workspace:*
+        version: link:../architectural-intelligence
       '@types/node':
         specifier: ^22.5.4
         version: 22.19.10
