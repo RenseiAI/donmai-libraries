@@ -1,6 +1,6 @@
 {
   "name": "@renseiai/architectural-intelligence",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "type": "module",
   "description": "Architectural Intelligence — system-level synthesis of patterns, conventions, decisions, and drift across a tenant's codebase",
   "author": "Rensei AI (https://rensei.ai)",
@@ -45,6 +45,18 @@
     "LICENSE"
   ],
   "dependencies": {},
+  "peerDependencies": {
+    "drizzle-orm": ">=0.40.0",
+    "postgres": ">=3.4.0"
+  },
+  "peerDependenciesMeta": {
+    "drizzle-orm": {
+      "optional": true
+    },
+    "postgres": {
+      "optional": true
+    }
+  },
   "devDependencies": {
     "@types/node": "^22.5.4",
     "typescript": "^5.7.3",

@@ -439,16 +439,29 @@ describe('query path filtering', () => {
 })
 
 // ---------------------------------------------------------------------------
-// PostgresArchitecturalIntelligence — throws on construction
+// PostgresArchitecturalIntelligence — requires an injected db adapter
+// (full coverage lives in src/postgres/__tests__/postgres.test.ts)
 // ---------------------------------------------------------------------------
 
 describe('PostgresArchitecturalIntelligence', () => {
-  it('throws with descriptive message on construction', () => {
-    expect(() => new PostgresArchitecturalIntelligence()).toThrow(/REN-1322/)
+  it('throws when constructed without a db adapter', () => {
+    expect(
+      () =>
+        new PostgresArchitecturalIntelligence({
+          db: undefined as unknown as never,
+          orgId: 'org-test',
+        }),
+    ).toThrow(/db.+required/i)
   })
 
-  it('throw message mentions SaaS-only', () => {
-    expect(() => new PostgresArchitecturalIntelligence()).toThrow(/SaaS-only/)
+  it('throws when constructed without an orgId', () => {
+    expect(
+      () =>
+        new PostgresArchitecturalIntelligence({
+          db: { query: async () => [], json: (v) => ({ __jsonbParam: true, value: v }) },
+          orgId: '',
+        }),
+    ).toThrow(/orgId.+required/i)
   })
 })
 

@@ -19,7 +19,7 @@ The package ships:
 | Capability | Entry points |
 |---|---|
 | Single-tenant local store | `SqliteArchitecturalIntelligence` |
-| Multi-tenant store (stub) | `PostgresArchitecturalIntelligence` |
+| Multi-tenant store (injected Postgres handle) | `PostgresArchitecturalIntelligence`, `adapterFromPostgresJs` |
 | Observation pipeline | `runObservationPass`, `attachPipelineSubscribers`, `readDiffObservations` |
 | Synthesis prompts (versioned registry) | `promptRegistry`, `currentPrompt`, `versionedPrompt` |
 | Eval / A/B test harness | `evaluatePrompt`, `compareABPrompts` |

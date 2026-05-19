@@ -62,7 +62,18 @@ export { CITATION_CONFIDENCE_RANK } from './types.js'
 export { SqliteArchitecturalIntelligence } from './sqlite-impl.js'
 export type { SqliteArchConfig } from './sqlite-impl.js'
 
-export { PostgresArchitecturalIntelligence } from './postgres-impl.js'
+export {
+  PostgresArchitecturalIntelligence,
+  adapterFromPostgresJs,
+  isJsonbParam,
+} from './postgres/index.js'
+export type {
+  PostgresArchConfig,
+  PostgresDbAdapter,
+  JsonbParam,
+  DbRow,
+  PostgresJsSqlShape,
+} from './postgres/index.js'
 
 // Observation pipeline (REN-1324)
 export {
