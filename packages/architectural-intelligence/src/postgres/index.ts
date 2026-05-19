@@ -41,11 +41,23 @@ import type {
   DriftReport,
 } from '../types.js'
 import type { PostgresDbAdapter } from './adapter.js'
+import { RLS_ORG_ID_SETTING } from './adapter.js'
 import { queryArchView } from './queries.js'
 import { contributeObservation } from './contribute.js'
 
-export type { PostgresDbAdapter, JsonbParam, DbRow, PostgresJsSqlShape } from './adapter.js'
-export { adapterFromPostgresJs, isJsonbParam } from './adapter.js'
+export type {
+  PostgresDbAdapter,
+  JsonbParam,
+  DbRow,
+  PostgresJsSqlShape,
+  TransactionRunner,
+} from './adapter.js'
+export {
+  adapterFromPostgresJs,
+  isJsonbParam,
+  RLS_DDL_EXAMPLE,
+  RLS_ORG_ID_SETTING,
+} from './adapter.js'
 
 // ---------------------------------------------------------------------------
 // Config
@@ -115,7 +127,7 @@ export class PostgresArchitecturalIntelligence implements ArchitecturalIntellige
     // Prefer the spec's scope when it carries an explicit projectId; fall
     // back to the instance projectId for "org-wide" callers.
     const projectId = spec.scope.projectId ?? this._projectId
-    return queryArchView(this._db, this._orgId, projectId, spec)
+    return this.withTenantScope((tx) => queryArchView(tx, this._orgId, projectId, spec))
   }
 
   // -------------------------------------------------------------------------
@@ -130,11 +142,56 @@ export class PostgresArchitecturalIntelligence implements ArchitecturalIntellige
           '(provide one on observation.scope.projectId or on the SDK config).',
       )
     }
-    await contributeObservation(
-      this._db,
-      { orgId: this._orgId, projectId, agentId: this._agentId },
-      observation,
+    await this.withTenantScope((tx) =>
+      contributeObservation(
+        tx,
+        { orgId: this._orgId, projectId, agentId: this._agentId },
+        observation,
+      ),
     )
+  }
+
+  // -------------------------------------------------------------------------
+  // RLS — tenant-scoped transaction wrapping
+  // -------------------------------------------------------------------------
+
+  /**
+   * Run a body against a transaction-scoped adapter that has
+   * `SET LOCAL rensei.current_org_id = '<orgId>'` applied. This gives the
+   * SDK defence-in-depth: app-level `WHERE org_id = $orgId` (always on)
+   * PLUS database-level RLS policies (when the consumer applies the DDL
+   * shipped in `RLS_DDL_EXAMPLE`).
+   *
+   * When the adapter does NOT expose a `transaction` runner, the SDK
+   * falls back to running the body against the plain adapter — RLS at
+   * the DB level is skipped but app-level scoping still applies. This
+   * keeps the SDK usable in development / single-tenant deployments and
+   * in the in-memory test adapter.
+   *
+   * `SET LOCAL` is intentionally used (not `SET`) so the GUC scope dies
+   * at COMMIT/ROLLBACK and does not leak to the next checked-out
+   * connection from a pool.
+   */
+  private async withTenantScope<T>(
+    body: (tx: PostgresDbAdapter) => Promise<T>,
+  ): Promise<T> {
+    const tx = this._db.transaction
+    if (!tx) {
+      // No transaction support — run against the plain adapter. App-level
+      // org scoping still enforced by the WHERE clauses in queries.ts.
+      return body(this._db)
+    }
+    return tx(async (scoped) => {
+      // postgres-js refuses to bind GUC names as parameters, so the org
+      // id is parametrised but the setting name is literal in the SQL.
+      // The org id is a UUID generated server-side / validated by the
+      // caller — no untrusted concatenation path here.
+      await scoped.query(`SELECT set_config($1, $2, true)`, [
+        RLS_ORG_ID_SETTING,
+        this._orgId,
+      ])
+      return body(scoped)
+    })
   }
 
   // -------------------------------------------------------------------------

@@ -66,6 +66,8 @@ export {
   PostgresArchitecturalIntelligence,
   adapterFromPostgresJs,
   isJsonbParam,
+  RLS_DDL_EXAMPLE,
+  RLS_ORG_ID_SETTING,
 } from './postgres/index.js'
 export type {
   PostgresArchConfig,
@@ -73,6 +75,7 @@ export type {
   JsonbParam,
   DbRow,
   PostgresJsSqlShape,
+  TransactionRunner,
 } from './postgres/index.js'
 
 // Observation pipeline (REN-1324)

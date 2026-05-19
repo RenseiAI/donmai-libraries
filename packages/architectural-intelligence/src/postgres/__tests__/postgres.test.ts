@@ -20,6 +20,8 @@ import {
   type DbRow,
   type JsonbParam,
   isJsonbParam,
+  RLS_DDL_EXAMPLE,
+  RLS_ORG_ID_SETTING,
 } from '../index.js'
 import type { ArchObservation, ArchScope } from '../../types.js'
 
@@ -62,175 +64,274 @@ interface GraphNodeRowDb {
 interface Store {
   observations: ObservationRow[]
   graphNodes: GraphNodeRowDb[]
+  /**
+   * Set of SET LOCAL calls observed across the lifetime of the store —
+   * used to assert that the SDK applies tenant scoping.
+   */
+  setLocalCalls: Array<{ name: string; value: string }>
+  /**
+   * When true, the in-memory store simulates RLS enforcement: queries
+   * that don't have the expected GUC set, or whose GUC org id doesn't
+   * match the row, return zero rows (the policy USING clause).
+   */
+  enforceRls: boolean
 }
 
-function freshStore(): Store {
-  return { observations: [], graphNodes: [] }
+function freshStore(opts?: { enforceRls?: boolean }): Store {
+  return {
+    observations: [],
+    graphNodes: [],
+    setLocalCalls: [],
+    enforceRls: opts?.enforceRls ?? false,
+  }
+}
+
+/**
+ * Build an in-memory adapter. The optional `txGucOverride` lets a test
+ * force a GUC value (simulating a misbehaving caller that bypasses the
+ * SDK's SET LOCAL) — useful for proving the wrong-org-id path returns
+ * zero rows under RLS enforcement.
+ */
+interface AdapterOptions {
+  /** Force the tx-scoped GUC to a specific value, ignoring set_config calls. */
+  txGucOverride?: string | null
+  /**
+   * Skip applying the SET LOCAL call entirely (simulates an adapter that
+   * forgot to plumb the transaction). The SDK MUST NOT see this path
+   * silently leak cross-tenant — that's what RLS catches.
+   */
+  swallowSetConfig?: boolean
 }
 
 /**
  * Match `$1, $2, ...` placeholders against the params array. The store
  * does not parse SQL — it inspects the SQL string for the table name and
  * the WHERE clause shape we care about.
+ *
+ * Transaction model: a top-level `transaction(fn)` creates a per-tx GUC
+ * map. Inside the callback the SDK runs `SELECT set_config($1, $2, true)`
+ * which updates the per-tx GUC. Subsequent queries inside the same tx
+ * inherit it; the GUC dies when the tx settles. Outside a transaction the
+ * GUC is undefined (matches Postgres `SET LOCAL` semantics).
  */
-function makeAdapter(store: Store): PostgresDbAdapter {
+function makeAdapter(store: Store, options: AdapterOptions = {}): PostgresDbAdapter {
   function unbox(v: unknown): unknown {
     if (isJsonbParam(v)) return v.value
     return v
   }
 
-  return {
-    json(value: unknown): JsonbParam {
-      return { __jsonbParam: true, value }
-    },
+  // txGuc is a closure variable representing the per-transaction GUC bag.
+  // Outside a tx it's undefined; inside it's a Record. We pass it through
+  // a chain so the in-tx adapter sees the same map.
+  function build(txGuc: Record<string, string> | undefined): PostgresDbAdapter {
+    return {
+      json(value: unknown): JsonbParam {
+        return { __jsonbParam: true, value }
+      },
 
-    async query<TRow extends DbRow = DbRow>(
-      text: string,
-      params: ReadonlyArray<unknown>,
-    ): Promise<TRow[]> {
-      const sql = text.trim()
-      const bound = params.map(unbox)
+      transaction: async <T>(fn: (tx: PostgresDbAdapter) => Promise<T>): Promise<T> => {
+        // Nested transactions reuse the current scope so set_config from
+        // an inner SDK call is visible to its body.
+        const scoped: Record<string, string> = { ...(txGuc ?? {}) }
+        const txAdapter = build(scoped)
+        try {
+          return await fn(txAdapter)
+        } finally {
+          // SET LOCAL lifetime ends at commit/rollback — clear so the
+          // outer (or test inspection) does not see leaked GUCs.
+          for (const k of Object.keys(scoped)) delete scoped[k]
+        }
+      },
 
-      // INSERT INTO observations
-      if (/^INSERT\s+INTO\s+observations/i.test(sql)) {
-        const [
-          id,
-          orgId,
-          projectId,
-          agentId,
-          content,
-          contentHash,
-          kind,
-          payload,
-          source,
-          weight,
-          metadata,
-        ] = bound as [
-          string,
-          string,
-          string,
-          string,
-          string,
-          string,
-          string,
-          string,
-          string,
-          string,
-          Record<string, unknown>,
-        ]
-        const existing = store.observations.find(
-          (o) =>
-            o.org_id === orgId &&
-            o.project_id === projectId &&
-            o.agent_id === agentId &&
-            o.content_hash === contentHash,
-        )
-        if (existing) {
-          existing.weight += 1
-          existing.updated_at = new Date()
+      async query<TRow extends DbRow = DbRow>(
+        text: string,
+        params: ReadonlyArray<unknown>,
+      ): Promise<TRow[]> {
+        const sql = text.trim()
+        const bound = params.map(unbox)
+
+        // SET LOCAL via set_config(name, value, is_local=true)
+        if (/^SELECT\s+set_config\s*\(/i.test(sql)) {
+          const [name, value] = bound as [string, string]
+          store.setLocalCalls.push({ name, value })
+          if (!options.swallowSetConfig && txGuc) {
+            txGuc[name] = value
+          }
           return [] as unknown as TRow[]
         }
-        store.observations.push({
-          id,
-          org_id: orgId,
-          project_id: projectId,
-          agent_id: agentId,
-          content,
-          content_hash: contentHash,
-          kind,
-          payload,
-          source,
-          weight: Number(weight),
-          metadata,
-          created_at: new Date(),
-          updated_at: new Date(),
-        })
-        return [] as unknown as TRow[]
-      }
 
-      // INSERT INTO graph_nodes
-      if (/^INSERT\s+INTO\s+graph_nodes/i.test(sql)) {
-        const [
-          id,
-          name,
-          type,
-          description,
-          properties,
-          importanceWeight,
-          feedbackWeight,
-          orgId,
-          projectId,
-          sourceObservationId,
-          sourceSessionId,
-        ] = bound as [
-          string,
-          string,
-          string,
-          string,
-          Record<string, unknown>,
-          number,
-          number,
-          string,
-          string,
-          string | null,
-          string | null,
-        ]
-        store.graphNodes.push({
-          id,
-          name,
-          type,
-          description,
-          properties,
-          importance_weight: Number(importanceWeight),
-          feedback_weight: Number(feedbackWeight),
-          org_id: orgId,
-          project_id: projectId,
-          source_observation_id: sourceObservationId,
-          source_session_id: sourceSessionId,
-          created_at: new Date(),
-          updated_at: new Date(),
-        })
-        return [] as unknown as TRow[]
-      }
+        // Effective GUC the simulated RLS will check against. The
+        // txGucOverride lets a test simulate a "wrong org" caller.
+        const effectiveOrgGuc =
+          options.txGucOverride !== undefined
+            ? options.txGucOverride
+            : (txGuc?.[RLS_ORG_ID_SETTING] ?? null)
 
-      // SELECT ... FROM graph_nodes WHERE type = ANY ($1::text[]) AND org_id = $2 [AND project_id = $3]
-      if (/^SELECT[\s\S]+FROM\s+graph_nodes/i.test(sql)) {
-        const kinds = bound[0] as string[]
-        const orgId = bound[1] as string
-        const projectId = bound.length >= 3 ? (bound[2] as string) : undefined
+        // RLS check helper — simulates the policy USING clause.
+        // When enforceRls is on, a row is visible only if its org_id
+        // matches the GUC. Missing GUC → fail closed (zero rows).
+        function rlsAllowsOrg(rowOrgId: string): boolean {
+          if (!store.enforceRls) return true
+          if (effectiveOrgGuc === null) return false
+          return rowOrgId === effectiveOrgGuc
+        }
 
-        const matched = store.graphNodes.filter((row) => {
-          if (!kinds.includes(row.type)) return false
-          if (row.org_id !== orgId) return false
-          if (projectId !== undefined && row.project_id !== projectId) return false
-          return true
-        })
-        matched.sort((a, b) => {
-          if (b.importance_weight !== a.importance_weight) {
-            return b.importance_weight - a.importance_weight
+        // INSERT INTO observations
+        if (/^INSERT\s+INTO\s+observations/i.test(sql)) {
+          const [
+            id,
+            orgId,
+            projectId,
+            agentId,
+            content,
+            contentHash,
+            kind,
+            payload,
+            source,
+            weight,
+            metadata,
+          ] = bound as [
+            string,
+            string,
+            string,
+            string,
+            string,
+            string,
+            string,
+            string,
+            string,
+            string,
+            Record<string, unknown>,
+          ]
+          // RLS WITH CHECK — INSERT also fails if the row's org_id
+          // doesn't match the GUC.
+          if (!rlsAllowsOrg(orgId)) {
+            throw new Error(
+              `simulated RLS: INSERT denied — row.org_id=${orgId} guc=${effectiveOrgGuc}`,
+            )
           }
-          return b.updated_at.getTime() - a.updated_at.getTime()
-        })
-        // Re-key to the camelCase aliases the SDK expects.
-        return matched.map((r) => ({
-          id: r.id,
-          name: r.name,
-          type: r.type,
-          description: r.description,
-          properties: r.properties,
-          importanceWeight: r.importance_weight,
-          orgId: r.org_id,
-          projectId: r.project_id,
-          sourceObservationId: r.source_observation_id,
-          sourceSessionId: r.source_session_id,
-          createdAt: r.created_at,
-          updatedAt: r.updated_at,
-        })) as unknown as TRow[]
-      }
+          const existing = store.observations.find(
+            (o) =>
+              o.org_id === orgId &&
+              o.project_id === projectId &&
+              o.agent_id === agentId &&
+              o.content_hash === contentHash,
+          )
+          if (existing) {
+            existing.weight += 1
+            existing.updated_at = new Date()
+            return [] as unknown as TRow[]
+          }
+          store.observations.push({
+            id,
+            org_id: orgId,
+            project_id: projectId,
+            agent_id: agentId,
+            content,
+            content_hash: contentHash,
+            kind,
+            payload,
+            source,
+            weight: Number(weight),
+            metadata,
+            created_at: new Date(),
+            updated_at: new Date(),
+          })
+          return [] as unknown as TRow[]
+        }
 
-      throw new Error(`In-memory adapter does not handle SQL: ${sql.slice(0, 80)}...`)
-    },
+        // INSERT INTO graph_nodes
+        if (/^INSERT\s+INTO\s+graph_nodes/i.test(sql)) {
+          const [
+            id,
+            name,
+            type,
+            description,
+            properties,
+            importanceWeight,
+            feedbackWeight,
+            orgId,
+            projectId,
+            sourceObservationId,
+            sourceSessionId,
+          ] = bound as [
+            string,
+            string,
+            string,
+            string,
+            Record<string, unknown>,
+            number,
+            number,
+            string,
+            string,
+            string | null,
+            string | null,
+          ]
+          if (!rlsAllowsOrg(orgId)) {
+            throw new Error(
+              `simulated RLS: INSERT denied — row.org_id=${orgId} guc=${effectiveOrgGuc}`,
+            )
+          }
+          store.graphNodes.push({
+            id,
+            name,
+            type,
+            description,
+            properties,
+            importance_weight: Number(importanceWeight),
+            feedback_weight: Number(feedbackWeight),
+            org_id: orgId,
+            project_id: projectId,
+            source_observation_id: sourceObservationId,
+            source_session_id: sourceSessionId,
+            created_at: new Date(),
+            updated_at: new Date(),
+          })
+          return [] as unknown as TRow[]
+        }
+
+        // SELECT ... FROM graph_nodes WHERE type = ANY ($1::text[]) AND org_id = $2 [AND project_id = $3]
+        if (/^SELECT[\s\S]+FROM\s+graph_nodes/i.test(sql)) {
+          const kinds = bound[0] as string[]
+          const orgId = bound[1] as string
+          const projectId = bound.length >= 3 ? (bound[2] as string) : undefined
+
+          const matched = store.graphNodes.filter((row) => {
+            if (!rlsAllowsOrg(row.org_id)) return false
+            if (!kinds.includes(row.type)) return false
+            if (row.org_id !== orgId) return false
+            if (projectId !== undefined && row.project_id !== projectId) return false
+            return true
+          })
+          matched.sort((a, b) => {
+            if (b.importance_weight !== a.importance_weight) {
+              return b.importance_weight - a.importance_weight
+            }
+            return b.updated_at.getTime() - a.updated_at.getTime()
+          })
+          // Re-key to the camelCase aliases the SDK expects.
+          return matched.map((r) => ({
+            id: r.id,
+            name: r.name,
+            type: r.type,
+            description: r.description,
+            properties: r.properties,
+            importanceWeight: r.importance_weight,
+            orgId: r.org_id,
+            projectId: r.project_id,
+            sourceObservationId: r.source_observation_id,
+            sourceSessionId: r.source_session_id,
+            createdAt: r.created_at,
+            updatedAt: r.updated_at,
+          })) as unknown as TRow[]
+        }
+
+        throw new Error(`In-memory adapter does not handle SQL: ${sql.slice(0, 80)}...`)
+      },
+    }
   }
+
+  return build(undefined)
 }
 
 // ---------------------------------------------------------------------------
@@ -585,5 +686,223 @@ describe('assess()', () => {
     expect(report.hasCriticalDrift).toBe(false)
     expect(report.deviations).toHaveLength(0)
     expect(report.summary).toMatch(/placeholder/i)
+  })
+})
+
+// ---------------------------------------------------------------------------
+// RLS — SET LOCAL transaction wrapping (FU-2)
+// ---------------------------------------------------------------------------
+
+describe('RLS — SET LOCAL transaction wrapping', () => {
+  it('query() runs inside a transaction and applies SET LOCAL rensei.current_org_id', async () => {
+    await impl.query({ workType: 'development', scope: SCOPE_A })
+
+    expect(store.setLocalCalls).toHaveLength(1)
+    expect(store.setLocalCalls[0]?.name).toBe(RLS_ORG_ID_SETTING)
+    expect(store.setLocalCalls[0]?.value).toBe(ORG_A)
+    expect(RLS_ORG_ID_SETTING).toBe('rensei.current_org_id')
+  })
+
+  it('contribute() runs inside a transaction and applies SET LOCAL', async () => {
+    await impl.contribute({
+      kind: 'pattern',
+      payload: { title: 'X', description: '' },
+      source: { sessionId: 'sess-set-local' },
+      confidence: 0.8,
+      scope: SCOPE_A,
+    })
+
+    expect(store.setLocalCalls).toHaveLength(1)
+    expect(store.setLocalCalls[0]?.value).toBe(ORG_A)
+  })
+
+  it('each call opens a fresh transaction and re-applies SET LOCAL', async () => {
+    await impl.query({ workType: 'development', scope: SCOPE_A })
+    await impl.query({ workType: 'qa', scope: SCOPE_A })
+    await impl.contribute({
+      kind: 'pattern',
+      payload: { title: 'Y', description: '' },
+      source: { sessionId: 'sess-y' },
+      confidence: 0.8,
+      scope: SCOPE_A,
+    })
+
+    expect(store.setLocalCalls).toHaveLength(3)
+    for (const call of store.setLocalCalls) {
+      expect(call.name).toBe(RLS_ORG_ID_SETTING)
+      expect(call.value).toBe(ORG_A)
+    }
+  })
+
+  it('falls back to non-transactional execution when adapter omits transaction()', async () => {
+    // Build a deliberately reduced adapter that lacks `transaction`.
+    // App-level org scoping (WHERE clauses in queries.ts) still applies,
+    // so a contribute → query round-trip works; RLS at the DB level is
+    // skipped (consumer accepted that trade-off).
+    const reducedStore = freshStore()
+    const baseAdapter = makeAdapter(reducedStore)
+    const reduced: PostgresDbAdapter = {
+      query: baseAdapter.query.bind(baseAdapter),
+      json: baseAdapter.json.bind(baseAdapter),
+      // transaction omitted on purpose
+    }
+    const implReduced = new PostgresArchitecturalIntelligence({
+      db: reduced,
+      orgId: ORG_A,
+      projectId: PROJECT_A,
+    })
+
+    await implReduced.contribute({
+      kind: 'pattern',
+      payload: { title: 'NoTx', description: '' },
+      source: { sessionId: 's-no-tx' },
+      confidence: 0.8,
+      scope: SCOPE_A,
+    })
+    const view = await implReduced.query({ workType: 'development', scope: SCOPE_A })
+
+    expect(view.patterns).toHaveLength(1)
+    expect(reducedStore.setLocalCalls).toHaveLength(0)
+  })
+})
+
+// ---------------------------------------------------------------------------
+// RLS — wrong org id in transaction returns zero rows (defence-in-depth)
+// ---------------------------------------------------------------------------
+
+describe('RLS — wrong org id returns zero rows even with bypassed app-level WHERE', () => {
+  it('query under RLS with mismatched GUC returns zero rows', async () => {
+    // Seed an Org-A row via a plain adapter (no RLS) so we have data to
+    // try to leak. Then mount an RLS-enforcing adapter with the GUC
+    // pinned to Org-B, simulating a misconfigured caller — the WHERE
+    // clause inside the SDK is correct for Org-A, but the simulated
+    // policy fails the row because guc != row.org_id.
+    const seededStore = freshStore()
+    const seederImpl = new PostgresArchitecturalIntelligence({
+      db: makeAdapter(seededStore),
+      orgId: ORG_A,
+      projectId: PROJECT_A,
+    })
+    await seederImpl.contribute({
+      kind: 'pattern',
+      payload: { title: 'OrgA secret', description: '' },
+      source: { sessionId: 'seed' },
+      confidence: 0.8,
+      scope: SCOPE_A,
+    })
+
+    // Now flip RLS on and force the GUC to ORG_B regardless of what
+    // SET LOCAL says. This is the "wrong tenant in transaction" case
+    // FU-2 explicitly needs to cover.
+    seededStore.enforceRls = true
+    const rlsAdapter = makeAdapter(seededStore, { txGucOverride: ORG_B })
+    const impllyingOrgA = new PostgresArchitecturalIntelligence({
+      db: rlsAdapter,
+      orgId: ORG_A,
+      projectId: PROJECT_A,
+    })
+
+    const view = await impllyingOrgA.query({ workType: 'development', scope: SCOPE_A })
+    expect(view.patterns).toHaveLength(0)
+    expect(view.conventions).toHaveLength(0)
+    expect(view.decisions).toHaveLength(0)
+  })
+
+  it('query under RLS with NULL GUC fails closed (zero rows)', async () => {
+    const seededStore = freshStore()
+    const seederImpl = new PostgresArchitecturalIntelligence({
+      db: makeAdapter(seededStore),
+      orgId: ORG_A,
+      projectId: PROJECT_A,
+    })
+    await seederImpl.contribute({
+      kind: 'convention',
+      payload: { title: 'Visible only with GUC', description: '' },
+      source: { sessionId: 'seed-c' },
+      confidence: 0.9,
+      scope: SCOPE_A,
+    })
+
+    // Simulate an adapter that swallows SET LOCAL — the GUC stays unset.
+    seededStore.enforceRls = true
+    const swallowed = makeAdapter(seededStore, {
+      txGucOverride: null,
+      swallowSetConfig: true,
+    })
+    const implBroken = new PostgresArchitecturalIntelligence({
+      db: swallowed,
+      orgId: ORG_A,
+      projectId: PROJECT_A,
+    })
+
+    const view = await implBroken.query({ workType: 'development', scope: SCOPE_A })
+    expect(view.conventions).toHaveLength(0)
+  })
+
+  it('contribute under RLS with mismatched GUC raises (WITH CHECK fails)', async () => {
+    const store = freshStore({ enforceRls: true })
+    const adapter = makeAdapter(store, { txGucOverride: ORG_B })
+    const implOrgA = new PostgresArchitecturalIntelligence({
+      db: adapter,
+      orgId: ORG_A,
+      projectId: PROJECT_A,
+    })
+
+    await expect(
+      implOrgA.contribute({
+        kind: 'pattern',
+        payload: { title: 'Should be denied', description: '' },
+        source: { sessionId: 'denied' },
+        confidence: 0.8,
+        scope: SCOPE_A,
+      }),
+    ).rejects.toThrow(/simulated RLS/i)
+  })
+
+  it('query under RLS with matching GUC returns the expected rows', async () => {
+    // Sanity check: with RLS on and the SDK applying the right SET LOCAL,
+    // round-trip behaviour is identical to the non-RLS path.
+    const store = freshStore({ enforceRls: true })
+    const impllOrgA = new PostgresArchitecturalIntelligence({
+      db: makeAdapter(store),
+      orgId: ORG_A,
+      projectId: PROJECT_A,
+    })
+
+    await impllOrgA.contribute({
+      kind: 'pattern',
+      payload: { title: 'Happy path', description: '' },
+      source: { sessionId: 'hp' },
+      confidence: 0.8,
+      scope: SCOPE_A,
+    })
+
+    const view = await impllOrgA.query({ workType: 'development', scope: SCOPE_A })
+    expect(view.patterns).toHaveLength(1)
+    expect(view.patterns[0]?.title).toBe('Happy path')
+  })
+})
+
+// ---------------------------------------------------------------------------
+// RLS_DDL_EXAMPLE exemplar — sanity check the shipped DDL
+// ---------------------------------------------------------------------------
+
+describe('RLS_DDL_EXAMPLE', () => {
+  it('targets both observations and graph_nodes', () => {
+    expect(RLS_DDL_EXAMPLE).toMatch(/ALTER TABLE observations ENABLE ROW LEVEL SECURITY/i)
+    expect(RLS_DDL_EXAMPLE).toMatch(/ALTER TABLE graph_nodes\s+ENABLE ROW LEVEL SECURITY/i)
+  })
+
+  it('uses current_setting against the SDK-exported GUC name', () => {
+    expect(RLS_DDL_EXAMPLE).toContain(`current_setting('${RLS_ORG_ID_SETTING}', true)`)
+  })
+
+  it('applies FORCE ROW LEVEL SECURITY (table owner is not exempt)', () => {
+    expect(RLS_DDL_EXAMPLE).toMatch(/FORCE ROW LEVEL SECURITY/i)
+  })
+
+  it('declares policies for both tables', () => {
+    expect(RLS_DDL_EXAMPLE).toMatch(/CREATE POLICY .+ ON observations/i)
+    expect(RLS_DDL_EXAMPLE).toMatch(/CREATE POLICY .+ ON graph_nodes/i)
   })
 })
