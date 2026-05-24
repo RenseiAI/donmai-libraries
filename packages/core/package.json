@@ -1,5 +1,5 @@
 {
-  "name": "@renseiai/agentfactory",
+  "name": "@donmai/core",
   "version": "0.8.59",
   "type": "module",
   "description": "Multi-agent fleet management for coding agents — orchestrator, providers, crash recovery",
@@ -10,12 +10,12 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/RenseiAI/agentfactory.git",
+    "url": "git+https://github.com/RenseiAI/donmai-libraries.git",
     "directory": "packages/core"
   },
-  "homepage": "https://github.com/RenseiAI/agentfactory/tree/main/packages/core",
+  "homepage": "https://github.com/RenseiAI/donmai-libraries/tree/main/packages/core",
   "bugs": {
-    "url": "https://github.com/RenseiAI/agentfactory/issues"
+    "url": "https://github.com/RenseiAI/donmai-libraries/issues"
   },
   "publishConfig": {
     "access": "public"

@@ -1,5 +1,5 @@
 {
-  "name": "@renseiai/agentfactory-mcp-server",
+  "name": "@donmai/mcp-server",
   "version": "0.8.59",
   "type": "module",
   "description": "MCP server exposing AgentFactory fleet capabilities to MCP-aware clients",
@@ -10,7 +10,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/RenseiAI/agentfactory.git",
+    "url": "git+https://github.com/RenseiAI/donmai-libraries.git",
     "directory": "packages/mcp-server"
   },
   "publishConfig": {

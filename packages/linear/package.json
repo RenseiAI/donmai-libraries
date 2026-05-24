@@ -1,5 +1,5 @@
 {
-  "name": "@renseiai/plugin-linear",
+  "name": "@donmai/plugin-linear",
   "version": "0.8.59",
   "type": "module",
   "description": "Linear issue tracker integration for AgentFactory — status transitions, agent sessions, work routing",
@@ -10,12 +10,12 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/RenseiAI/agentfactory.git",
+    "url": "git+https://github.com/RenseiAI/donmai-libraries.git",
     "directory": "packages/linear"
   },
-  "homepage": "https://github.com/RenseiAI/agentfactory/tree/main/packages/linear",
+  "homepage": "https://github.com/RenseiAI/donmai-libraries/tree/main/packages/linear",
   "bugs": {
-    "url": "https://github.com/RenseiAI/agentfactory/issues"
+    "url": "https://github.com/RenseiAI/donmai-libraries/issues"
   },
   "publishConfig": {
     "access": "public"

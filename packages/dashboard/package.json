@@ -1,5 +1,5 @@
 {
-  "name": "@renseiai/agentfactory-dashboard",
+  "name": "@donmai/dashboard",
   "version": "0.8.59",
   "description": "Premium dashboard UI components for AgentFactory",
   "author": "Rensei AI (https://rensei.ai)",
@@ -9,12 +9,12 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/RenseiAI/agentfactory.git",
+    "url": "git+https://github.com/RenseiAI/donmai-libraries.git",
     "directory": "packages/dashboard"
   },
-  "homepage": "https://github.com/RenseiAI/agentfactory/tree/main/packages/dashboard",
+  "homepage": "https://github.com/RenseiAI/donmai-libraries/tree/main/packages/dashboard",
   "bugs": {
-    "url": "https://github.com/RenseiAI/agentfactory/issues"
+    "url": "https://github.com/RenseiAI/donmai-libraries/issues"
   },
   "publishConfig": {
     "access": "public"

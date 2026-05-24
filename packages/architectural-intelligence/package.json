@@ -1,5 +1,5 @@
 {
-  "name": "@renseiai/architectural-intelligence",
+  "name": "@donmai/architectural-intelligence",
   "version": "0.2.0",
   "type": "module",
   "description": "Architectural Intelligence — system-level synthesis of patterns, conventions, decisions, and drift across a tenant's codebase",
@@ -10,12 +10,12 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/RenseiAI/agentfactory.git",
+    "url": "git+https://github.com/RenseiAI/donmai-libraries.git",
     "directory": "packages/architectural-intelligence"
   },
-  "homepage": "https://github.com/RenseiAI/agentfactory/tree/main/packages/architectural-intelligence",
+  "homepage": "https://github.com/RenseiAI/donmai-libraries/tree/main/packages/architectural-intelligence",
   "bugs": {
-    "url": "https://github.com/RenseiAI/agentfactory/issues"
+    "url": "https://github.com/RenseiAI/donmai-libraries/issues"
   },
   "publishConfig": {
     "access": "public"

@@ -1,5 +1,5 @@
 {
-  "name": "@renseiai/agentfactory-server",
+  "name": "@donmai/server",
   "version": "0.8.59",
   "type": "module",
   "description": "Webhook server and distributed worker pool for AgentFactory — Redis queues, issue locks, session management",
@@ -10,12 +10,12 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/RenseiAI/agentfactory.git",
+    "url": "git+https://github.com/RenseiAI/donmai-libraries.git",
     "directory": "packages/server"
   },
-  "homepage": "https://github.com/RenseiAI/agentfactory/tree/main/packages/server",
+  "homepage": "https://github.com/RenseiAI/donmai-libraries/tree/main/packages/server",
   "bugs": {
-    "url": "https://github.com/RenseiAI/agentfactory/issues"
+    "url": "https://github.com/RenseiAI/donmai-libraries/issues"
   },
   "publishConfig": {
     "access": "public"
