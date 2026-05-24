@@ -43,8 +43,8 @@
     "LICENSE"
   ],
   "dependencies": {
-    "@renseiai/agentfactory": "workspace:*",
-    "@renseiai/plugin-linear": "workspace:*",
+    "@donmai/core": "workspace:*",
+    "@donmai/plugin-linear": "workspace:*",
     "ioredis": "^5.4.2"
   },
   "devDependencies": {

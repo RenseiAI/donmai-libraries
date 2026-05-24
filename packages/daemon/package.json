@@ -36,7 +36,7 @@
     "LICENSE"
   ],
   "dependencies": {
-    "@renseiai/agentfactory": "workspace:*",
+    "@donmai/core": "workspace:*",
     "yaml": "^2.8.2",
     "zod": "^4.3.6"
   },

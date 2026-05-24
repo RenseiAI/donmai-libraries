@@ -48,12 +48,12 @@
     "LICENSE"
   ],
   "dependencies": {
-    "@renseiai/agentfactory": "workspace:*",
-    "@renseiai/agentfactory-server": "workspace:*",
+    "@donmai/core": "workspace:*",
+    "@donmai/server": "workspace:*",
     "yaml": "^2.8.2"
   },
   "peerDependencies": {
-    "@renseiai/plugin-linear": "workspace:*",
+    "@donmai/plugin-linear": "workspace:*",
     "next": ">=14.0.0"
   },
   "devDependencies": {

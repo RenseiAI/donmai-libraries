@@ -122,10 +122,10 @@
     "LICENSE"
   ],
   "dependencies": {
-    "@renseiai/agentfactory": "workspace:*",
-    "@renseiai/plugin-linear": "workspace:*",
-    "@renseiai/agentfactory-server": "workspace:*",
-    "@renseiai/architectural-intelligence": "workspace:*",
+    "@donmai/core": "workspace:*",
+    "@donmai/plugin-linear": "workspace:*",
+    "@donmai/server": "workspace:*",
+    "@donmai/architectural-intelligence": "workspace:*",
     "dotenv": "^17.2.3"
   },
   "optionalDependencies": {

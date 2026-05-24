@@ -43,7 +43,7 @@
     "LICENSE"
   ],
   "dependencies": {
-    "@renseiai/agentfactory": "workspace:*",
+    "@donmai/core": "workspace:*",
     "@linear/sdk": "^70.0.0"
   },
   "peerDependencies": {

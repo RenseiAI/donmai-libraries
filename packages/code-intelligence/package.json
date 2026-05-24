@@ -48,14 +48,14 @@
   },
   "peerDependencies": {
     "@anthropic-ai/claude-agent-sdk": "^0.2.7",
-    "@renseiai/architectural-intelligence": "^0.2.0",
+    "@donmai/architectural-intelligence": "^0.2.0",
     "zod": "^4.3.6"
   },
   "peerDependenciesMeta": {
     "@anthropic-ai/claude-agent-sdk": {
       "optional": true
     },
-    "@renseiai/architectural-intelligence": {
+    "@donmai/architectural-intelligence": {
       "optional": true
     },
     "zod": {
@@ -63,7 +63,7 @@
     }
   },
   "devDependencies": {
-    "@renseiai/architectural-intelligence": "workspace:*",
+    "@donmai/architectural-intelligence": "workspace:*",
     "@types/node": "^22.5.4",
     "typescript": "^5.7.3",
     "vitest": "^3.2.3"

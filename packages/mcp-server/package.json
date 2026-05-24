@@ -36,7 +36,7 @@
   ],
   "dependencies": {
     "@modelcontextprotocol/sdk": "^1.12.1",
-    "@renseiai/agentfactory-server": "workspace:*",
+    "@donmai/server": "workspace:*",
     "zod": "^4.3.6"
   },
   "devDependencies": {

@@ -45,18 +45,18 @@ importers:
 
   packages/cli:
     dependencies:
-      '@renseiai/agentfactory':
-        specifier: workspace:*
-        version: link:../core
-      '@renseiai/agentfactory-server':
-        specifier: workspace:*
-        version: link:../server
-      '@renseiai/architectural-intelligence':
+      '@donmai/architectural-intelligence':
         specifier: workspace:*
         version: link:../architectural-intelligence
-      '@renseiai/plugin-linear':
+      '@donmai/core':
+        specifier: workspace:*
+        version: link:../core
+      '@donmai/plugin-linear':
         specifier: workspace:*
         version: link:../linear
+      '@donmai/server':
+        specifier: workspace:*
+        version: link:../server
       dotenv:
         specifier: ^17.2.3
         version: 17.2.4
@@ -87,7 +87,7 @@ importers:
         specifier: ^4.3.6
         version: 4.3.6
     devDependencies:
-      '@renseiai/architectural-intelligence':
+      '@donmai/architectural-intelligence':
         specifier: workspace:*
         version: link:../architectural-intelligence
       '@types/node':
@@ -105,12 +105,12 @@ importers:
       '@anthropic-ai/claude-agent-sdk':
         specifier: ^0.2.7
         version: 0.2.37(zod@4.3.6)
+      '@donmai/architectural-intelligence':
+        specifier: workspace:*
+        version: link:../architectural-intelligence
       '@modelcontextprotocol/sdk':
         specifier: ^1.12.1
         version: 1.27.1(zod@4.3.6)
-      '@renseiai/architectural-intelligence':
-        specifier: workspace:*
-        version: link:../architectural-intelligence
       '@sigstore/verify':
         specifier: 3.1.0
         version: 3.1.0
@@ -157,7 +157,7 @@ importers:
 
   packages/daemon:
     dependencies:
-      '@renseiai/agentfactory':
+      '@donmai/core':
         specifier: workspace:*
         version: link:../core
       yaml:
@@ -254,12 +254,12 @@ importers:
       '@anthropic-ai/claude-agent-sdk':
         specifier: ^0.2.7
         version: 0.2.37(zod@4.3.6)
+      '@donmai/core':
+        specifier: workspace:*
+        version: link:../core
       '@linear/sdk':
         specifier: ^70.0.0
         version: 70.0.0(graphql@16.12.0)
-      '@renseiai/agentfactory':
-        specifier: workspace:*
-        version: link:../core
       zod:
         specifier: ^4.3.6
         version: 4.3.6
@@ -276,12 +276,12 @@ importers:
 
   packages/mcp-server:
     dependencies:
+      '@donmai/server':
+        specifier: workspace:*
+        version: link:../server
       '@modelcontextprotocol/sdk':
         specifier: ^1.12.1
         version: 1.27.1(zod@4.3.6)
-      '@renseiai/agentfactory-server':
-        specifier: workspace:*
-        version: link:../server
       zod:
         specifier: ^4.3.6
         version: 4.3.6
@@ -298,15 +298,15 @@ importers:
 
   packages/nextjs:
     dependencies:
-      '@renseiai/agentfactory':
+      '@donmai/core':
         specifier: workspace:*
         version: link:../core
-      '@renseiai/agentfactory-server':
-        specifier: workspace:*
-        version: link:../server
-      '@renseiai/plugin-linear':
+      '@donmai/plugin-linear':
         specifier: workspace:*
         version: link:../linear
+      '@donmai/server':
+        specifier: workspace:*
+        version: link:../server
       yaml:
         specifier: ^2.8.2
         version: 2.8.2
@@ -326,10 +326,10 @@ importers:
 
   packages/server:
     dependencies:
-      '@renseiai/agentfactory':
+      '@donmai/core':
         specifier: workspace:*
         version: link:../core
-      '@renseiai/plugin-linear':
+      '@donmai/plugin-linear':
         specifier: workspace:*
         version: link:../linear
       ioredis:
@@ -348,10 +348,10 @@ importers:
 
   packages/test-utils:
     devDependencies:
-      '@renseiai/agentfactory':
+      '@donmai/core':
         specifier: workspace:*
         version: link:../core
-      '@renseiai/plugin-linear':
+      '@donmai/plugin-linear':
         specifier: workspace:*
         version: link:../linear
       typescript:
