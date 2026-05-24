@@ -1,6 +1,6 @@
 {
   "name": "@donmai/mcp-server",
-  "version": "0.8.59",
+  "version": "0.9.0",
   "type": "module",
   "description": "MCP server exposing AgentFactory fleet capabilities to MCP-aware clients",
   "author": "Rensei AI (https://rensei.ai)",

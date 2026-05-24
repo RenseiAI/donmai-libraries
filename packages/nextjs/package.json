@@ -1,6 +1,6 @@
 {
   "name": "@renseiai/agentfactory-nextjs",
-  "version": "0.8.59",
+  "version": "0.9.0",
   "type": "module",
   "description": "Next.js API route handlers for AgentFactory — webhook processor, worker/session management, public stats",
   "author": "Rensei AI (https://rensei.ai)",

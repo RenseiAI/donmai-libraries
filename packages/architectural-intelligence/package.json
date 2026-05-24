@@ -1,6 +1,6 @@
 {
   "name": "@donmai/architectural-intelligence",
-  "version": "0.2.0",
+  "version": "0.9.0",
   "type": "module",
   "description": "Architectural Intelligence — system-level synthesis of patterns, conventions, decisions, and drift across a tenant's codebase",
   "author": "Rensei AI (https://rensei.ai)",

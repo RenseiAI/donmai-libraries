@@ -1,6 +1,6 @@
 {
   "name": "@donmai/core",
-  "version": "0.8.59",
+  "version": "0.9.0",
   "type": "module",
   "description": "Multi-agent fleet management for coding agents — orchestrator, providers, crash recovery",
   "author": "Rensei AI (https://rensei.ai)",

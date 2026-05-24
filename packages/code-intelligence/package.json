@@ -1,6 +1,6 @@
 {
   "name": "@renseiai/agentfactory-code-intelligence",
-  "version": "0.8.59",
+  "version": "0.9.0",
   "type": "module",
   "description": "Code intelligence for AgentFactory — tree-sitter AST parsing, BM25 search, incremental indexing, memory deduplication",
   "author": "Rensei AI (https://rensei.ai)",
@@ -48,7 +48,7 @@
   },
   "peerDependencies": {
     "@anthropic-ai/claude-agent-sdk": "^0.2.7",
-    "@donmai/architectural-intelligence": "^0.2.0",
+    "@donmai/architectural-intelligence": "^0.9.0",
     "zod": "^4.3.6"
   },
   "peerDependenciesMeta": {
