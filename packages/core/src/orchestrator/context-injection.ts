@@ -30,7 +30,7 @@ import type {
   Convention,
   Decision,
   Deviation,
-} from '@renseiai/architectural-intelligence'
+} from '@donmai/architectural-intelligence'
 import type { Logger } from '../logger.js'
 
 // ---------------------------------------------------------------------------

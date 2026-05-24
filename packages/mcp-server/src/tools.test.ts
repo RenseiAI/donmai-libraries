@@ -1,7 +1,7 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 
-// ── Mock @renseiai/agentfactory-server ────────────────────────────────────────
-vi.mock('@renseiai/agentfactory-server', () => ({
+// ── Mock @donmai/server ────────────────────────────────────────
+vi.mock('@donmai/server', () => ({
   getAllSessions: vi.fn(),
   getSessionsByStatus: vi.fn(),
   getSessionState: vi.fn(),
@@ -24,7 +24,7 @@ import {
   storeSessionState,
   updateSessionStatus,
   publishUrgent,
-} from '@renseiai/agentfactory-server'
+} from '@donmai/server'
 import { registerFleetTools } from './tools.js'
 
 // ── Helpers ─────────────────────────────────────────────────────────────────

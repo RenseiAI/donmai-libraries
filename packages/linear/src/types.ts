@@ -1,5 +1,5 @@
 import type { LinearClient } from '@linear/sdk'
-import type { ToolCategory } from '@renseiai/agentfactory'
+import type { ToolCategory } from '@donmai/core'
 
 /**
  * AgentSession states as defined by Linear Agent SDK

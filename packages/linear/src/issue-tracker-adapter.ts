@@ -5,7 +5,7 @@
  * by wrapping LinearAgentClient and AgentSession.
  *
  * Types are defined locally (structurally identical to core) to avoid
- * a compile-time dependency on @renseiai/agentfactory.
+ * a compile-time dependency on @donmai/core.
  */
 
 import { LinearAgentClient, createLinearAgentClient } from './agent-client.js'
@@ -22,7 +22,7 @@ import {
 } from './types.js'
 
 // ---------------------------------------------------------------------------
-// Platform-agnostic types (structurally identical to @renseiai/agentfactory)
+// Platform-agnostic types (structurally identical to @donmai/core)
 // Defined locally to avoid circular dependency: core -> linear -> core
 // ---------------------------------------------------------------------------
 
@@ -116,7 +116,7 @@ class LinearIssueTrackerSession implements IssueTrackerSession {
   }
 
   async emitAction(tool: string, input: Record<string, unknown>, ephemeral?: boolean, toolCategory?: string): Promise<void> {
-    await this.session.emitAction(tool, input, ephemeral, toolCategory as import('@renseiai/agentfactory').ToolCategory | undefined)
+    await this.session.emitAction(tool, input, ephemeral, toolCategory as import('@donmai/core').ToolCategory | undefined)
   }
 
   async emitToolResult(tool: string, output: string, ephemeral?: boolean): Promise<void> {

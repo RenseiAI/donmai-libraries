@@ -14,8 +14,8 @@ import {
   APPROVED_FOR_MERGE_LABEL,
   type LabelPollerAdapter,
 } from '../merge-worker-sidecar.js'
-import { LocalMergeQueueAdapter } from '@renseiai/agentfactory'
-import { createLocalMergeQueueStorage } from '@renseiai/agentfactory-server'
+import { LocalMergeQueueAdapter } from '@donmai/core'
+import { createLocalMergeQueueStorage } from '@donmai/server'
 
 const mockExecFile = vi.mocked(execFile)
 

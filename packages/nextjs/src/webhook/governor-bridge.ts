@@ -6,7 +6,7 @@
  * their normal direct-dispatch behavior.
  */
 
-import type { GovernorEventBus, GovernorEvent } from '@renseiai/agentfactory'
+import type { GovernorEventBus, GovernorEvent } from '@donmai/core'
 
 let _eventBus: GovernorEventBus | null = null
 

@@ -24,7 +24,7 @@ import {
   clearSessionFailures,
   archiveInbox,
   onSessionTerminated,
-} from '@renseiai/agentfactory-server'
+} from '@donmai/server'
 import type { RouteConfig } from '../../types.js'
 
 const log = createLogger('api:sessions:status')

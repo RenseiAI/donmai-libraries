@@ -4,7 +4,7 @@
  * Queries GitHub commit status API for Vercel deployment state.
  * Used to verify deployments before QA/acceptance work can proceed.
  *
- * Self-contained — no dependency on @renseiai/agentfactory core.
+ * Self-contained — no dependency on @donmai/core core.
  * Originally in packages/core/src/deployment/deployment-checker.ts;
  * duplicated here to keep the linear plugin fully decoupled from core.
  */

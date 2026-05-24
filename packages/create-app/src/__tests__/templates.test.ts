@@ -175,18 +175,18 @@ describe.each(COMBOS)(
       }
     })
 
-    it(`${dashboard ? 'includes' : 'excludes'} @renseiai/agentfactory-dashboard`, () => {
+    it(`${dashboard ? 'includes' : 'excludes'} @donmai/dashboard`, () => {
       if (dashboard) {
-        expect(pkg.dependencies).toHaveProperty('@renseiai/agentfactory-dashboard')
+        expect(pkg.dependencies).toHaveProperty('@donmai/dashboard')
       } else {
-        expect(pkg.dependencies).not.toHaveProperty('@renseiai/agentfactory-dashboard')
+        expect(pkg.dependencies).not.toHaveProperty('@donmai/dashboard')
       }
     })
 
     it('dashboard dependency version matches other @renseiai/* versions', () => {
       if (!dashboard) return
-      const coreVersion = pkg.dependencies['@renseiai/agentfactory']
-      const dashVersion = pkg.dependencies['@renseiai/agentfactory-dashboard']
+      const coreVersion = pkg.dependencies['@donmai/core']
+      const dashVersion = pkg.dependencies['@donmai/dashboard']
       expect(dashVersion).toBe(coreVersion)
     })
 

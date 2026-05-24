@@ -8,8 +8,8 @@
  */
 
 import { NextResponse } from 'next/server'
-import { aggregatePhaseMetrics, createLogger } from '@renseiai/agentfactory-server'
-import type { TimeRange } from '@renseiai/agentfactory-server'
+import { aggregatePhaseMetrics, createLogger } from '@donmai/server'
+import type { TimeRange } from '@donmai/server'
 
 const log = createLogger('api/public/phase-metrics')
 

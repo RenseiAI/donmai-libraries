@@ -9,15 +9,15 @@
  */
 
 import { NextResponse } from 'next/server'
-import type { AgentWorkType } from '@renseiai/agentfactory'
-import { buildFailureContextBlock, type WorkflowContext } from '@renseiai/plugin-linear'
-import type { LinearWebhookPayload } from '@renseiai/plugin-linear'
+import type { AgentWorkType } from '@donmai/core'
+import { buildFailureContextBlock, type WorkflowContext } from '@donmai/plugin-linear'
+import type { LinearWebhookPayload } from '@donmai/plugin-linear'
 import {
   checkIssueDeploymentStatus,
   formatFailedDeployments,
   eventTimestamp,
-} from '@renseiai/agentfactory'
-import type { GovernorIssue } from '@renseiai/agentfactory'
+} from '@donmai/core'
+import type { GovernorIssue } from '@donmai/core'
 import { publishGovernorEvent } from '../governor-bridge.js'
 import {
   generateIdempotencyKey,
@@ -41,7 +41,7 @@ import {
   MAX_TOTAL_SESSIONS,
   didAcceptanceJustComplete,
   incrementDispatchCount,
-} from '@renseiai/agentfactory-server'
+} from '@donmai/server'
 import type { ResolvedWebhookConfig } from '../../types.js'
 import {
   emitActivity,
@@ -50,7 +50,7 @@ import {
   hasExcludedLabel,
   getAppUrl,
 } from '../utils.js'
-import type { createLogger } from '@renseiai/agentfactory-server'
+import type { createLogger } from '@donmai/server'
 
 export async function handleIssueUpdated(
   config: ResolvedWebhookConfig,

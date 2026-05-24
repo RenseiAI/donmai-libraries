@@ -3,8 +3,8 @@
  */
 
 import { NextResponse } from 'next/server'
-import type { AgentWorkType } from '@renseiai/agentfactory'
-import type { LinearWebhookPayload } from '@renseiai/plugin-linear'
+import type { AgentWorkType } from '@donmai/core'
+import type { LinearWebhookPayload } from '@donmai/plugin-linear'
 import {
   TERMINAL_STATUSES,
   validateWorkTypeForStatus,
@@ -13,7 +13,7 @@ import {
   getValidWorkTypesForStatus,
   buildFailureContextBlock,
   type WorkflowContext,
-} from '@renseiai/plugin-linear'
+} from '@donmai/plugin-linear'
 import {
   generateIdempotencyKey,
   isWebhookProcessed,
@@ -29,7 +29,7 @@ import {
   MAX_TOTAL_SESSIONS,
   incrementDispatchCount,
   getDispatchCount,
-} from '@renseiai/agentfactory-server'
+} from '@donmai/server'
 import type { ResolvedWebhookConfig } from '../../types.js'
 import {
   emitActivity,
@@ -39,7 +39,7 @@ import {
   getPriority,
   WORK_TYPE_MESSAGES,
 } from '../utils.js'
-import type { createLogger } from '@renseiai/agentfactory-server'
+import type { createLogger } from '@donmai/server'
 
 export async function handleSessionCreated(
   config: ResolvedWebhookConfig,

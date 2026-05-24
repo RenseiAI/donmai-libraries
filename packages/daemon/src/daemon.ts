@@ -23,7 +23,7 @@ import { register } from './registration.js'
 import { HeartbeatService } from './heartbeat.js'
 import { WorkerSpawner, createStubSpawner } from './worker-spawner.js'
 import { runSetupWizard, shouldSkipWizard, buildDefaultConfig } from './setup-wizard.js'
-import { globalHookBus } from '@renseiai/agentfactory'
+import { globalHookBus } from '@donmai/core'
 import { AutoUpdater } from './auto-update.js'
 import type { AutoUpdateOptions } from './auto-update.js'
 

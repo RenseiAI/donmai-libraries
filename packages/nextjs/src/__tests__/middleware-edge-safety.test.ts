@@ -27,7 +27,7 @@ const FORBIDDEN_NODE_MODULES = [
 ]
 
 const FORBIDDEN_PACKAGE_IMPORTS = [
-  '@renseiai/agentfactory-server',
+  '@donmai/server',
 ]
 
 function readSource(relativePath: string): string {
@@ -56,7 +56,7 @@ describe('middleware Edge Runtime safety', () => {
     }
   })
 
-  it('middleware factory (factory.ts) does not import @renseiai/agentfactory-server', () => {
+  it('middleware factory (factory.ts) does not import @donmai/server', () => {
     const source = readSource('middleware/factory.ts')
 
     for (const pkg of FORBIDDEN_PACKAGE_IMPORTS) {

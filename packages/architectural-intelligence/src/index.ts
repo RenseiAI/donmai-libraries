@@ -1,5 +1,5 @@
 /**
- * @renseiai/architectural-intelligence — public API
+ * @donmai/architectural-intelligence — public API
  *
  * Architecture reference: rensei-architecture/007-intelligence-services.md
  * §Architectural Intelligence

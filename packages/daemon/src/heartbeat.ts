@@ -19,7 +19,7 @@
  * can filter on it.
  */
 
-import { globalHookBus } from '@renseiai/agentfactory'
+import { globalHookBus } from '@donmai/core'
 import type { DaemonHeartbeatPayload, DaemonRegistrationStatus } from './types.js'
 
 // ---------------------------------------------------------------------------

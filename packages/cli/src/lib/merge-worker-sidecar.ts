@@ -24,7 +24,7 @@ import {
   type MergeWorkerConfig,
   type MergeWorkerDeps,
   type IssueTrackerClient,
-} from '@renseiai/agentfactory'
+} from '@donmai/core'
 import {
   MergeQueueStorage,
   createLocalMergeQueueStorage,
@@ -34,8 +34,8 @@ import {
   redisGet,
   redisSet,
   redisExpire,
-} from '@renseiai/agentfactory-server'
-import { LinearIssueTrackerClient, ProxyIssueTrackerAdapter } from '@renseiai/plugin-linear'
+} from '@donmai/server'
+import { LinearIssueTrackerClient, ProxyIssueTrackerAdapter } from '@donmai/plugin-linear'
 
 const execFileAsync = promisify(execFile)
 

@@ -4,7 +4,7 @@ import type {
   AgentHandle,
   AgentEvent,
   AgentProviderName,
-} from '@renseiai/agentfactory'
+} from '@donmai/core'
 
 export function createMockAgentHandle(events: AgentEvent[] = []): AgentHandle {
   return {

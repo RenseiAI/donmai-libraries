@@ -278,7 +278,7 @@ export class PostgresArchitecturalIntelligence implements ArchitecturalIntellige
       summary:
         'PostgresArchitecturalIntelligence.assess() is a placeholder. ' +
         'For real drift detection, call assessChange(this, modelAdapter, ...) ' +
-        'from `@renseiai/architectural-intelligence`.',
+        'from `@donmai/architectural-intelligence`.',
       assessedAt: new Date(),
     }
   }

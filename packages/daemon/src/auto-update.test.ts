@@ -34,7 +34,7 @@ import {
 } from './auto-update.js'
 import type { BinaryVerifier, VersionManifest } from './auto-update.js'
 import { Daemon } from './daemon.js'
-import { globalHookBus } from '@renseiai/agentfactory'
+import { globalHookBus } from '@donmai/core'
 import type { DaemonConfig } from './types.js'
 
 // ---------------------------------------------------------------------------

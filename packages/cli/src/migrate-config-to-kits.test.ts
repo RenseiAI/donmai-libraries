@@ -24,8 +24,8 @@ import {
   parseKitManifest,
   composeKits,
   getProjectConfig,
-} from '@renseiai/agentfactory'
-import type { RepositoryConfig, ProjectConfig } from '@renseiai/agentfactory'
+} from '@donmai/core'
+import type { RepositoryConfig, ProjectConfig } from '@donmai/core'
 import { runMigration } from './migrate-config-to-kits.js'
 
 // ---------------------------------------------------------------------------

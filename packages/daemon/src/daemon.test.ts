@@ -19,7 +19,7 @@ import { tmpdir } from 'node:os'
 import { resolve } from 'node:path'
 import { stringify as yamlStringify } from 'yaml'
 import { Daemon } from './daemon.js'
-import { globalHookBus } from '@renseiai/agentfactory'
+import { globalHookBus } from '@donmai/core'
 import type { DaemonConfig } from './types.js'
 
 // ---------------------------------------------------------------------------

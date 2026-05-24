@@ -13,8 +13,8 @@ import {
   RedisPosteriorStore,
   createRedisObservationStore,
   createLogger,
-} from '@renseiai/agentfactory-server'
-import { betaMean, betaVariance } from '@renseiai/agentfactory'
+} from '@donmai/server'
+import { betaMean, betaVariance } from '@donmai/core'
 
 const log = createLogger('api/public/routing-metrics')
 

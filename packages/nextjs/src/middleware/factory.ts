@@ -5,7 +5,7 @@
  * rate limiting, and security for AgentFactory API routes.
  *
  * IMPORTANT: This module runs in the Edge Runtime. It MUST NOT import
- * from @renseiai/agentfactory-server (which uses Node.js crypto/ioredis).
+ * from @donmai/server (which uses Node.js crypto/ioredis).
  * All utilities are inlined for Edge compatibility.
  */
 

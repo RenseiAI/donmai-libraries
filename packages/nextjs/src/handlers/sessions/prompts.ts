@@ -7,7 +7,7 @@
 
 import { NextRequest, NextResponse } from 'next/server'
 import { requireWorkerAuth } from '../../middleware/worker-auth.js'
-import { createLogger } from '@renseiai/agentfactory-server'
+import { createLogger } from '@donmai/server'
 
 const log = createLogger('api:sessions:prompts')
 

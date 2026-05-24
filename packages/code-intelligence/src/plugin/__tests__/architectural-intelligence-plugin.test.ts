@@ -9,7 +9,7 @@ import type {
   Deviation,
   Citation,
   DriftReport,
-} from '@renseiai/architectural-intelligence'
+} from '@donmai/architectural-intelligence'
 
 // ── Test fixtures ────────────────────────────────────────────────────
 

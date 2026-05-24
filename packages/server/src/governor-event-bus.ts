@@ -9,7 +9,7 @@
  * MAXLEN: 10,000 (approximate trim)
  */
 
-import type { GovernorEvent, GovernorEventBus } from '@renseiai/agentfactory'
+import type { GovernorEvent, GovernorEventBus } from '@donmai/core'
 import { getRedisClient } from './redis.js'
 
 // ---------------------------------------------------------------------------

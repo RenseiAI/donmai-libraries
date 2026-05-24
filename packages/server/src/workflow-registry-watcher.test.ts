@@ -17,7 +17,7 @@ vi.mock('./workflow-store.js', () => ({
 
 const mockValidate = vi.fn((data: unknown) => data)
 
-vi.mock('@renseiai/agentfactory', () => ({
+vi.mock('@donmai/core', () => ({
   validateWorkflowDefinition: (...args: unknown[]) => mockValidate(...args as [any]),
 }))
 

@@ -11,7 +11,7 @@ import {
   hashSessionId,
   isValidPublicId,
   createLogger,
-} from '@renseiai/agentfactory-server'
+} from '@donmai/server'
 import { getActivities, getLastCursor } from '../sessions/activity-store.js'
 
 const log = createLogger('api/public/sessions/[id]/activities')

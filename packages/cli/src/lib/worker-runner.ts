@@ -19,14 +19,14 @@ import {
   type AgentOrchestrator,
   type Logger,
   type ToolPlugin,
-} from '@renseiai/agentfactory'
+} from '@donmai/core'
 import {
   LinearIssueTrackerClient,
   ProxyIssueTrackerAdapter,
   createLinearStatusMappings,
   linearPlugin,
   type AgentWorkType,
-} from '@renseiai/plugin-linear'
+} from '@donmai/plugin-linear'
 import {
   MergeQueueStorage,
   createLocalMergeQueueStorage,
@@ -40,8 +40,8 @@ import {
   sessionEventBus,
   type TenantEnvelope,
   type SessionHeartbeatHandle,
-} from '@renseiai/agentfactory-server'
-import { createProxyFileReservationDelegate } from '@renseiai/agentfactory'
+} from '@donmai/server'
+import { createProxyFileReservationDelegate } from '@donmai/core'
 
 let codeIntelligencePlugin: ToolPlugin | undefined
 try {

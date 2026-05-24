@@ -71,7 +71,7 @@ const DEFAULT_CONFIDENCE_FLOOR = 0.05
 // PipelineHookBus — minimal bus interface
 //
 // The pipeline declares only what it needs from the hook bus. This keeps
-// @renseiai/architectural-intelligence a zero-dependency standalone package.
+// @donmai/architectural-intelligence a zero-dependency standalone package.
 // In production: pass the core HookBus instance (it satisfies this interface).
 // In tests: use createTestBus() below or any compatible mock.
 // ---------------------------------------------------------------------------
@@ -383,7 +383,7 @@ export interface PipelineSubscriberOptions {
  *   - `post-activate` events for workarea providers → lightweight pattern obs.
  *   - `post-verb` events for workarea providers → track significant verbs.
  *
- * In production: pass `globalHookBus` from `@renseiai/agentfactory` core.
+ * In production: pass `globalHookBus` from `@donmai/core` core.
  * In tests: pass a `createTestBus()` instance and emit events manually.
  *
  * @returns Unsubscribe function — call to detach all subscribers.

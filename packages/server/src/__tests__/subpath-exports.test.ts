@@ -1,7 +1,7 @@
 import { describe, it, expect } from 'vitest'
 
 /**
- * Subpath export resolution tests for @renseiai/agentfactory-server.
+ * Subpath export resolution tests for @donmai/server.
  *
  * Verifies that every key export defined in the main barrel resolves
  * to a module that exports the expected symbol. These tests catch:
@@ -10,7 +10,7 @@ import { describe, it, expect } from 'vitest'
  * - Missing or renamed function/class exports
  */
 
-describe('@renseiai/agentfactory-server subpath exports', () => {
+describe('@donmai/server subpath exports', () => {
   // Redis exports
   it('exports isRedisConfigured from main', async () => {
     const mod = await import('../index.js')

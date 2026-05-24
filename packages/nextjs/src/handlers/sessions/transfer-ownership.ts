@@ -12,7 +12,7 @@ import {
   removeWorkerSession,
   addWorkerSession,
   createLogger,
-} from '@renseiai/agentfactory-server'
+} from '@donmai/server'
 
 const log = createLogger('api:sessions:transfer-ownership')
 

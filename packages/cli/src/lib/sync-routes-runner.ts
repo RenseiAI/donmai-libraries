@@ -11,7 +11,7 @@ import {
   ROUTE_MANIFEST,
   generateRouteContent,
   generatePageContent,
-} from '@renseiai/agentfactory'
+} from '@donmai/core'
 
 // ---------------------------------------------------------------------------
 // Public types
@@ -73,8 +73,8 @@ export function runSyncRoutes(config?: SyncRoutesConfig): SyncRoutesResult {
       try {
         const pkg = JSON.parse(readFileSync(pkgJsonPath, 'utf-8'))
         const allDeps = { ...pkg.dependencies, ...pkg.devDependencies }
-        if (!allDeps['@renseiai/agentfactory-dashboard']) {
-          result.warnings.push('@renseiai/agentfactory-dashboard not found in dependencies — page files require this package')
+        if (!allDeps['@donmai/dashboard']) {
+          result.warnings.push('@donmai/dashboard not found in dependencies — page files require this package')
         }
       } catch {
         // Ignore JSON parse errors

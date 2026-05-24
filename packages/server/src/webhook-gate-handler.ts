@@ -10,7 +10,7 @@
  */
 
 import { timingSafeEqual } from 'node:crypto'
-import type { GateStorage } from '@renseiai/agentfactory'
+import type { GateStorage } from '@donmai/core'
 
 const log = {
   info: (msg: string, data?: Record<string, unknown>) => console.log(`[webhook-gate-handler] ${msg}`, data ? JSON.stringify(data) : ''),

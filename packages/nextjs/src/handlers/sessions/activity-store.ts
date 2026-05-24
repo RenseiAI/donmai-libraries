@@ -2,7 +2,7 @@
  * In-memory activity store for TUI streaming.
  * Ring buffer per session (last 200 activities).
  */
-import { createLogger } from '@renseiai/agentfactory-server'
+import { createLogger } from '@donmai/server'
 
 const log = createLogger('activity-store')
 

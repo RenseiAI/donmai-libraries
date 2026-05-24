@@ -1,7 +1,7 @@
 /**
  * Redis-backed Processing State Storage
  *
- * Implements the `ProcessingStateStorage` interface from `@renseiai/agentfactory`
+ * Implements the `ProcessingStateStorage` interface from `@donmai/core`
  * using Redis for persistence. Used by the top-of-funnel governor to track
  * which processing phases (research, backlog-creation) have been completed
  * for each issue.
@@ -14,7 +14,7 @@ import type {
   ProcessingStateStorage,
   ProcessingPhase,
   ProcessingRecord,
-} from '@renseiai/agentfactory'
+} from '@donmai/core'
 import { redisSet, redisGet, redisDel, redisExists } from './redis.js'
 
 // Redis key prefix for processing state records

@@ -7,11 +7,11 @@
  */
 
 import { getRedisClient, isRedisConfigured } from './redis.js'
-import type { ObservationStore, ObservationQueryResult } from '@renseiai/agentfactory'
-import { ROUTING_KEYS } from '@renseiai/agentfactory'
-import type { RoutingObservation } from '@renseiai/agentfactory'
-import type { AgentProviderName } from '@renseiai/agentfactory'
-import type { AgentWorkType } from '@renseiai/agentfactory'
+import type { ObservationStore, ObservationQueryResult } from '@donmai/core'
+import { ROUTING_KEYS } from '@donmai/core'
+import type { RoutingObservation } from '@donmai/core'
+import type { AgentProviderName } from '@donmai/core'
+import type { AgentWorkType } from '@donmai/core'
 
 const log = {
   info: (msg: string, data?: Record<string, unknown>) => console.log(`[routing] ${msg}`, data ? JSON.stringify(data) : ''),

@@ -3,8 +3,8 @@
  */
 
 import { NextResponse } from 'next/server'
-import type { AgentWorkType } from '@renseiai/agentfactory'
-import type { LinearWebhookPayload } from '@renseiai/plugin-linear'
+import type { AgentWorkType } from '@donmai/core'
+import type { LinearWebhookPayload } from '@donmai/plugin-linear'
 import {
   getSessionState,
   updateSessionStatus,
@@ -16,10 +16,10 @@ import {
   publishUrgent,
   generateIdempotencyKey,
   isWebhookProcessed,
-} from '@renseiai/agentfactory-server'
+} from '@donmai/server'
 import type { ResolvedWebhookConfig } from '../../types.js'
 import { handleStopSignal, emitActivity, determineWorkType } from '../utils.js'
-import type { createLogger } from '@renseiai/agentfactory-server'
+import type { createLogger } from '@donmai/server'
 
 /**
  * Strip @mention triggers from comment body to extract actual user instructions.

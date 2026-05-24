@@ -14,8 +14,8 @@ import {
   publishUrgent,
   disconnectRedis,
   type AgentSessionState,
-} from '@renseiai/agentfactory-server'
-import { createLinearAgentClient } from '@renseiai/plugin-linear'
+} from '@donmai/server'
+import { createLinearAgentClient } from '@donmai/plugin-linear'
 
 // ---------------------------------------------------------------------------
 // Public types

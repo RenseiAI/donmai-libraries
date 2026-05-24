@@ -16,7 +16,7 @@ const mockRedisDel = vi.fn()
 const mockDisconnectRedis = vi.fn()
 const mockIsRedisConfigured = vi.fn(() => true)
 
-vi.mock('@renseiai/agentfactory-server', () => ({
+vi.mock('@donmai/server', () => ({
   MergeQueueStorage: vi.fn().mockImplementation(() => ({
     getStatus: mockGetStatus,
     list: mockList,

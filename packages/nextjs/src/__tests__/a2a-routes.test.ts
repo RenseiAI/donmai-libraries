@@ -8,8 +8,8 @@ import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { NextRequest } from 'next/server'
 import { createAgentCardHandler } from '../handlers/a2a/agent-card.js'
 import { createA2aRpcHandler } from '../handlers/a2a/rpc.js'
-import type { A2aServerConfig } from '@renseiai/agentfactory-server'
-import type { A2aTask, A2aMessage, A2aAgentCard, JsonRpcResponse } from '@renseiai/agentfactory-server'
+import type { A2aServerConfig } from '@donmai/server'
+import type { A2aTask, A2aMessage, A2aAgentCard, JsonRpcResponse } from '@donmai/server'
 
 // ---------------------------------------------------------------------------
 // Helpers

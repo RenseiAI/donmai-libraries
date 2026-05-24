@@ -16,7 +16,7 @@ vi.mock('./redis.js', () => ({
 
 import { createRedisObservationStore } from './routing-observation-store.js'
 import { isRedisConfigured } from './redis.js'
-import type { RoutingObservation } from '@renseiai/agentfactory'
+import type { RoutingObservation } from '@donmai/core'
 
 const mockIsRedisConfigured = vi.mocked(isRedisConfigured)
 

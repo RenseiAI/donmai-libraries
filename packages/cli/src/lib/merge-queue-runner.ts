@@ -13,7 +13,7 @@ import {
   redisSet,
   redisDel,
   type MergeQueueEntry,
-} from '@renseiai/agentfactory-server'
+} from '@donmai/server'
 
 // ---------------------------------------------------------------------------
 // Public types

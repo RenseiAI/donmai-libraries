@@ -31,7 +31,7 @@ export function generatePageContent(entry: PageEntry): string {
 
   // Build import statement
   const importName = entry.importAlias ?? entry.component
-  const imports = [`import { DashboardShell, ${importName} } from '@renseiai/agentfactory-dashboard'`]
+  const imports = [`import { DashboardShell, ${importName} } from '@donmai/dashboard'`]
   imports.push(`import { usePathname${hasParams ? ', useParams' : ''} } from 'next/navigation'`)
 
   // Build component body

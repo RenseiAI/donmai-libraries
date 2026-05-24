@@ -345,8 +345,8 @@ export function renderMarkdownReport(report: CleanupReport): string {
 /**
  * Build a real LinearClientInterface adapter from an API key.
  *
- * Delegates to cleanup-sub-issues-adapter.ts which imports @renseiai/plugin-linear.
- * Using a dynamic import prevents Vite from analyzing the @renseiai/plugin-linear
+ * Delegates to cleanup-sub-issues-adapter.ts which imports @donmai/plugin-linear.
+ * Using a dynamic import prevents Vite from analyzing the @donmai/plugin-linear
  * dependency during test collection (where workspace packages may not be built).
  */
 async function buildLinearClientFromApiKey(apiKey: string): Promise<LinearClientInterface> {

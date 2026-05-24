@@ -6,7 +6,7 @@
  */
 
 import { NextRequest } from 'next/server'
-import { createLogger } from '@renseiai/agentfactory-server'
+import { createLogger } from '@donmai/server'
 
 const log = createLogger('cron-auth')
 

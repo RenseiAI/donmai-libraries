@@ -6,8 +6,8 @@
  */
 
 import type { NextRequest, NextResponse } from 'next/server'
-import type { AgentWorkType } from '@renseiai/agentfactory'
-import type { LinearAgentClient, SubIssueStatus, WorkflowContext } from '@renseiai/plugin-linear'
+import type { AgentWorkType } from '@donmai/core'
+import type { LinearAgentClient, SubIssueStatus, WorkflowContext } from '@donmai/plugin-linear'
 
 /**
  * Resolves a Linear client for a given organization.
@@ -43,7 +43,7 @@ export interface AutoTriggerConfig {
  * Configuration for the webhook processor.
  *
  * `generatePrompt` is optional — if not provided, falls back to
- * `defaultGeneratePrompt` from @renseiai/plugin-linear.
+ * `defaultGeneratePrompt` from @donmai/plugin-linear.
  */
 export interface WebhookConfig extends RouteConfig {
   webhookSecret?: string // falls back to LINEAR_WEBHOOK_SECRET

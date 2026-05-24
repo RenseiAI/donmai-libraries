@@ -5,8 +5,8 @@
  * to avoid external dependencies like chalk.
  */
 
-import type { ScanResult } from '@renseiai/agentfactory'
-import type { LinearApiQuota } from '@renseiai/plugin-linear'
+import type { ScanResult } from '@donmai/core'
+import type { LinearApiQuota } from '@donmai/plugin-linear'
 
 // ---------------------------------------------------------------------------
 // ANSI colors (matching packages/core/src/logger.ts)

@@ -1,4 +1,4 @@
-import { extractBearerToken, verifyApiKey, isWorkerAuthConfigured } from '@renseiai/agentfactory-server'
+import { extractBearerToken, verifyApiKey, isWorkerAuthConfigured } from '@donmai/server'
 
 const MCP_API_KEY_ENV = 'MCP_API_KEY'
 

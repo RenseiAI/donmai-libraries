@@ -122,7 +122,7 @@ describe('IssueTrackerProvider stubs — capability snapshot', () => {
 // Export resolution — contract types re-exported from main barrel
 // ---------------------------------------------------------------------------
 
-describe('@renseiai/agentfactory barrel exports', () => {
+describe('@donmai/core barrel exports', () => {
   it('exports JiraIssueTrackerProvider from main', async () => {
     const mod = await import('../../index.js')
     expect((mod as any).JiraIssueTrackerProvider).toBeDefined()

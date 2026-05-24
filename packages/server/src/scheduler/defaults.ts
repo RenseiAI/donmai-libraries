@@ -5,7 +5,7 @@
  * set is already exported as `DEFAULT_FILTERS` from `./filters.js`.
  *
  * Usage:
- *   import { DEFAULT_FILTERS, DEFAULT_SCORERS } from '@renseiai/agentfactory-server'
+ *   import { DEFAULT_FILTERS, DEFAULT_SCORERS } from '@donmai/server'
  */
 
 import { createDefaultScorers } from './scorers.js'

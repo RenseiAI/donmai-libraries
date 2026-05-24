@@ -1,5 +1,5 @@
 /**
- * Type vocabulary tests for @renseiai/architectural-intelligence
+ * Type vocabulary tests for @donmai/architectural-intelligence
  *
  * Verifies:
  *   - CitationConfidence rank ordering (authored > inferred-high > inferred-medium > inferred-low)

@@ -88,7 +88,7 @@ describe('defaultParseAutoTriggerConfig', () => {
   let defaultParseAutoTriggerConfig: () => any
 
   beforeEach(async () => {
-    const mod = await import('@renseiai/plugin-linear')
+    const mod = await import('@donmai/plugin-linear')
     defaultParseAutoTriggerConfig = mod.defaultParseAutoTriggerConfig
   })
 

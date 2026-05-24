@@ -2,7 +2,7 @@
  * Generic error formatting for Linear comments.
  */
 
-import { AgentSpawnError } from '@renseiai/plugin-linear'
+import { AgentSpawnError } from '@donmai/plugin-linear'
 
 /**
  * Format an error for posting as a Linear comment with markdown.

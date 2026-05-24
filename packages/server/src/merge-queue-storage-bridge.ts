@@ -16,7 +16,7 @@
  *   // Pass localStorage as mergeQueueStorage in OrchestratorConfig
  */
 
-import type { LocalMergeQueueStorage } from '@renseiai/agentfactory'
+import type { LocalMergeQueueStorage } from '@donmai/core'
 import type { MergeQueueStorage } from './merge-queue-storage.js'
 
 /**

@@ -1,7 +1,7 @@
 /**
  * Worker Authentication — Next.js Adapter
  *
- * Thin wrapper around @renseiai/agentfactory-server's framework-agnostic
+ * Thin wrapper around @donmai/server's framework-agnostic
  * auth functions, adapted for Next.js request/response types.
  */
 
@@ -11,7 +11,7 @@ import {
   verifyApiKey,
   isWorkerAuthConfigured,
   createLogger,
-} from '@renseiai/agentfactory-server'
+} from '@donmai/server'
 
 export { isWorkerAuthConfigured }
 

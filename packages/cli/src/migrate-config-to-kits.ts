@@ -30,7 +30,7 @@ import {
   projectConfigToKitManifest,
   serializeKitManifestToToml,
   validateKitManifest,
-} from '@renseiai/agentfactory'
+} from '@donmai/core'
 
 // ---------------------------------------------------------------------------
 // CLI arg parsing

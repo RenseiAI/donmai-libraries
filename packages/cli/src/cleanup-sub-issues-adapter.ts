@@ -6,7 +6,7 @@
  * lazily delegates here via the `linearClient` injection point.
  */
 
-import { createLinearAgentClient } from '@renseiai/plugin-linear'
+import { createLinearAgentClient } from '@donmai/plugin-linear'
 import type { LinearClientInterface, LinearIssue } from './cleanup-sub-issues.js'
 
 const PROCESSED_LABEL = 'cleanup:processed'

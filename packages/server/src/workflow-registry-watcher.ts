@@ -9,8 +9,8 @@
  * the Redis pub/sub subscription cannot be established.
  */
 
-import { validateWorkflowDefinition } from '@renseiai/agentfactory'
-import type { WorkflowDefinition } from '@renseiai/agentfactory'
+import { validateWorkflowDefinition } from '@donmai/core'
+import type { WorkflowDefinition } from '@donmai/core'
 import {
   subscribeToWorkflowChanges,
   workflowStoreGet,

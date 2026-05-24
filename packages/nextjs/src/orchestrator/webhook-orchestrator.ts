@@ -13,7 +13,7 @@ import {
   createOrchestrator,
   type AgentOrchestrator,
   type AgentProcess,
-} from '@renseiai/agentfactory'
+} from '@donmai/core'
 import {
   withRetry,
   AgentSpawnError,
@@ -21,7 +21,7 @@ import {
   createAgentSession,
   createLinearAgentClient,
   type RetryConfig,
-} from '@renseiai/plugin-linear'
+} from '@donmai/plugin-linear'
 import {
   createLogger,
   generateIdempotencyKey,
@@ -42,7 +42,7 @@ import {
   extractFailureReason,
   markAcceptanceCompleted,
   type WorkflowPhase,
-} from '@renseiai/agentfactory-server'
+} from '@donmai/server'
 import { formatErrorForComment } from './error-formatting.js'
 import type {
   WebhookOrchestratorConfig,

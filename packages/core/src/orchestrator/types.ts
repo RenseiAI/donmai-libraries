@@ -139,7 +139,7 @@ export interface OrchestratorConfig {
    * ArchView into the `architecturalContext` template variable.
    * When omitted, architectural context injection is skipped gracefully.
    */
-  architecturalIntelligence?: import('@renseiai/architectural-intelligence').ArchitecturalIntelligence
+  architecturalIntelligence?: import('@donmai/architectural-intelligence').ArchitecturalIntelligence
   /**
    * Maximum tokens to devote to the architectural context section.
    * Defaults to 2000. Priority order: drift warnings > active issue patterns >

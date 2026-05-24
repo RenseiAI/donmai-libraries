@@ -2,7 +2,7 @@ import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { stripMentionTriggers } from '../webhook/handlers/session-prompted.js'
 
 // Mock dependencies before importing the handler
-vi.mock('@renseiai/agentfactory-server', () => ({
+vi.mock('@donmai/server', () => ({
   getSessionState: vi.fn(),
   updateSessionStatus: vi.fn(),
   storeSessionState: vi.fn(),
@@ -35,7 +35,7 @@ vi.mock('next/server', () => ({
   },
 }))
 
-import { getSessionState, dispatchWork } from '@renseiai/agentfactory-server'
+import { getSessionState, dispatchWork } from '@donmai/server'
 import { handleSessionPrompted } from '../webhook/handlers/session-prompted.js'
 
 const mockGetSessionState = vi.mocked(getSessionState)

@@ -12,7 +12,7 @@
 
 import { NextRequest, NextResponse } from 'next/server'
 import { requireWorkerAuth } from '../../middleware/worker-auth.js'
-import { querySecurityScanEvents, createLogger } from '@renseiai/agentfactory-server'
+import { querySecurityScanEvents, createLogger } from '@donmai/server'
 
 const log = createLogger('api:factory:events')
 

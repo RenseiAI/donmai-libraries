@@ -6,7 +6,7 @@
  */
 
 import { NextResponse } from 'next/server'
-import { listWorkers, getTotalCapacity, getQueueLength, createLogger } from '@renseiai/agentfactory-server'
+import { listWorkers, getTotalCapacity, getQueueLength, createLogger } from '@donmai/server'
 
 const log = createLogger('api:workers:list')
 

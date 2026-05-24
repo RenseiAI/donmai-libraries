@@ -5,7 +5,7 @@
  */
 
 import { NextRequest, NextResponse } from 'next/server'
-import { cleanupOrphanedSessions, createLogger } from '@renseiai/agentfactory-server'
+import { cleanupOrphanedSessions, createLogger } from '@donmai/server'
 import { verifyCronAuth } from '../middleware/cron-auth.js'
 import type { CronConfig } from '../types.js'
 
