@@ -1,12 +1,12 @@
 # Plugin Signing (Sigstore)
 
-Default-signed plugin posture for the AgentFactory platform. Implements
-REN-1344 — productionizes the signing CI scaffolding deferred from
-REN-1314 and REN-1311.
+Default-signed plugin posture for the AgentFactory platform. Productionizes
+the signing CI scaffolding, including keyless Sigstore signing and
+trusted-issuer verification.
 
 > Architecture references:
-> [`015-plugin-spec.md` §Auth + trust](../../rensei-architecture/015-plugin-spec.md)
-> and [`002-provider-base-contract.md` §Signing and trust](../../rensei-architecture/002-provider-base-contract.md).
+> [`015-plugin-spec.md` §Auth + trust](../../donmai-architecture/015-plugin-spec.md)
+> and [`002-provider-base-contract.md` §Signing and trust](../../donmai-architecture/002-provider-base-contract.md).
 
 ## Why default-signed
 
@@ -30,7 +30,7 @@ sandboxes, or run arbitrary deployments. We mitigate that risk by:
 | Layer | File | Responsibility |
 |------|------|----------------|
 | CI signing | `.github/workflows/plugin-sign.yml` | Pack tarball, request Fulcio OIDC cert, sign, push to Rekor, attach bundle to Release. |
-| Verifier | `packages/core/src/providers/verifiers/sigstore.ts` | Bundle verification via `@sigstore/verify` (REN-1344: graduated to a regular dependency). |
+| Verifier | `packages/core/src/providers/verifiers/sigstore.ts` | Bundle verification via `@sigstore/verify` (graduated to a regular dependency). |
 | Loader gate | `packages/core/src/plugins/loader.ts` | Calls `checkTrustedIssuer` after signature verification; rejects under strict mode. |
 | Trust set | `packages/core/src/plugins/trusted-issuers.ts` | Module-level singleton holding the trusted-issuer list. |
 
@@ -70,7 +70,7 @@ The plugin loader exposes a *plugin-loader-level* `trustMode`:
 | `permissive` (default) | warn + accept | warn + accept | accept |
 | `strict` | **reject** | **reject** | accept |
 
-This sits one level above the provider-base `TrustMode` from REN-1314
+This sits one level above the provider-base `TrustMode`
 (`permissive` / `signed-by-allowlist` / `attested`). The two compose:
 the provider-base mode handles the cryptographic + attestation policy;
 the plugin-loader mode handles the trusted-issuer gate.
@@ -170,7 +170,7 @@ loader.installPlugin(manifest)
   ├── verifyPluginSignature (manifest hash + algorithm dispatch)
   │     └── SigstoreVerifier.verify (bundle → @sigstore/verify)
   │
-  ├── checkTrustedIssuer (REN-1344)
+  ├── checkTrustedIssuer
   │     └── strict: signer must be in trusted-issuer set
   │
   └── installed
@@ -206,8 +206,8 @@ For a fully active default-signed posture the user must:
 - [ ] Flip the host loader to `trustMode: 'strict'` +
       `requireSignatures: true` once the trusted-issuer set is
       populated and end-to-end signing has been validated.
-- [ ] Document the activation date in `runs/STATUS.md` and close
-      REN-1344.
+- [ ] Document the activation date in `runs/STATUS.md` and close the
+      tracking issue.
 
 Until those steps are completed the platform behaves exactly as before
 (`permissive` mode, unsigned plugins accepted with a warning) — the

@@ -6,13 +6,13 @@ Multi-agent fleet management for coding agents. This is a pnpm monorepo using Tu
 
 ## Architecture
 
-Authoritative architecture lives in `../rensei-architecture/` (remote: https://github.com/RenseiAI/rensei-architecture, private). Read in this order:
+Authoritative architecture lives in `../donmai-architecture/` (remote: https://github.com/RenseiAI/donmai-architecture). Read in this order:
 
 1. `001-layered-execution-model.md` — canonical synthesis. Always first.
 2. The reference doc(s) for whichever layer you are working on (`002`–`008`, `011`, `013`–`016`).
 3. Any open ADRs that touch your work (`ADR-*.md`).
 
-If this project's docs conflict with `../rensei-architecture/`, the corpus wins. Either update this project's docs to align, or open an ADR to amend the corpus (do NOT amend the corpus during implementation — post a `migration:needs-spec-decision` comment on the Linear issue and continue with adjacent work).
+If this project's docs conflict with `../donmai-architecture/`, the corpus wins. Either update this project's docs to align, or open an ADR to amend the corpus (do NOT amend the corpus during implementation — post a `migration:needs-spec-decision` comment on the issue and continue with adjacent work).
 
 ## Project Structure
 
@@ -504,12 +504,12 @@ Every package under `packages/*` ships to **public** npm (and GitHub Packages). 
 - **Commit SHAs that point to private branches**
 - **Internal email or org-only contact info**
 
-`v0.8.62` of `@renseiai/architectural-intelligence` shipped a README that leaked 8 `REN-XXXX` refs plus a link to the private `rensei-architecture` repo. Required a `v0.8.63` re-publish; the bad README still sits in npm's version-history view for that one version.
+Some past releases shipped READMEs that leaked Linear IDs and private-repo links, requiring a re-publish patch version. The bad README still sits in npm's version-history view for those versions.
 
 When in doubt, grep before commit:
 
 ```bash
-grep -nE 'REN-[0-9]|REN2-[0-9]|SUP-[0-9]|rensei-architecture|rensei-ops|RenseiAI/(rensei-)' packages/*/README.md
+grep -nE 'REN-[0-9]|REN2-[0-9]|SUP-[0-9]|rensei-architecture|rensei-ops|RenseiAI/rensei' packages/*/README.md
 ```
 
 The same rule applies to any other public-registry assets (PyPI sdist, crates.io, Homebrew formulas, etc.) and to release notes that auto-attach to GitHub Releases when they're cut from a public repo.

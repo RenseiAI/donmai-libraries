@@ -21,16 +21,16 @@ Everything in `af` works without a `rensei` account. If you are self-hosting, `a
 
 The binaries listed in `packages/cli/package.json` "bin" entries, in order of typical usage frequency:
 
-| Legacy binary | Go equivalent | Status | Linear ref |
-|---------------|--------------|--------|-----------|
-| `af-orchestrator` | `af orchestrator` | Ported | REN-1361 |
-| `af-linear` | `af linear` | Ported | REN-1360 |
-| `af-analyze-logs` | `af logs analyze` | Ported | REN-1359 |
-| `af-cleanup` | `af admin cleanup` | Ported | REN-1362 |
-| `af-queue-admin` | `af admin queue` | Ported | REN-1362 |
-| `af-merge-queue` | `af admin merge-queue` | Ported | REN-1362 |
-| `af-code` | `af code` | Ported | REN-1363 |
-| `af-arch` | `af arch` | Ported | REN-1363 |
+| Legacy binary | Go equivalent | Status |
+|---------------|--------------|--------|
+| `af-orchestrator` | `af orchestrator` | Ported |
+| `af-linear` | `af linear` | Ported |
+| `af-analyze-logs` | `af logs analyze` | Ported |
+| `af-cleanup` | `af admin cleanup` | Ported |
+| `af-queue-admin` | `af admin queue` | Ported |
+| `af-merge-queue` | `af admin merge-queue` | Ported |
+| `af-code` | `af code` | Ported |
+| `af-arch` | `af arch` | Ported |
 
 ## Auxiliary binary mapping
 
@@ -46,9 +46,9 @@ These binaries handle utility and migration tasks. They are less frequently used
 | `af-add-dep` | `af add-dep` | Not yet ported | Safe dependency install in agent worktrees; tracking issue pending |
 | `af-sync-routes` | `af sync-routes` | Not yet ported | Next.js route-file generator from manifest; tracking issue pending |
 | `af-migrate-worktrees` | _(migration complete — retire after run)_ | Out of scope | One-shot migration from `.worktrees/` to sibling-dir layout; no Go port planned |
-| `af-migrate-config-to-kits` | _(migration complete — retire after run)_ | Out of scope | One-shot `.agentfactory/config.yaml` → `.rensei/kits/` migration (REN-1294); no Go port planned |
+| `af-migrate-config-to-kits` | _(migration complete — retire after run)_ | Out of scope | One-shot `.agentfactory/config.yaml` → `.rensei/kits/` migration; no Go port planned |
 | `agentfactory` (root binary) | `af` | Ported | Top-level dispatcher; the `agentfactory` name is the legacy alias |
-| `rensei-daemon` (from `@renseiai/daemon`) | `rensei daemon run` (and `af daemon run`) | Ported | REN-1406 (installer) + REN-1408 (runtime). Single-binary OSS UX — no separate daemon binary. |
+| `rensei-daemon` (from `@renseiai/daemon`) | `rensei daemon run` (and `af daemon run`) | Ported | Daemon runtime ported to Go. Single-binary OSS UX — no separate daemon binary. |
 
 > **"Out of scope"** binaries are one-shot migration tools. Once the migration they perform has been applied to your repository, the binary itself is no longer needed. They will not be ported to Go.
 
@@ -121,7 +121,7 @@ These binaries handle utility and migration tasks. They are less frequently used
 
 ### Daemon (`@renseiai/daemon` → `af daemon` / `rensei daemon`)
 
-The daemon is a long-running supervisor that registers one machine with the Rensei orchestrator and serves an HTTP control API on `127.0.0.1:7734`. It is now ported into the same Go binary as the rest of the CLI (REN-1406 + REN-1408) — the legacy `@renseiai/daemon` Node package is deprecated.
+The daemon is a long-running supervisor that registers one machine with the Rensei orchestrator and serves an HTTP control API on `127.0.0.1:7734`. It is now ported into the same Go binary as the rest of the CLI — the legacy `@renseiai/daemon` Node package is deprecated.
 
 | Task | Legacy | Go `af` / `rensei` |
 |------|--------|---------|
@@ -162,7 +162,7 @@ Copy the relevant block into your `CHANGELOG.md` when retiring each binary.
 
 The `af-orchestrator` binary (from `@renseiai/agentfactory-cli`) is deprecated
 and will be removed in a future release. Use the Go `af orchestrator` command
-instead — flags are identical. Ported in REN-1361.
+instead — flags are identical.
 ```
 
 ### `af-linear`
@@ -172,7 +172,7 @@ instead — flags are identical. Ported in REN-1361.
 
 The `af-linear` binary (from `@renseiai/agentfactory-cli`) is deprecated and
 will be removed in a future release. Use `af linear` instead — all subcommands
-and flags are preserved. Ported in REN-1360.
+and flags are preserved.
 ```
 
 ### `af-analyze-logs`
@@ -182,7 +182,7 @@ and flags are preserved. Ported in REN-1360.
 
 The `af-analyze-logs` binary (from `@renseiai/agentfactory-cli`) is deprecated.
 Use `af logs analyze` instead. Note the subcommand path change: the top-level
-`logs` group now houses all log-related commands. Ported in REN-1359.
+`logs` group now houses all log-related commands.
 ```
 
 ### `af-cleanup`
@@ -192,7 +192,7 @@ Use `af logs analyze` instead. Note the subcommand path change: the top-level
 
 The `af-cleanup` binary (from `@renseiai/agentfactory-cli`) is deprecated. Use
 `af admin cleanup` instead — flags (`--dry-run`, `--force`, `--path`, etc.) are
-preserved. Ported in REN-1362.
+preserved.
 ```
 
 ### `af-queue-admin`
@@ -202,8 +202,7 @@ preserved. Ported in REN-1362.
 
 The `af-queue-admin` binary (from `@renseiai/agentfactory-cli`) is deprecated.
 Use `af admin queue` instead — all subcommands (`list`, `sessions`, `workers`,
-`clear-claims`, `clear-queue`, `reset`, `remove`) are preserved. Ported in
-REN-1362.
+`clear-claims`, `clear-queue`, `reset`, `remove`) are preserved.
 ```
 
 ### `af-merge-queue`
@@ -213,8 +212,7 @@ REN-1362.
 
 The `af-merge-queue` binary (from `@renseiai/agentfactory-cli`) is deprecated.
 Use `af admin merge-queue` instead — subcommands (`status`, `list`, `retry`,
-`skip`, `pause`, `resume`, `priority`) and flags are preserved. Ported in
-REN-1362.
+`skip`, `pause`, `resume`, `priority`) and flags are preserved.
 ```
 
 ### `af-code`
@@ -223,7 +221,7 @@ REN-1362.
 ### Deprecated: `af-code`
 
 The `af-code` binary (from `@renseiai/agentfactory-cli`) is deprecated. Use
-`af code` instead — all subcommands and flags are preserved. Ported in REN-1363.
+`af code` instead — all subcommands and flags are preserved.
 ```
 
 ### `af-arch`
@@ -232,8 +230,7 @@ The `af-code` binary (from `@renseiai/agentfactory-cli`) is deprecated. Use
 ### Deprecated: `af-arch`
 
 The `af-arch` binary (from `@renseiai/agentfactory-cli`) is deprecated. Use
-`af arch` instead — the `assess` subcommand and all flags are preserved. Ported
-in REN-1363.
+`af arch` instead — the `assess` subcommand and all flags are preserved.
 ```
 
 ### `@renseiai/daemon` (rensei-daemon)
@@ -243,11 +240,10 @@ in REN-1363.
 
 The `@renseiai/daemon` Node package and its `rensei-daemon` binary are deprecated.
 The runtime is now in-process inside the af / rensei Go binary — use
-`rensei daemon run` (or `af daemon run`) as the long-running entry point. Ported
-in REN-1406 (installer surface) and REN-1408 (runtime). The Node package will
-remain at version 0.1.0 through cycle 5 for OSS continuity, then be removed in
-cycle 6 once the rensei-smokes harness has soaked the Go daemon for 7
-consecutive nights.
+`rensei daemon run` (or `af daemon run`) as the long-running entry point. The
+Node package will remain at version 0.1.0 through cycle 5 for OSS continuity,
+then be removed in cycle 6 once the CI smoke harness has soaked the Go daemon
+for 7 consecutive nights.
 ```
 
 ---
@@ -277,7 +273,7 @@ af --version
 
 The Go binary is statically compiled — no Node.js, no `node_modules`, no pnpm.
 
-> **macOS users**: starting with `af v0.2.2`, all darwin builds are signed with an Apple Developer ID Application certificate and notarized via Apple's `notarytool`. `brew install RenseiAI/tap/af` runs cleanly with **no Gatekeeper friction** — no popup, no System Settings → Privacy & Security clickthrough required. Verify with `spctl --assess --verbose /opt/homebrew/bin/af` (expects `accepted` + `source=Notarized Developer ID`). See REN-1412 and `agentfactory-tui/RELEASING.md` § macOS signing for the signing pipeline detail.
+> **macOS users**: starting with `af v0.2.2`, all darwin builds are signed with an Apple Developer ID Application certificate and notarized via Apple's `notarytool`. `brew install RenseiAI/tap/af` runs cleanly with **no Gatekeeper friction** — no popup, no System Settings → Privacy & Security clickthrough required. Verify with `spctl --assess --verbose /opt/homebrew/bin/af` (expects `accepted` + `source=Notarized Developer ID`). See `agentfactory-tui/RELEASING.md` § macOS signing for the signing pipeline detail.
 
 ---
 
