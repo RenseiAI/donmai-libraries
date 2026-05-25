@@ -128,36 +128,42 @@ jobs:
 
       - name: Publish @donmai/plugin-linear to GitHub Packages
         if: steps.check.outputs.should_publish == 'true'
+        continue-on-error: true
         run: .github/scripts/publish-if-needed.sh @donmai/plugin-linear "$RELEASE_VERSION"
         env:
           NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Publish @donmai/architectural-intelligence to GitHub Packages
         if: steps.check.outputs.should_publish == 'true'
+        continue-on-error: true
         run: .github/scripts/publish-if-needed.sh @donmai/architectural-intelligence "$RELEASE_VERSION"
         env:
           NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Publish @donmai/core to GitHub Packages
         if: steps.check.outputs.should_publish == 'true'
+        continue-on-error: true
         run: .github/scripts/publish-if-needed.sh @donmai/core "$RELEASE_VERSION"
         env:
           NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Publish @donmai/server to GitHub Packages
         if: steps.check.outputs.should_publish == 'true'
+        continue-on-error: true
         run: .github/scripts/publish-if-needed.sh @donmai/server "$RELEASE_VERSION"
         env:
           NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Publish @donmai/dashboard to GitHub Packages
         if: steps.check.outputs.should_publish == 'true'
+        continue-on-error: true
         run: .github/scripts/publish-if-needed.sh @donmai/dashboard "$RELEASE_VERSION"
         env:
           NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Publish @donmai/mcp-server to GitHub Packages
         if: steps.check.outputs.should_publish == 'true'
+        continue-on-error: true
         run: .github/scripts/publish-if-needed.sh @donmai/mcp-server "$RELEASE_VERSION"
         env:
           NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
