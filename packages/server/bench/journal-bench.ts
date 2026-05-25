@@ -16,7 +16,7 @@
  *      non-Redis overhead. The Redis-backed run is the one that gates AC.
  *
  * Run locally:
- *   REDIS_URL=redis://localhost:6379 pnpm --filter @renseiai/agentfactory-server bench:journal
+ *   REDIS_URL=redis://localhost:6379 pnpm --filter @donmai/server bench:journal
  *
  * Output: JSON to stdout — bench artifact for the PR.
  */

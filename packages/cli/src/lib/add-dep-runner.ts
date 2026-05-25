@@ -13,8 +13,8 @@ import { resolve } from 'node:path'
 import {
   type PackageManager,
   getAddCommand,
-} from '@renseiai/agentfactory'
-import { loadRepositoryConfig } from '@renseiai/agentfactory'
+} from '@donmai/core'
+import { loadRepositoryConfig } from '@donmai/core'
 
 export interface AddDepOptions {
   packages: string[]

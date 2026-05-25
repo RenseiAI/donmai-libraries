@@ -192,8 +192,8 @@ export const ARCHITECTURE_VERBS: VerbDeclaration[] = [ASSESS_CHANGE_VERB]
  * the architectural-intelligence package):
  *
  * @example
- * import { getDefaultRegistry } from '@renseiai/agentfactory/plugins'
- * import { registerArchitectureVerbs } from '@renseiai/architectural-intelligence/verbs'
+ * import { getDefaultRegistry } from '@donmai/core/plugins'
+ * import { registerArchitectureVerbs } from '@donmai/architectural-intelligence/verbs'
  * registerArchitectureVerbs(getDefaultRegistry())
  *
  * @param registry  - The PluginRegistry instance (or any VerbRegistry-compatible object).

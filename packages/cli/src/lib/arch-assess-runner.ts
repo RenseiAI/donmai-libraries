@@ -27,9 +27,9 @@ import {
   resolveDriftGatePolicy,
   evaluateGate,
   type DriftGatePolicy,
-} from '@renseiai/architectural-intelligence'
-import type { ModelAdapter } from '@renseiai/architectural-intelligence'
-import type { PrDiff } from '@renseiai/architectural-intelligence'
+} from '@donmai/architectural-intelligence'
+import type { ModelAdapter } from '@donmai/architectural-intelligence'
+import type { PrDiff } from '@donmai/architectural-intelligence'
 
 // ---------------------------------------------------------------------------
 // Input / Output

@@ -17,7 +17,7 @@
  *   without importing a provider-specific type. The architectural-intelligence
  *   package stays provider-orthogonal.
  *
- * - `ProviderScope` is re-declared here (not imported from @renseiai/agentfactory)
+ * - `ProviderScope` is re-declared here (not imported from @donmai/core)
  *   so the package remains a standalone OSS dep. Future alignment with core can
  *   happen once the package graduates from skeleton to full impl.
  *
@@ -47,7 +47,7 @@ export interface ArchScope {
 
 /**
  * Work type that narrows retrieved architectural context.
- * Values mirror AgentWorkType from @renseiai/agentfactory (core).
+ * Values mirror AgentWorkType from @donmai/core (core).
  */
 export type WorkType =
   | 'research'

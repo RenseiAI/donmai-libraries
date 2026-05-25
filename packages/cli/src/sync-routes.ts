@@ -55,7 +55,7 @@ Usage:
 
 Options:
   --dry-run       Preview what would be created without writing files
-  --pages         Also sync dashboard page.tsx files (requires @renseiai/agentfactory-dashboard)
+  --pages         Also sync dashboard page.tsx files (requires @donmai/dashboard)
   --app-dir <p>   Custom app directory (default: src/app)
   --help, -h      Show this help message
 

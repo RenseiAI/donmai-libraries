@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest'
-import type { QueuedWork } from '@renseiai/agentfactory-server'
+import type { QueuedWork } from '@donmai/server'
 
 /**
  * Tests for project-based work filtering in the poll handler.

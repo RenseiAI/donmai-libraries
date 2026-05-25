@@ -40,7 +40,7 @@ import { resolve as resolvePath } from 'node:path'
 import { EventEmitter } from 'node:events'
 import { arch, platform } from 'node:process'
 import type { AutoUpdateChannel, DaemonAutoUpdateConfig } from './types.js'
-import { globalHookBus } from '@renseiai/agentfactory'
+import { globalHookBus } from '@donmai/core'
 
 // ---------------------------------------------------------------------------
 // Constants
@@ -405,7 +405,7 @@ export class AutoUpdater extends EventEmitter {
  * Adapts VerifierInput → BinaryVerifier interface.
  */
 async function _defaultVerifier(): Promise<BinaryVerifier> {
-  const { SigstoreVerifier } = await import('@renseiai/agentfactory')
+  const { SigstoreVerifier } = await import('@donmai/core')
   const v = new SigstoreVerifier()
   return {
     async verify(input: { contentHash: string; signatureValue: string }) {

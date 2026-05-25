@@ -143,7 +143,7 @@ import {
   attemptSessionSteering as attemptSessionSteeringImpl,
   createResumeWithFallbackHandle as createResumeWithFallbackHandleImpl,
 } from './agent-spawner.js'
-import type { ArchitecturalIntelligence } from '@renseiai/architectural-intelligence'
+import type { ArchitecturalIntelligence } from '@donmai/architectural-intelligence'
 
 // Default inactivity timeout: 5 minutes
 const DEFAULT_INACTIVITY_TIMEOUT_MS = 300000

@@ -8,8 +8,8 @@
 
 import { NextRequest, NextResponse } from 'next/server'
 import { requireWorkerAuth } from '../../middleware/worker-auth.js'
-import { workflowStoreSave, createLogger } from '@renseiai/agentfactory-server'
-import { validateWorkflowDefinition } from '@renseiai/agentfactory'
+import { workflowStoreSave, createLogger } from '@donmai/server'
+import { validateWorkflowDefinition } from '@donmai/core'
 import { parse as parseYaml } from 'yaml'
 
 const log = createLogger('api:workflows:deploy')

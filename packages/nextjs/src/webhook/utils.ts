@@ -4,9 +4,9 @@
  * Shared helpers used by webhook sub-handlers.
  */
 
-import type { AgentWorkType } from '@renseiai/agentfactory'
-import type { LinearAgentClient } from '@renseiai/plugin-linear'
-import { STATUS_WORK_TYPE_MAP } from '@renseiai/plugin-linear'
+import type { AgentWorkType } from '@donmai/core'
+import type { LinearAgentClient } from '@donmai/plugin-linear'
+import { STATUS_WORK_TYPE_MAP } from '@donmai/plugin-linear'
 import {
   getSessionState,
   updateSessionStatus,
@@ -17,7 +17,7 @@ import {
   releaseIssueLock,
   promoteNextPendingWork,
   createLogger,
-} from '@renseiai/agentfactory-server'
+} from '@donmai/server'
 import type { ResolvedWebhookConfig } from '../types.js'
 
 const baseLogger = createLogger('webhook')

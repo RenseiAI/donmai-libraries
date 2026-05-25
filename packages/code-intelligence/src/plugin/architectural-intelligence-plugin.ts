@@ -10,7 +10,7 @@
  * Long-running sessions can go stale when peer agents ingest new observations
  * mid-flight; these tools let an agent refresh that view on demand.
  *
- * Both tools call into the `@renseiai/architectural-intelligence` SDK
+ * Both tools call into the `@donmai/architectural-intelligence` SDK
  * (`ArchitecturalIntelligence.query`). They do not re-implement query logic.
  *
  * Wiring (consumer side):
@@ -33,7 +33,7 @@ import type {
   Convention,
   Decision,
   Deviation,
-} from '@renseiai/architectural-intelligence'
+} from '@donmai/architectural-intelligence'
 
 // ── Plugin Types ─────────────────────────────────────────────────────
 
@@ -158,7 +158,7 @@ function errorPayload(err: unknown): { content: Array<{ type: 'text'; text: stri
  *
  * @example
  * ```ts
- * import { PostgresArchitecturalIntelligence } from '@renseiai/architectural-intelligence'
+ * import { PostgresArchitecturalIntelligence } from '@donmai/architectural-intelligence'
  * const ai = new PostgresArchitecturalIntelligence({ ... })
  * const plugin = createArchitecturalIntelligencePlugin({ architecturalIntelligence: ai })
  * // → register `plugin` alongside codeIntelligencePlugin in OrchestratorConfig.toolPlugins

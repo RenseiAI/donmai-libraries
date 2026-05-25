@@ -15,7 +15,7 @@
  *
  * Note: Tests that require the `atomic` binary skip cleanly when the binary is
  * not installed. Run `which atomic` to check — if absent, install atomic and
- * rerun `pnpm --filter @renseiai/agentfactory test -- vcs/atomic`.
+ * rerun `pnpm --filter @donmai/core test -- vcs/atomic`.
  */
 
 import { describe, it, expect, vi, beforeEach } from 'vitest'

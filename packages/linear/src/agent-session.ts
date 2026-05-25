@@ -18,7 +18,7 @@ import type {
   IssueRelationInfo,
   ActionActivityContent,
 } from './types.js'
-import type { ToolCategory } from '@renseiai/agentfactory'
+import type { ToolCategory } from '@donmai/core'
 import {
   WORK_TYPE_START_STATUS,
   WORK_TYPE_COMPLETE_STATUS,

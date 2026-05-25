@@ -27,7 +27,7 @@ import type {
   ListIssuesFilter,
   AddRelationInput,
   AddRelationResult,
-} from '@renseiai/agentfactory'
+} from '@donmai/core'
 
 import { createLinearAgentClient } from './agent-client.js'
 import { resolveSDKLabelNames } from './utils.js'

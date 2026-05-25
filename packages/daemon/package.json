@@ -1,6 +1,6 @@
 {
   "name": "@renseiai/daemon",
-  "version": "0.1.0",
+  "version": "0.9.0",
   "type": "module",
   "deprecated": "Replaced by the Go daemon shipped inside the af / rensei binary (REN-1408). Use `af daemon run` (or `rensei daemon run`) instead. This Node package will be removed in cycle 6 after the smoke harness has soaked for 7 nights — see ../../docs/migration-from-legacy-cli.md for the migration path.",
   "description": "[DEPRECATED — REN-1408] Rensei local daemon. Use `af daemon run` from agentfactory-tui instead. Final removal scheduled for cycle 6.",
@@ -36,7 +36,7 @@
     "LICENSE"
   ],
   "dependencies": {
-    "@renseiai/agentfactory": "workspace:*",
+    "@donmai/core": "workspace:*",
     "yaml": "^2.8.2",
     "zod": "^4.3.6"
   },

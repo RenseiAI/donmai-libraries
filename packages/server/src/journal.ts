@@ -4,7 +4,7 @@
  * Foundation primitive for the long-running runtime substrate per
  * `rensei-architecture/ADR-2026-04-29-long-running-runtime-substrate.md`
  * (commit 56f2bc6) — Decisions 2 (journal schema), 3 (idempotency hash),
- * 7 (code home in `@renseiai/agentfactory-server`).
+ * 7 (code home in `@donmai/server`).
  *
  * Responsibilities:
  * - Hot-path Redis hash journal `journal:{sessionId}:{stepId}` storing per-step
@@ -418,7 +418,7 @@ export async function detectIdempotencyCollision(
 
 /**
  * Session-step hook event taxonomy. Decoupled from the provider-tagged
- * `ProviderHookEvent` in `@renseiai/agentfactory` core because session events
+ * `ProviderHookEvent` in `@donmai/core` core because session events
  * are not provider-scoped — they describe runtime journal transitions.
  *
  * Subscribers (e.g. the platform-side Postgres mirror) listen on the

@@ -108,7 +108,7 @@ describe.each(configs)(
       expect(content).toContain('export default nextConfig')
       if (options.includeDashboard) {
         expect(content).toContain('transpilePackages')
-        expect(content).toContain('@renseiai/agentfactory-dashboard')
+        expect(content).toContain('@donmai/dashboard')
       }
     })
 

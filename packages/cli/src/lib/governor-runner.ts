@@ -15,13 +15,13 @@ import {
   type GovernorEventBus,
   type EventDeduplicator,
   type WorkflowGovernorCallbacks,
-} from '@renseiai/agentfactory'
+} from '@donmai/core'
 import type {
   GovernorConfig,
   GovernorAction,
   GovernorIssue,
   ScanResult,
-} from '@renseiai/agentfactory'
+} from '@donmai/core'
 
 // ---------------------------------------------------------------------------
 // Public types

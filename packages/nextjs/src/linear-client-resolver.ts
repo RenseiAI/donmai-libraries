@@ -21,12 +21,12 @@ import {
   type LinearAgentClient,
   type CircuitBreakerStrategy,
   type RateLimiterStrategy,
-} from '@renseiai/plugin-linear'
+} from '@donmai/plugin-linear'
 import {
   getAccessToken,
   isRedisConfigured,
   createLogger,
-} from '@renseiai/agentfactory-server'
+} from '@donmai/server'
 import type { LinearClientResolver } from './types.js'
 
 const log = createLogger('linear-client-resolver')

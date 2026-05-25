@@ -46,7 +46,7 @@ import type {
   WorkerHealthStatus,
 } from './fleet-supervisor-types.js'
 import { DEFAULT_PATROL_CONFIG, DEFAULT_NUDGE_PROMPTS } from './fleet-supervisor-types.js'
-import type { GovernorEventBus } from '@renseiai/agentfactory'
+import type { GovernorEventBus } from '@donmai/core'
 
 const log = createLogger('patrol-loop')
 

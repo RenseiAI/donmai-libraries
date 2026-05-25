@@ -1,6 +1,6 @@
 {
   "name": "@renseiai/agentfactory-nextjs",
-  "version": "0.8.59",
+  "version": "0.9.0",
   "type": "module",
   "description": "Next.js API route handlers for AgentFactory — webhook processor, worker/session management, public stats",
   "author": "Rensei AI (https://rensei.ai)",
@@ -48,12 +48,12 @@
     "LICENSE"
   ],
   "dependencies": {
-    "@renseiai/agentfactory": "workspace:*",
-    "@renseiai/agentfactory-server": "workspace:*",
+    "@donmai/core": "workspace:*",
+    "@donmai/server": "workspace:*",
     "yaml": "^2.8.2"
   },
   "peerDependencies": {
-    "@renseiai/plugin-linear": "workspace:*",
+    "@donmai/plugin-linear": "workspace:*",
     "next": ">=14.0.0"
   },
   "devDependencies": {

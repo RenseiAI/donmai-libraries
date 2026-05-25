@@ -3,7 +3,7 @@
  *
  * This barrel ONLY re-exports modules that are compatible with Next.js
  * Edge Runtime. It deliberately excludes worker-auth and cron-auth
- * which depend on @renseiai/agentfactory-server (Node.js crypto/ioredis).
+ * which depend on @donmai/server (Node.js crypto/ioredis).
  *
  * Use this subpath import in middleware.ts:
  *   import { createAgentFactoryMiddleware } from '@renseiai/agentfactory-nextjs/middleware'

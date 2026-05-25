@@ -1,6 +1,6 @@
 {
-  "name": "@renseiai/agentfactory",
-  "version": "0.8.59",
+  "name": "@donmai/core",
+  "version": "0.9.0",
   "type": "module",
   "description": "Multi-agent fleet management for coding agents — orchestrator, providers, crash recovery",
   "author": "Rensei AI (https://rensei.ai)",
@@ -10,12 +10,12 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/RenseiAI/agentfactory.git",
+    "url": "git+https://github.com/RenseiAI/donmai-libraries.git",
     "directory": "packages/core"
   },
-  "homepage": "https://github.com/RenseiAI/agentfactory/tree/main/packages/core",
+  "homepage": "https://github.com/RenseiAI/donmai-libraries/tree/main/packages/core",
   "bugs": {
-    "url": "https://github.com/RenseiAI/agentfactory/issues"
+    "url": "https://github.com/RenseiAI/donmai-libraries/issues"
   },
   "publishConfig": {
     "access": "public"
@@ -47,7 +47,7 @@
   "dependencies": {
     "@anthropic-ai/claude-agent-sdk": "^0.2.7",
     "@modelcontextprotocol/sdk": "^1.12.1",
-    "@renseiai/architectural-intelligence": "workspace:*",
+    "@donmai/architectural-intelligence": "workspace:*",
     "@sigstore/verify": "3.1.0",
     "dotenv": "^17.2.3",
     "handlebars": "^4.7.8",

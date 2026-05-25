@@ -1,6 +1,6 @@
 {
   "name": "@renseiai/agentfactory-cli",
-  "version": "0.8.59",
+  "version": "0.9.0",
   "type": "module",
   "description": "CLI tools for AgentFactory — local orchestrator, remote worker, queue admin",
   "author": "Rensei AI (https://rensei.ai)",
@@ -122,10 +122,10 @@
     "LICENSE"
   ],
   "dependencies": {
-    "@renseiai/agentfactory": "workspace:*",
-    "@renseiai/plugin-linear": "workspace:*",
-    "@renseiai/agentfactory-server": "workspace:*",
-    "@renseiai/architectural-intelligence": "workspace:*",
+    "@donmai/core": "workspace:*",
+    "@donmai/plugin-linear": "workspace:*",
+    "@donmai/server": "workspace:*",
+    "@donmai/architectural-intelligence": "workspace:*",
     "dotenv": "^17.2.3"
   },
   "optionalDependencies": {

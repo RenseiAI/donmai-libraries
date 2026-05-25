@@ -91,7 +91,7 @@ describe('runSyncRoutes', () => {
     // Add dashboard dependency to package.json
     writeFileSync(
       join(tmpDir, 'package.json'),
-      JSON.stringify({ dependencies: { '@renseiai/agentfactory-dashboard': '^0.8.4' } }),
+      JSON.stringify({ dependencies: { '@donmai/dashboard': '^0.8.4' } }),
     )
 
     const result = runSyncRoutes({ projectRoot: tmpDir, pages: true })
@@ -107,7 +107,7 @@ describe('runSyncRoutes', () => {
   it('warns if dashboard dependency is missing when syncing pages', () => {
     const result = runSyncRoutes({ projectRoot: tmpDir, pages: true })
     expect(result.warnings).toContain(
-      '@renseiai/agentfactory-dashboard not found in dependencies — page files require this package',
+      '@donmai/dashboard not found in dependencies — page files require this package',
     )
   })
 })

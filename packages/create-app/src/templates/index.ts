@@ -118,11 +118,11 @@ function routeReexport(post: string | null, get?: string, del?: string): string 
 
 function packageJson(opts: TemplateOptions): string {
   const deps: Record<string, string> = {
-    '@renseiai/agentfactory': '^0.8.4',
+    '@donmai/core': '^0.8.4',
     '@renseiai/agentfactory-cli': '^0.8.4',
-    '@renseiai/plugin-linear': '^0.8.4',
+    '@donmai/plugin-linear': '^0.8.4',
     '@renseiai/agentfactory-nextjs': '^0.8.4',
-    '@renseiai/agentfactory-server': '^0.8.4',
+    '@donmai/server': '^0.8.4',
     'next': '^16.1.0',
     'react': '^19.0.0',
     'react-dom': '^19.0.0',
@@ -143,7 +143,7 @@ function packageJson(opts: TemplateOptions): string {
   }
 
   if (opts.includeDashboard) {
-    deps['@renseiai/agentfactory-dashboard'] = '^0.8.4'
+    deps['@donmai/dashboard'] = '^0.8.4'
     devDeps['@tailwindcss/postcss'] = '^4'
     devDeps['tailwindcss'] = '^4'
   }
@@ -199,7 +199,7 @@ function nextConfig(opts: TemplateOptions): string {
     return `import type { NextConfig } from 'next'
 
 const nextConfig: NextConfig = {
-  transpilePackages: ['@renseiai/agentfactory-dashboard'],
+  transpilePackages: ['@donmai/dashboard'],
 }
 
 export default nextConfig
@@ -338,7 +338,7 @@ export const config = {
 function layoutTsx(opts: TemplateOptions): string {
   if (opts.includeDashboard) {
     return `import type { Metadata } from 'next'
-import '@renseiai/agentfactory-dashboard/styles'
+import '@donmai/dashboard/styles'
 import './globals.css'
 
 export const metadata: Metadata = {
@@ -375,14 +375,14 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
 
 function globalsCss(): string {
   return `@import "tailwindcss";
-@source "../../node_modules/@renseiai/agentfactory-dashboard/src";
+@source "../../node_modules/@donmai/dashboard/src";
 `
 }
 
 function dashboardPageTsx(): string {
   return `'use client'
 
-import { DashboardShell, DashboardPage as FleetPage } from '@renseiai/agentfactory-dashboard'
+import { DashboardShell, DashboardPage as FleetPage } from '@donmai/dashboard'
 import { usePathname } from 'next/navigation'
 
 export default function DashboardPage() {
@@ -399,7 +399,7 @@ export default function DashboardPage() {
 function pipelinePageTsx(): string {
   return `'use client'
 
-import { DashboardShell, PipelinePage } from '@renseiai/agentfactory-dashboard'
+import { DashboardShell, PipelinePage } from '@donmai/dashboard'
 import { usePathname } from 'next/navigation'
 
 export default function Pipeline() {
@@ -416,7 +416,7 @@ export default function Pipeline() {
 function sessionsPageTsx(): string {
   return `'use client'
 
-import { DashboardShell, SessionPage } from '@renseiai/agentfactory-dashboard'
+import { DashboardShell, SessionPage } from '@donmai/dashboard'
 import { usePathname } from 'next/navigation'
 
 export default function Sessions() {
@@ -433,7 +433,7 @@ export default function Sessions() {
 function sessionDetailPageTsx(): string {
   return `'use client'
 
-import { DashboardShell, SessionPage } from '@renseiai/agentfactory-dashboard'
+import { DashboardShell, SessionPage } from '@donmai/dashboard'
 import { usePathname, useParams } from 'next/navigation'
 
 export default function SessionDetailPage() {
@@ -451,7 +451,7 @@ export default function SessionDetailPage() {
 function settingsPageTsx(): string {
   return `'use client'
 
-import { DashboardShell, SettingsPage } from '@renseiai/agentfactory-dashboard'
+import { DashboardShell, SettingsPage } from '@donmai/dashboard'
 import { usePathname } from 'next/navigation'
 
 export default function Settings() {

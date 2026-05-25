@@ -15,7 +15,7 @@ import type { SerializedIssue } from './issue-tracker-proxy.js'
 export type { ProxyClientConfig } from './proxy-client.js'
 
 // ---------------------------------------------------------------------------
-// Platform-agnostic types (structurally identical to @renseiai/agentfactory)
+// Platform-agnostic types (structurally identical to @donmai/core)
 // Defined locally to avoid circular dependency: core -> linear -> core
 // ---------------------------------------------------------------------------
 

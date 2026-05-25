@@ -6,14 +6,14 @@
  */
 
 import { NextRequest, NextResponse } from 'next/server'
-import type { LinearWebhookPayload } from '@renseiai/plugin-linear'
+import type { LinearWebhookPayload } from '@donmai/plugin-linear'
 import {
   isAgentSessionCreated,
   isAgentSessionPrompted,
   isAgentSessionUpdated,
   isIssueUpdate,
-} from '@renseiai/plugin-linear'
-import { createLogger, generateRequestId } from '@renseiai/agentfactory-server'
+} from '@donmai/plugin-linear'
+import { createLogger, generateRequestId } from '@donmai/server'
 import type { ResolvedWebhookConfig } from '../types.js'
 import { verifyWebhookSignature } from './signature.js'
 import { handleSessionCreated } from './handlers/session-created.js'

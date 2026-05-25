@@ -1,6 +1,6 @@
 {
   "name": "@renseiai/kit-default-ts-nextjs",
-  "version": "1.0.0",
+  "version": "0.9.0",
   "description": "OSS default Kit for TypeScript / Next.js projects",
   "author": "Rensei AI (https://rensei.ai)",
   "license": "MIT",

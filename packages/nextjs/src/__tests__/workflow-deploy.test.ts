@@ -45,7 +45,7 @@ function makeValidationError(message: string): Error {
 const mockWorkflowStoreSave = vi.fn()
 const mockRequireWorkerAuth = vi.fn<(req: NextRequest) => NextResponse | null>(() => null)
 
-vi.mock('@renseiai/agentfactory-server', () => ({
+vi.mock('@donmai/server', () => ({
   workflowStoreSave: (...args: unknown[]) => mockWorkflowStoreSave(...args),
   createLogger: () => ({
     info: vi.fn(),
@@ -55,7 +55,7 @@ vi.mock('@renseiai/agentfactory-server', () => ({
   }),
 }))
 
-vi.mock('@renseiai/agentfactory', () => ({
+vi.mock('@donmai/core', () => ({
   validateWorkflowDefinition: (data: unknown) => inlineValidate(data),
 }))
 

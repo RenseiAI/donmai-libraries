@@ -15,12 +15,12 @@ import {
   type AgentWorkType,
   type OrchestratorIssue,
   type ToolPlugin,
-} from '@renseiai/agentfactory'
+} from '@donmai/core'
 import {
   LinearIssueTrackerClient,
   createLinearStatusMappings,
   linearPlugin,
-} from '@renseiai/plugin-linear'
+} from '@donmai/plugin-linear'
 import {
   MergeQueueStorage,
   createLocalMergeQueueStorage,
@@ -28,8 +28,8 @@ import {
   checkFileConflicts as serverCheckFileConflicts,
   releaseFiles as serverReleaseFiles,
   isRedisConfigured,
-} from '@renseiai/agentfactory-server'
-import { createProxyFileReservationDelegate } from '@renseiai/agentfactory'
+} from '@donmai/server'
+import { createProxyFileReservationDelegate } from '@donmai/core'
 
 let codeIntelligencePlugin: ToolPlugin | undefined
 try {

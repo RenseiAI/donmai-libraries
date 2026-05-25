@@ -6,7 +6,7 @@
 
 import { NextRequest, NextResponse } from 'next/server'
 import { requireWorkerAuth } from '../../middleware/worker-auth.js'
-import { updateHeartbeat, getWorker, createLogger } from '@renseiai/agentfactory-server'
+import { updateHeartbeat, getWorker, createLogger } from '@donmai/server'
 
 const log = createLogger('api:workers:heartbeat')
 

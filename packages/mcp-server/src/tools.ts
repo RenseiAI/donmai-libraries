@@ -8,8 +8,8 @@ import {
   storeSessionState,
   updateSessionStatus,
   publishUrgent,
-} from '@renseiai/agentfactory-server'
-import type { AgentSessionStatus } from '@renseiai/agentfactory-server'
+} from '@donmai/server'
+import type { AgentSessionStatus } from '@donmai/server'
 
 // Work type values for zod enum validation
 const WORK_TYPES = [

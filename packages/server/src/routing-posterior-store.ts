@@ -1,9 +1,9 @@
 import { isRedisConfigured, redisSet, redisGet, redisDel, redisKeys } from './redis.js'
 import type { AgentWorkType } from './types.js'
-import type { AgentProviderName } from '@renseiai/agentfactory'
-import type { RoutingPosterior } from '@renseiai/agentfactory'
-import type { PosteriorStore } from '@renseiai/agentfactory'
-import { defaultPosterior, ROUTING_KEYS } from '@renseiai/agentfactory'
+import type { AgentProviderName } from '@donmai/core'
+import type { RoutingPosterior } from '@donmai/core'
+import type { PosteriorStore } from '@donmai/core'
+import { defaultPosterior, ROUTING_KEYS } from '@donmai/core'
 
 const log = {
   info: (msg: string, data?: Record<string, unknown>) => console.log(`[routing] ${msg}`, data ? JSON.stringify(data) : ''),

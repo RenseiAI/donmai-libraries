@@ -2,10 +2,10 @@
  * Gate Storage — Redis Implementation
  *
  * Redis-backed storage adapter for gate lifecycle state.
- * Implements the GateStorage interface from @renseiai/agentfactory (packages/core).
+ * Implements the GateStorage interface from @donmai/core (packages/core).
  */
 
-import type { GateStorage, GateState } from '@renseiai/agentfactory'
+import type { GateStorage, GateState } from '@donmai/core'
 import { redisSet, redisGet, redisDel, redisKeys } from './redis.js'
 
 const log = {

@@ -7,8 +7,8 @@
 
 import { NextRequest, NextResponse } from 'next/server'
 import { requireWorkerAuth } from '../../middleware/worker-auth.js'
-import { getSessionState, createLogger } from '@renseiai/agentfactory-server'
-import { buildCompletionComments } from '@renseiai/plugin-linear'
+import { getSessionState, createLogger } from '@donmai/server'
+import { buildCompletionComments } from '@donmai/plugin-linear'
 import type { RouteConfig } from '../../types.js'
 
 const log = createLogger('api:sessions:completion')

@@ -91,7 +91,7 @@ describe('generatePageContent', () => {
       exportName: 'Pipeline',
     })
     expect(content).toContain(`'use client'`)
-    expect(content).toContain(`import { DashboardShell, PipelinePage } from '@renseiai/agentfactory-dashboard'`)
+    expect(content).toContain(`import { DashboardShell, PipelinePage } from '@donmai/dashboard'`)
     expect(content).toContain(`import { usePathname } from 'next/navigation'`)
     expect(content).toContain(`export default function Pipeline()`)
     expect(content).toContain(`<PipelinePage />`)
@@ -105,7 +105,7 @@ describe('generatePageContent', () => {
       exportName: 'DashboardPage',
       importAlias: 'DashboardPage as FleetPage',
     })
-    expect(content).toContain(`import { DashboardShell, DashboardPage as FleetPage } from '@renseiai/agentfactory-dashboard'`)
+    expect(content).toContain(`import { DashboardShell, DashboardPage as FleetPage } from '@donmai/dashboard'`)
     expect(content).toContain(`<FleetPage />`)
   })
 

@@ -22,7 +22,7 @@ import {
   maybeCleanupOrphans,
   createLogger,
   filterByQuota,
-} from '@renseiai/agentfactory-server'
+} from '@donmai/server'
 
 const log = createLogger('api:workers:poll')
 

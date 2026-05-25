@@ -6,7 +6,7 @@
  * stub adapters (Jira, Asana, Notion).
  *
  * LinearIssueTrackerProvider lives in packages/linear; import from
- * @renseiai/plugin-linear.
+ * @donmai/plugin-linear.
  */
 
 export type {

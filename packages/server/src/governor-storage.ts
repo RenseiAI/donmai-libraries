@@ -2,10 +2,10 @@
  * Governor Storage — Redis Implementation
  *
  * Redis-backed storage adapter for the human touchpoint override state.
- * Implements the OverrideStorage interface from @renseiai/agentfactory (packages/core).
+ * Implements the OverrideStorage interface from @donmai/core (packages/core).
  */
 
-import type { OverrideStorage, OverrideState } from '@renseiai/agentfactory'
+import type { OverrideStorage, OverrideState } from '@donmai/core'
 import { redisSet, redisGet, redisDel } from './redis.js'
 
 const log = {

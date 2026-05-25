@@ -232,7 +232,7 @@ export class LocalPoolWorkareaProvider implements WorkareaProvider {
     name: 'Local Pool WorkareaProvider',
     description: 'OSS reference impl — warm pool of git worktrees on the local filesystem',
     requires: { rensei: '>=0.8.0' },
-    entry: { kind: 'static', modulePath: '@renseiai/agentfactory/workarea/local-pool' },
+    entry: { kind: 'static', modulePath: '@donmai/core/workarea/local-pool' },
     capabilitiesDeclared: {
       supportsSnapshot: false,
       supportsWarmPool: true,

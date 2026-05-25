@@ -6,9 +6,9 @@
 
 import { NextRequest, NextResponse } from 'next/server'
 import { requireWorkerAuth } from '../../middleware/worker-auth.js'
-import { getSessionState, createLogger } from '@renseiai/agentfactory-server'
-import { ENVIRONMENT_ISSUE_TYPES } from '@renseiai/agentfactory'
-import { createAgentSession } from '@renseiai/plugin-linear'
+import { getSessionState, createLogger } from '@donmai/server'
+import { ENVIRONMENT_ISSUE_TYPES } from '@donmai/core'
+import { createAgentSession } from '@donmai/plugin-linear'
 import type { RouteConfig } from '../../types.js'
 
 const log = createLogger('api:sessions:tool-error')

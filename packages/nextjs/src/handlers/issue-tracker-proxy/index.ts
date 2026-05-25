@@ -21,13 +21,13 @@
 
 import { NextResponse } from 'next/server'
 import type { NextRequest } from 'next/server'
-import { createLogger } from '@renseiai/agentfactory-server'
+import { createLogger } from '@donmai/server'
 import type {
   ProxyRequest,
   ProxyResponse,
   IssueTrackerMethod,
-} from '@renseiai/plugin-linear'
-import { isCircuitOpenError } from '@renseiai/plugin-linear'
+} from '@donmai/plugin-linear'
+import { isCircuitOpenError } from '@donmai/plugin-linear'
 import { requireWorkerAuth } from '../../middleware/worker-auth.js'
 import { serializeIssue, serializeComment, serializeViewer, serializeTeam } from './serializer.js'
 import type { ProxyHandlerConfig } from './types.js'
@@ -235,7 +235,7 @@ export function createIssueTrackerProxyHandler(config: ProxyHandlerConfig) {
   async function GET(_request: NextRequest): Promise<NextResponse> {
     // Health endpoint — no auth required for monitoring
     try {
-      const { getQuota } = await import('@renseiai/agentfactory-server')
+      const { getQuota } = await import('@donmai/server')
       const quota = await getQuota('default')
 
       return NextResponse.json({

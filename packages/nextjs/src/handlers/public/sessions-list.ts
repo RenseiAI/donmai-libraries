@@ -11,7 +11,7 @@ import {
   isSessionInQueue,
   hashSessionId,
   createLogger,
-} from '@renseiai/agentfactory-server'
+} from '@donmai/server'
 
 const log = createLogger('api/public/sessions')
 

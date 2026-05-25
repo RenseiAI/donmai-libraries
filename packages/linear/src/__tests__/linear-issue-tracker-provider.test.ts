@@ -1,6 +1,6 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { LinearIssueTrackerProvider } from '../linear-issue-tracker-provider.js'
-import type { IssueTrackerProvider } from '@renseiai/agentfactory'
+import type { IssueTrackerProvider } from '@donmai/core'
 
 /**
  * LinearIssueTrackerProvider — unit tests.
@@ -187,7 +187,7 @@ describe('LinearIssueTrackerProvider', () => {
 
   // ── Export from package index ────────────────────────────────────────────
 
-  it('is exported from @renseiai/plugin-linear barrel', async () => {
+  it('is exported from @donmai/plugin-linear barrel', async () => {
     const mod = await import('../index.js')
     expect(mod.LinearIssueTrackerProvider).toBeDefined()
     expect(typeof mod.LinearIssueTrackerProvider).toBe('function')

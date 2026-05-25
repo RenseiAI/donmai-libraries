@@ -24,7 +24,7 @@ import type {
   ArchQuerySpec,
   ArchObservation,
   ArchScope,
-} from '@renseiai/architectural-intelligence'
+} from '@donmai/architectural-intelligence'
 
 // ---------------------------------------------------------------------------
 // Helpers: build mock domain objects

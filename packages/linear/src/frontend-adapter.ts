@@ -1,12 +1,12 @@
 /**
  * LinearFrontendAdapter
  *
- * Implements the WorkSchedulingFrontend interface (defined in @renseiai/agentfactory)
+ * Implements the WorkSchedulingFrontend interface (defined in @donmai/core)
  * by wrapping the LinearAgentClient. This adapter translates between abstract,
  * frontend-agnostic types and Linear-specific concepts.
  *
  * Structural typing note: This class structurally satisfies the WorkSchedulingFrontend
- * interface from @renseiai/agentfactory without an explicit `implements` clause, avoiding
+ * interface from @donmai/core without an explicit `implements` clause, avoiding
  * a circular package dependency (core depends on linear at runtime, linear depends on
  * core only for types). Consumers who import both packages can assign this to
  * WorkSchedulingFrontend.
@@ -18,7 +18,7 @@ import type { LinearAgentClient } from './agent-client.js'
 import { resolveSDKLabelNames } from './utils.js'
 
 // ---------------------------------------------------------------------------
-// Abstract types (structurally identical to @renseiai/agentfactory frontend types)
+// Abstract types (structurally identical to @donmai/core frontend types)
 // ---------------------------------------------------------------------------
 
 /**
@@ -182,7 +182,7 @@ async function toAbstractComment(comment: Comment): Promise<AbstractComment> {
 /**
  * Linear frontend adapter that wraps LinearAgentClient.
  *
- * Structurally satisfies WorkSchedulingFrontend from @renseiai/agentfactory.
+ * Structurally satisfies WorkSchedulingFrontend from @donmai/core.
  */
 export class LinearFrontendAdapter {
   readonly name = 'linear' as const

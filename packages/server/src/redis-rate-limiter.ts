@@ -5,13 +5,13 @@
  * All processes (dashboard, governor, CLI agents) share one bucket
  * keyed by `linear:rate-limit:{workspaceId}`.
  *
- * Implements RateLimiterStrategy from @renseiai/plugin-linear
+ * Implements RateLimiterStrategy from @donmai/plugin-linear
  * so it can be injected into LinearAgentClient.
  */
 
 import { getRedisClient } from './redis.js'
 import { createLogger } from './logger.js'
-import type { RateLimiterStrategy } from '@renseiai/plugin-linear'
+import type { RateLimiterStrategy } from '@donmai/plugin-linear'
 
 const log = createLogger('redis-rate-limiter')
 

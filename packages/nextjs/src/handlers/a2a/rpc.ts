@@ -2,7 +2,7 @@
  * POST /api/a2a
  *
  * A2A JSON-RPC 2.0 endpoint. Parses incoming requests, delegates to
- * `createA2aRequestHandler()` from @renseiai/agentfactory-server,
+ * `createA2aRequestHandler()` from @donmai/server,
  * and returns JSON-RPC responses.
  *
  * Supports both regular JSON responses and SSE streaming via
@@ -17,12 +17,12 @@ import {
   extractBearerToken,
   verifyApiKey,
   createLogger,
-} from '@renseiai/agentfactory-server'
+} from '@donmai/server'
 import type {
   A2aHandlerOptions,
   A2aRequestHandler,
-} from '@renseiai/agentfactory-server'
-import type { JsonRpcRequest } from '@renseiai/agentfactory-server'
+} from '@donmai/server'
+import type { JsonRpcRequest } from '@donmai/server'
 
 const log = createLogger('api:a2a:rpc')
 

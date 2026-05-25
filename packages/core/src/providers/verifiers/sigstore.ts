@@ -140,7 +140,7 @@ export class SigstoreVerifier implements Verifier {
       valid: false,
       reason:
         '@sigstore/verify package failed to load. As of REN-1344 this package ' +
-        'is a regular dependency of @renseiai/agentfactory; reinstall dependencies ' +
+        'is a regular dependency of @donmai/core; reinstall dependencies ' +
         'with `pnpm install`. ' +
         'Alternatively, use signatureValue starting with "SIGSTORE_TEST:" for tests, ' +
         'or use the cosign or ed25519 algorithm with a local key.',

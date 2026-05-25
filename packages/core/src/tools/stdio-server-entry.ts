@@ -50,7 +50,7 @@ async function reconstructFileReservationDelegate(
   try {
     // Dynamic import — server package is available at runtime but is NOT a compile-time
     // dependency of core. Use a variable to prevent TypeScript module resolution.
-    const serverPkg = '@renseiai/agentfactory-server'
+    const serverPkg = '@donmai/server'
     const serverMod = await import(serverPkg)
     const { reserveFiles, checkFileConflicts, releaseFiles, releaseAllSessionFiles } = serverMod
     // Derive repoId from the working directory name (same convention as CLI runners)
@@ -167,11 +167,11 @@ async function loadPlugin(name: string): Promise<ToolPluginLike | null> {
   // Try to import the plugin package based on naming convention
   const pluginPackages: Record<string, { module: string; export: string }> = {
     'af-linear': {
-      module: '@renseiai/agentfactory-linear/tools',
+      module: '@donmai/plugin-linear',
       export: 'linearPlugin',
     },
     'af-code-intelligence': {
-      module: '@renseiai/agentfactory-code-intelligence/plugin',
+      module: '@renseiai/agentfactory-code-intelligence',
       export: 'codeIntelligencePlugin',
     },
   }

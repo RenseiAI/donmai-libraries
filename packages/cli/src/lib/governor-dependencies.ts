@@ -3,19 +3,19 @@
  *
  * Maps each GovernorDependencies callback to its real implementation
  * using the Linear SDK (via LinearAgentClient) and Redis storage
- * (from @renseiai/agentfactory-server).
+ * (from @donmai/server).
  */
 
-import type { LinearAgentClient, WorkflowContext } from '@renseiai/plugin-linear'
+import type { LinearAgentClient, WorkflowContext } from '@donmai/plugin-linear'
 import type {
   GovernorDependencies,
   GovernorIssue,
   GovernorAction,
-} from '@renseiai/agentfactory'
+} from '@donmai/core'
 import {
   isHeld as checkIsHeld,
   getOverridePriority as checkOverridePriority,
-} from '@renseiai/agentfactory'
+} from '@donmai/core'
 import {
   getSessionStateByIssue,
   didJustFailQA,
@@ -24,8 +24,8 @@ import {
   RedisProcessingStateStorage,
   storeSessionState,
   dispatchWork as issueLockDispatchWork,
-} from '@renseiai/agentfactory-server'
-import type { QueuedWork } from '@renseiai/agentfactory-server'
+} from '@donmai/server'
+import type { QueuedWork } from '@donmai/server'
 
 // ---------------------------------------------------------------------------
 // Logging

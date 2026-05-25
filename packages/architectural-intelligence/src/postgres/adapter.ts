@@ -224,7 +224,7 @@ export const RLS_ORG_ID_SETTING = 'rensei.current_org_id'
  * use a Postgres role configured with `BYPASSRLS` and document the
  * carve-out in your runbook.
  */
-export const RLS_DDL_EXAMPLE = `-- Multi-tenant RLS for @renseiai/architectural-intelligence
+export const RLS_DDL_EXAMPLE = `-- Multi-tenant RLS for @donmai/architectural-intelligence
 --
 -- Run once per database. Idempotent: re-running is safe.
 --

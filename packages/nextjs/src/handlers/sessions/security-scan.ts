@@ -7,8 +7,8 @@
 
 import { NextRequest, NextResponse } from 'next/server'
 import { requireWorkerAuth } from '../../middleware/worker-auth.js'
-import { getSessionState, storeSecurityScanEvent, createLogger } from '@renseiai/agentfactory-server'
-import { SecurityScanEventSchema } from '@renseiai/agentfactory'
+import { getSessionState, storeSecurityScanEvent, createLogger } from '@donmai/server'
+import { SecurityScanEventSchema } from '@donmai/core'
 
 const log = createLogger('api:sessions:security-scan')
 

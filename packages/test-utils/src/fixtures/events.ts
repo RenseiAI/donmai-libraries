@@ -4,7 +4,7 @@ import type {
   AgentToolResultEvent,
   AgentResultEvent,
   AgentErrorEvent,
-} from '@renseiai/agentfactory'
+} from '@donmai/core'
 
 export function makeInitEvent(overrides: Partial<AgentInitEvent> = {}): AgentInitEvent {
   return {

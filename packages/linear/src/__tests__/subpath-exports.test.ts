@@ -1,7 +1,7 @@
 import { describe, it, expect } from 'vitest'
 
 /**
- * Subpath export resolution tests for @renseiai/plugin-linear.
+ * Subpath export resolution tests for @donmai/plugin-linear.
  *
  * Verifies that every key export defined in the main barrel resolves
  * to a module that exports the expected symbol. These tests catch:
@@ -10,7 +10,7 @@ import { describe, it, expect } from 'vitest'
  * - Missing or renamed function/class exports
  */
 
-describe('@renseiai/plugin-linear subpath exports', () => {
+describe('@donmai/plugin-linear subpath exports', () => {
   // Client exports
   it('exports LinearAgentClient from main', async () => {
     const mod = await import('../index.js')

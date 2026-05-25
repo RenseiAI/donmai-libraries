@@ -13,7 +13,7 @@ import { tool, type SdkMcpToolDefinition } from '@anthropic-ai/claude-agent-sdk'
 import { runLinear } from './linear-runner.js'
 
 // ---------------------------------------------------------------------------
-// Tool plugin types (structurally identical to @renseiai/agentfactory)
+// Tool plugin types (structurally identical to @donmai/core)
 // Defined locally to avoid compile-time dependency on core.
 // ---------------------------------------------------------------------------
 
