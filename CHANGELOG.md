@@ -4,7 +4,7 @@
 
 ### Deprecations
 
-- **`@renseiai/daemon` package** — Deprecated in favour of the Go daemon shipped inside the `af` / `rensei` binary (REN-1408). Use `rensei daemon run` (or `af daemon run`) as the long-running entry point. The Node package is preserved at version 0.1.0 for OSS continuity and will be removed in cycle 6 after the rensei-smokes harness has soaked for 7 consecutive nights. See [`docs/migration-from-legacy-cli.md`](./docs/migration-from-legacy-cli.md#daemon--renseiaidaemon-→-af-daemon--rensei-daemon) for the migration path.
+- **`@renseiai/daemon` package** — Deprecated in favour of the Go daemon shipped inside the `af` / `rensei` binary. Use `rensei daemon run` (or `af daemon run`) as the long-running entry point. The Node package is preserved at version 0.1.0 for OSS continuity and will be removed in cycle 6 after the CI smoke harness has soaked for 7 consecutive nights. See [`docs/migration-from-legacy-cli.md`](./docs/migration-from-legacy-cli.md#daemon--renseiaidaemon-→-af-daemon--rensei-daemon) for the migration path.
 
 ## v0.8.59
 

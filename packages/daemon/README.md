@@ -1,6 +1,6 @@
-# @renseiai/daemon — DEPRECATED (REN-1408)
+# @renseiai/daemon — DEPRECATED
 
-> **This package is deprecated.** The daemon runtime has been ported to Go and now ships inside the `af` / `rensei` binary as `af daemon run` / `rensei daemon run`. See [REN-1408](https://linear.app/supaku/issue/REN-1408/port-daemon-runtime-to-go-16k-loc-supervisor-registration-heartbeat) for the port and the [migration doc](../../docs/migration-from-legacy-cli.md) for the upgrade path.
+> **This package is deprecated.** The daemon runtime has been ported to Go and now ships inside the `donmai` binary as `donmai daemon run`. See the [migration doc](../../docs/migration-from-legacy-cli.md) for the upgrade path.
 
 ## Migration
 
@@ -34,7 +34,7 @@ The single-binary OSS UX cardinal rule (`brew install rensei` ships ONE binary t
 
 ## Removal timeline
 
-This package will be removed from the monorepo in **cycle 6** after the rensei-smokes harness has passed for 7 consecutive nights against the Go daemon. Until then, the package is preserved at version `0.1.0` so existing installations continue to work without disruption.
+This package will be removed from the monorepo in **cycle 6** after the smoke harness has passed for 7 consecutive nights against the Go daemon. Until then, the package is preserved at version `0.1.0` so existing installations continue to work without disruption.
 
 | Phase | When | What |
 |-------|------|------|
@@ -42,4 +42,4 @@ This package will be removed from the monorepo in **cycle 6** after the rensei-s
 | Soak | cycle 5 → 6 | Go daemon runs in CI smokes for 7 consecutive nights |
 | Removal | cycle 6 | Package directory deleted from monorepo, npm `deprecate` marker pushed |
 
-If you depend on this package, please migrate before the cycle-6 removal. Open a comment on the linked Linear issue if anything in the migration path is unclear.
+If you depend on this package, please migrate before the cycle-6 removal. Open a comment on the [migration doc](../../docs/migration-from-legacy-cli.md) if anything in the migration path is unclear.
