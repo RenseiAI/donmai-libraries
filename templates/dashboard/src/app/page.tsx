@@ -1,6 +1,6 @@
 'use client'
 
-import { DashboardShell, DashboardPage as FleetPage } from '@renseiai/agentfactory-dashboard'
+import { DashboardShell, DashboardPage as FleetPage } from '@donmai/dashboard'
 import { usePathname } from 'next/navigation'
 
 export default function DashboardPage() {
