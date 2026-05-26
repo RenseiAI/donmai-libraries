@@ -1,5 +1,6 @@
 'use client'
 
+import Link from 'next/link'
 import { cn } from '../../lib/utils'
 import { Logo } from '../../components/shared/logo'
 import { Separator } from '../../components/ui/separator'
@@ -41,7 +42,7 @@ export function Sidebar({ currentPath = '/', navItems = defaultNavItems, classNa
       <div className="flex items-center gap-2.5 px-5 py-4">
         <Logo size={22} />
         <span className="font-display text-sm font-bold text-af-text-primary tracking-tight">
-          AgentFactory
+          Donmai
         </span>
       </div>
 
@@ -54,7 +55,7 @@ export function Sidebar({ currentPath = '/', navItems = defaultNavItems, classNa
         {navItems.map((item) => {
           const active = isActive(item.href)
           return (
-            <a
+            <Link
               key={item.href}
               href={item.href}
               className={cn(
@@ -71,7 +72,7 @@ export function Sidebar({ currentPath = '/', navItems = defaultNavItems, classNa
                 {item.icon}
               </span>
               {item.label}
-            </a>
+            </Link>
           )
         })}
       </nav>
@@ -83,12 +84,12 @@ export function Sidebar({ currentPath = '/', navItems = defaultNavItems, classNa
       {/* Footer */}
       <div className="px-5 py-3">
         <a
-          href="https://github.com/renseiai/agentfactory"
+          href="https://github.com/RenseiAI/donmai"
           target="_blank"
           rel="noopener noreferrer"
           className="group flex items-center gap-1.5 text-2xs font-body text-af-text-tertiary hover:text-af-text-secondary transition-colors"
         >
-          AgentFactory
+          Donmai
           <ExternalLink className="h-2.5 w-2.5 opacity-0 group-hover:opacity-100 transition-opacity" />
         </a>
       </div>

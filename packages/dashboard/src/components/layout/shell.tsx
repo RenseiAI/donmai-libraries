@@ -47,7 +47,7 @@ export function DashboardShell({ children, currentPath = '/', className }: Dashb
             </Sheet>
             <Logo size={20} />
             <span className="text-sm font-display font-semibold text-af-text-primary tracking-tight">
-              AgentFactory
+              Donmai
             </span>
           </div>
 
