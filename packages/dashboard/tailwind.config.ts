@@ -5,33 +5,37 @@ const dashboardPreset: Config = {
   theme: {
     extend: {
       colors: {
-        // Void backgrounds - deeper, richer
-        'af-bg-primary': '#080C16',
-        'af-bg-secondary': '#0D1220',
-        'af-bg-tertiary': '#111828',
+        // Donmai palette mapped onto legacy af-* class names.
+        // Class names kept as af-* to avoid a 200-touch consumer refactor;
+        // hex values are the canonical Donmai brand tokens per
+        // runs/2026-05-22-donmai-rebrand/11-NAMING-MAP.md §Color tokens.
+        // v0.11+ may rename classes to donmai-* if/when worth the churn.
 
-        // Glass surfaces
-        'af-surface': '#141B2D',
-        'af-surface-raised': '#1A2236',
-        'af-surface-border': '#1E2740',
-        'af-surface-border-bright': '#283350',
+        // Surfaces (inherited Rensei dark palette per brand brief §2)
+        'af-bg-primary': '#09090B',
+        'af-bg-secondary': '#111113',
+        'af-bg-tertiary': '#18181B',
+        'af-surface': '#1F1F23',
+        'af-surface-raised': '#27272A',
+        'af-surface-border': '#27272A',
+        'af-surface-border-bright': '#3F3F46',
 
-        // Accent palette
-        'af-accent': '#FF6B35',
-        'af-accent-dim': '#CC5529',
-        'af-teal': '#00D4AA',
+        // Donmai accent palette
+        'af-accent': '#D94F2A',      // --donmai-accent
+        'af-accent-dim': '#A83820',  // --donmai-dim
+        'af-teal': '#00D4AA',        // kept (not brand palette)
         'af-teal-dim': '#00A886',
         'af-blue': '#4B8BF5',
 
-        // Status
+        // Status (Donmai brand brief semantics)
         'af-status-success': '#22C55E',
         'af-status-warning': '#F59E0B',
         'af-status-error': '#EF4444',
 
-        // Text hierarchy
-        'af-text-primary': '#F1F5F9',
-        'af-text-secondary': '#7C8DB5',
-        'af-text-tertiary': '#4B5B80',
+        // Text hierarchy (Donmai brand brief)
+        'af-text-primary': '#FAFAFA',
+        'af-text-secondary': '#A1A1AA',
+        'af-text-tertiary': '#71717A',
         'af-code': '#A5B4FC',
 
         // shadcn tokens
