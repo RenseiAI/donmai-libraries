@@ -74,10 +74,12 @@ const dashboardPreset: Config = {
         },
       },
       fontFamily: {
-        sans: ['Syne', 'DM Sans', 'system-ui', 'sans-serif'],
-        body: ['DM Sans', 'system-ui', 'sans-serif'],
+        // Donmai brand: DM Sans across the stack. Consumer should load
+        // DM Sans via next/font and expose --font-dm-sans on <html>.
+        sans: ['var(--font-dm-sans)', 'DM Sans', 'ui-sans-serif', 'system-ui', 'sans-serif'],
+        body: ['var(--font-dm-sans)', 'DM Sans', 'ui-sans-serif', 'system-ui', 'sans-serif'],
+        display: ['var(--font-dm-sans)', 'DM Sans', 'ui-sans-serif', 'system-ui', 'sans-serif'],
         mono: ['Fira Code', 'JetBrains Mono', 'ui-monospace', 'monospace'],
-        display: ['Syne', 'system-ui', 'sans-serif'],
       },
       fontSize: {
         '2xs': ['0.625rem', { lineHeight: '0.875rem' }],
