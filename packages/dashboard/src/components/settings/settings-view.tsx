@@ -26,7 +26,7 @@ export function SettingsView({ className }: SettingsViewProps) {
       <div>
         <h1 className="font-display text-xl font-bold text-af-text-primary tracking-tight">Settings</h1>
         <p className="mt-1 text-sm font-body text-af-text-secondary">
-          Configuration and integration status for your AgentFactory instance.
+          Configuration and integration status for your Donmai instance.
         </p>
       </div>
 

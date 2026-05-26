@@ -45,13 +45,13 @@ export function BottomBar({ className }: BottomBarProps) {
       </div>
 
       <a
-        href="https://github.com/renseiai/agentfactory"
+        href="https://github.com/RenseiAI/donmai"
         target="_blank"
         rel="noopener noreferrer"
         className="flex items-center gap-1 text-2xs font-body text-af-text-tertiary hover:text-af-text-secondary transition-colors"
       >
         <Zap className="h-2.5 w-2.5" />
-        AgentFactory
+        Donmai
       </a>
     </footer>
   )
