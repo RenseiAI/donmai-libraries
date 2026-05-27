@@ -82,7 +82,7 @@ export interface OrchestratorConfig {
    * This is required for remote workers because Linear's Agent API requires OAuth tokens.
    */
   apiActivityConfig?: {
-    /** Base URL of the agent API (e.g., https://agent.rensei.dev) */
+    /** Base URL of the agent API (e.g., https://donmai.dev/dashboard) */
     baseUrl: string
     /** API authentication key for the worker */
     apiKey: string

@@ -9,7 +9,7 @@
  */
 
 export interface ProxyFileReservationConfig {
-  /** Platform API base URL (e.g., https://agent.rensei.dev) */
+  /** Platform API base URL (e.g., https://donmai.dev/dashboard) */
   apiUrl: string
   /** Worker API key (Bearer token) */
   apiKey: string

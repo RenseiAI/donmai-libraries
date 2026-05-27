@@ -183,7 +183,7 @@ export function getAppUrl(config: ResolvedWebhookConfig): string {
     ?? process.env.NEXT_PUBLIC_APP_URL
     ?? (process.env.VERCEL_PROJECT_PRODUCTION_URL && `https://${process.env.VERCEL_PROJECT_PRODUCTION_URL}`)
     ?? (process.env.VERCEL_URL && `https://${process.env.VERCEL_URL}`)
-    ?? 'https://agent.rensei.dev'
+    ?? 'https://donmai.dev/dashboard'
 }
 
 /**
