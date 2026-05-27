@@ -44,12 +44,12 @@ AgentFactory is split into nine packages:
 | `@renseiai/agentfactory-dashboard` | Fleet management dashboard UI |
 | `@renseiai/agentfactory-mcp-server` | MCP server exposing fleet capabilities to external clients |
 | `@renseiai/agentfactory-code-intelligence` | Tree-sitter AST parsing, BM25 search, incremental indexing |
-| `@renseiai/create-agentfactory-app` | Project scaffolding tool (`npx create-agentfactory-app`) |
+| `@donmai/create-app` | Project scaffolding tool (`npx @donmai/create-app`) |
 
 ### Dependency Graph
 
 ```
-@renseiai/create-agentfactory-app (scaffolding, no runtime deps)
+@donmai/create-app (scaffolding, no runtime deps)
 
 @renseiai/agentfactory-nextjs
   ├── @renseiai/agentfactory (core)

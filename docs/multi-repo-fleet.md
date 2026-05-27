@@ -141,7 +141,7 @@ npm install @renseiai/agentfactory @renseiai/plugin-linear @renseiai/agentfactor
 Or scaffold a full project with the CLI:
 
 ```bash
-npx @renseiai/create-agentfactory-app my-agent
+npx @donmai/create-app my-agent
 ```
 
 **Non-TypeScript projects:** See [Non-TypeScript Projects](#non-typescript-projects) below.

@@ -36,7 +36,7 @@ packages/
   dashboard/           @renseiai/agentfactory-dashboard             — Fleet management dashboard UI
   mcp-server/          @renseiai/agentfactory-mcp-server            — MCP server for external clients
   code-intelligence/   @renseiai/agentfactory-code-intelligence     — Tree-sitter AST parsing, BM25 search
-  create-app/          @renseiai/create-agentfactory-app            — Project scaffolding tool
+  create-app/          @donmai/create-app                           — Project scaffolding tool
 
 docs/          Documentation
 examples/      Working code samples

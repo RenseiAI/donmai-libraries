@@ -11,7 +11,7 @@ npm install @renseiai/agentfactory-nextjs
 Or scaffold a complete project:
 
 ```bash
-npx @renseiai/create-agentfactory-app my-agent
+npx @donmai/create-app my-agent
 ```
 
 ## Quick Start

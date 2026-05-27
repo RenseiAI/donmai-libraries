@@ -1,14 +1,14 @@
 #!/usr/bin/env node
 
 /**
- * create-agentfactory-app
+ * create-donmai-app
  *
- * Scaffolds a new AgentFactory app — a Next.js webhook server + worker
+ * Scaffolds a new donmai app — a Next.js webhook server + worker
  * that processes Linear issues with coding agents.
  *
  * Usage:
- *   npx @renseiai/create-agentfactory-app my-agent
- *   npx @renseiai/create-agentfactory-app my-agent --team MY
+ *   npx @donmai/create-app my-agent
+ *   npx @donmai/create-app my-agent --team MY
  */
 
 import fs from 'node:fs'
@@ -65,7 +65,7 @@ function confirm(question: string, defaultYes = true): Promise<boolean> {
 
 async function main() {
   console.log()
-  console.log('  create-agentfactory-app')
+  console.log('  create-donmai-app')
   console.log()
 
   // Project name
@@ -149,7 +149,7 @@ async function main() {
 
 function printHelp() {
   console.log(`
-  Usage: npx @renseiai/create-agentfactory-app [project-name] [options]
+  Usage: npx @donmai/create-app [project-name] [options]
 
   Options:
     --team <KEY>     Linear team key (default: MY)
@@ -159,9 +159,9 @@ function printHelp() {
     -h, --help       Show this help message
 
   Examples:
-    npx @renseiai/create-agentfactory-app my-agent
-    npx @renseiai/create-agentfactory-app my-agent --team ENG
-    npx @renseiai/create-agentfactory-app my-agent --no-dashboard --no-redis
+    npx @donmai/create-app my-agent
+    npx @donmai/create-app my-agent --team ENG
+    npx @donmai/create-app my-agent --no-dashboard --no-redis
 `)
 }
 

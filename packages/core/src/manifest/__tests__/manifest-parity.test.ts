@@ -10,7 +10,7 @@
 
 import { describe, it, expect } from 'vitest'
 import { ROUTE_MANIFEST, generateRouteContent, generatePageContent } from '../index.js'
-import { getTemplates } from '@renseiai/create-agentfactory-app/templates'
+import { getTemplates } from '@donmai/create-app/templates'
 
 const templateFiles = getTemplates({
   projectName: 'test-project',

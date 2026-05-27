@@ -1,8 +1,8 @@
 {
-  "name": "@renseiai/create-agentfactory-app",
+  "name": "@donmai/create-app",
   "version": "0.9.0",
   "type": "module",
-  "description": "Create an AgentFactory app — multi-agent fleet management for coding agents",
+  "description": "Create a donmai app — multi-agent fleet management for coding agents",
   "author": "Rensei AI (https://rensei.ai)",
   "license": "MIT",
   "engines": {
@@ -29,7 +29,7 @@
     "scaffolding"
   ],
   "bin": {
-    "create-agentfactory-app": "dist/src/index.js"
+    "create-donmai-app": "dist/src/index.js"
   },
   "main": "./dist/src/index.js",
   "exports": {

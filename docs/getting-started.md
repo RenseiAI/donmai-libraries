@@ -19,7 +19,7 @@ This guide walks through setting up AgentFactory to process Linear issues with c
 The fastest way to get started is with the scaffolding tool:
 
 ```bash
-npx @renseiai/create-agentfactory-app my-agent
+npx @donmai/create-app my-agent
 
 cd my-agent
 cp .env.example .env.local    # Fill in LINEAR_ACCESS_TOKEN
@@ -187,7 +187,7 @@ When an `organizationId` is present on a webhook event, AgentFactory checks Redi
 
 ## Webhook Server Setup
 
-If you used `@renseiai/create-agentfactory-app`, this is already configured. For manual setup:
+If you used `@donmai/create-app`, this is already configured. For manual setup:
 
 ### Route Configuration
 

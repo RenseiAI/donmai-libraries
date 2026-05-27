@@ -1,5 +1,5 @@
 /**
- * Template generator for create-agentfactory-app
+ * Template generator for create-donmai-app
  *
  * Returns a map of file paths → file contents.
  */

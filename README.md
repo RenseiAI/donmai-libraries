@@ -22,7 +22,7 @@ AgentFactory turns your issue backlog into shipped code. It orchestrates a fleet
 | **[@renseiai/agentfactory-dashboard](./packages/dashboard)** | `@renseiai/agentfactory-dashboard` | Fleet management dashboard UI |
 | **[@renseiai/agentfactory-mcp-server](./packages/mcp-server)** | `@renseiai/agentfactory-mcp-server` | MCP server exposing fleet capabilities to external clients |
 | **[@renseiai/agentfactory-code-intelligence](./packages/code-intelligence)** | `@renseiai/agentfactory-code-intelligence` | Tree-sitter AST parsing, BM25 search, incremental indexing |
-| **[@renseiai/create-agentfactory-app](./packages/create-app)** | `@renseiai/create-agentfactory-app` | Project scaffolding tool |
+| **[@donmai/create-app](./packages/create-app)** | `@donmai/create-app` | Project scaffolding tool |
 
 ## Quick Start
 
@@ -40,7 +40,7 @@ Deploy the dashboard with a single click — no local setup required:
 ### Create a new project (recommended for customization)
 
 ```bash
-npx @renseiai/create-agentfactory-app my-agent
+npx @donmai/create-app my-agent
 
 cd my-agent
 cp .env.example .env.local    # Fill in LINEAR_ACCESS_TOKEN

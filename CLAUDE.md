@@ -25,7 +25,7 @@ If this project's docs conflict with `../donmai-architecture/`, the corpus wins.
 | `@renseiai/agentfactory-dashboard` | `packages/dashboard` | Fleet management dashboard UI |
 | `@renseiai/agentfactory-mcp-server` | `packages/mcp-server` | MCP server exposing fleet capabilities to external clients |
 | `@renseiai/agentfactory-code-intelligence` | `packages/code-intelligence` | Tree-sitter AST parsing, BM25 search, incremental indexing |
-| `@renseiai/create-agentfactory-app` | `packages/create-app` | Project scaffolding CLI |
+| `@donmai/create-app` | `packages/create-app` | Project scaffolding CLI |
 | `@renseiai/agentfactory-cli` | `packages/cli` | Orchestrator, worker, Linear CLI, and admin entry points |
 
 ## Code Intelligence (Optional)

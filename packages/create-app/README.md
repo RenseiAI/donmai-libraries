@@ -1,19 +1,19 @@
-# @renseiai/create-agentfactory-app
+# @donmai/create-app
 
-Scaffold a new [AgentFactory](https://github.com/renseiai/agentfactory) project — a Next.js webhook server that processes Linear issues with coding agents.
+Scaffold a new [donmai](https://github.com/RenseiAI/donmai-libraries) project — a Next.js webhook server that processes Linear issues with coding agents.
 
-> **Just want to deploy?** Skip scaffolding and use one-click deploy: [Vercel](https://vercel.com/new/clone?repository-url=https%3A%2F%2Fgithub.com%2Frenseiai%2Fagentfactory%2Ftree%2Fmain%2Ftemplates%2Fdashboard&project-name=agentfactory-dashboard&env=LINEAR_ACCESS_TOKEN,LINEAR_WEBHOOK_SECRET,REDIS_URL&envDescription=Environment%20variables%20needed%20for%20AgentFactory%20Dashboard&envLink=https%3A%2F%2Fgithub.com%2Frenseiai%2Fagentfactory%2Ftree%2Fmain%2Ftemplates%2Fdashboard%23environment-variables) | [Railway](https://railway.com/deploy/A7hIuF?referralCode=MwgIWL) (includes Redis). See the [dashboard template](https://github.com/renseiai/agentfactory/tree/main/templates/dashboard) for details.
+> **Just want to deploy?** Skip scaffolding and use one-click deploy: [Vercel](https://vercel.com/new/clone?repository-url=https%3A%2F%2Fgithub.com%2Frenseiai%2Fagentfactory%2Ftree%2Fmain%2Ftemplates%2Fdashboard&project-name=agentfactory-dashboard&env=LINEAR_ACCESS_TOKEN,LINEAR_WEBHOOK_SECRET,REDIS_URL&envDescription=Environment%20variables%20needed%20for%20AgentFactory%20Dashboard&envLink=https%3A%2F%2Fgithub.com%2Frenseiai%2Fagentfactory%2Ftree%2Fmain%2Ftemplates%2Fdashboard%23environment-variables) | [Railway](https://railway.com/deploy/A7hIuF?referralCode=MwgIWL) (includes Redis). See the [dashboard template](https://github.com/RenseiAI/donmai-libraries/tree/main/templates/dashboard) for details.
 
 ## Usage
 
 ```bash
-npx @renseiai/create-agentfactory-app my-agent
+npx @donmai/create-app my-agent
 ```
 
 Then follow the prompts:
 
 ```
-  create-agentfactory-app
+  create-donmai-app
 
   Project name (my-agent):
   Linear team key (e.g., MY): ENG
@@ -52,7 +52,7 @@ my-agent/
 ## Options
 
 ```
-npx @renseiai/create-agentfactory-app [project-name] [options]
+npx @donmai/create-app [project-name] [options]
 
 Options:
   --team <KEY>     Linear team key (default: MY)
