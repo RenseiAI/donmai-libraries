@@ -1,9 +1,9 @@
 version: 3
 
 project:
-  id: agentfactory
-  name: AgentFactory
-  url: https://github.com/RenseiAI/agentfactory
+  id: donmai-libraries
+  name: donmai-libraries
+  url: https://github.com/RenseiAI/donmai-libraries
 
 revision:
   branch: main

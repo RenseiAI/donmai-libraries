@@ -189,9 +189,9 @@ jobs:
       - name: Generate SBOMs and attribution
         if: steps.check.outputs.should_publish == 'true' && env.FOSSA_API_KEY != ''
         run: |
-          fossa report attribution --format spdx --project agentfactory > sbom-spdx.json
-          fossa report attribution --format cyclonedx --project agentfactory > sbom-cyclonedx.json
-          fossa report attribution --project agentfactory > NOTICE
+          fossa report attribution --format spdx --project donmai-libraries > sbom-spdx.json
+          fossa report attribution --format cyclonedx --project donmai-libraries > sbom-cyclonedx.json
+          fossa report attribution --project donmai-libraries > NOTICE
         env:
           FOSSA_API_KEY: ${{ secrets.FOSSA_API_KEY }}
 

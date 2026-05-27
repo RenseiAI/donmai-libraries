@@ -94,15 +94,15 @@ jobs:
 
       - name: Generate SPDX SBOM
         if: ${{ env.FOSSA_API_KEY != '' }}
-        run: fossa report attribution --format spdx --project agentfactory > sbom-spdx.json
+        run: fossa report attribution --format spdx --project donmai-libraries > sbom-spdx.json
 
       - name: Generate CycloneDX SBOM
         if: ${{ env.FOSSA_API_KEY != '' }}
-        run: fossa report attribution --format cyclonedx --project agentfactory > sbom-cyclonedx.json
+        run: fossa report attribution --format cyclonedx --project donmai-libraries > sbom-cyclonedx.json
 
       - name: Generate attribution document
         if: ${{ env.FOSSA_API_KEY != '' }}
-        run: fossa report attribution --project agentfactory > NOTICE
+        run: fossa report attribution --project donmai-libraries > NOTICE
 
       - name: Upload SBOM artifacts
         if: ${{ env.FOSSA_API_KEY != '' }}

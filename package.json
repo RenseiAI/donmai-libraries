@@ -1,15 +1,15 @@
 {
-  "name": "agentfactory",
+  "name": "donmai-libraries",
   "private": true,
   "packageManager": "pnpm@10.28.0",
   "description": "The open-source software factory — multi-agent fleet management for coding agents",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/RenseiAI/agentfactory.git"
+    "url": "git+https://github.com/RenseiAI/donmai-libraries.git"
   },
-  "homepage": "https://github.com/RenseiAI/agentfactory#readme",
+  "homepage": "https://github.com/RenseiAI/donmai-libraries#readme",
   "bugs": {
-    "url": "https://github.com/RenseiAI/agentfactory/issues"
+    "url": "https://github.com/RenseiAI/donmai-libraries/issues"
   },
   "author": "Rensei AI (https://rensei.ai)",
   "license": "MIT",
@@ -24,7 +24,7 @@
     "dev": "turbo run dev",
     "lint": "turbo run lint",
     "clean": "turbo run clean",
-    "agentfactory": "node --import tsx packages/cli/src/index.ts",
+    "donmai-libraries": "node --import tsx packages/cli/src/index.ts",
     "af-agent": "node --import tsx packages/cli/src/agent.ts",
     "af-orchestrator": "node --import tsx packages/cli/src/orchestrator.ts",
     "af-worker": "node --import tsx packages/cli/src/worker.ts",

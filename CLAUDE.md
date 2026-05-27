@@ -264,7 +264,7 @@ When you encounter "exceeds maximum allowed tokens" error when reading files:
 By default, worktrees are created in a **sibling directory** next to the repository:
 
 ```
-../agentfactory.wt/SUP-123/   # ../{repoName}.wt/{branch}
+../donmai-libraries.wt/SUP-123/   # ../{repoName}.wt/{branch}
 ```
 
 This avoids filesystem watcher storms in VSCode/Cursor that occurred with the previous `.worktrees/` (in-repo) layout. The path is configurable via `worktree.directory` in `.agentfactory/config.yaml` using `{repoName}` and `{branch}` template variables.
