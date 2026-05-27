@@ -313,33 +313,6 @@ export const RepositoryConfigSchema = z.object({
    * Required when `profiles` is set.
    */
   dispatch: DispatchConfigSchema.optional(),
-  /**
-   * PM workflow opt-in configuration (REN-1300).
-   * Controls which scheduled PM workflows are enabled per project and their cron schedule.
-   *
-   * Example .agentfactory/config.yaml:
-   *   pmWorkflows:
-   *     activeBacklogManagement:
-   *       enabled: true
-   *       schedule: "0 * * * *"   # hourly (default)
-   */
-  pmWorkflows: z.object({
-    /**
-     * Active Backlog Management workflow (REN-1300).
-     * Chains: backlog-groomer → outcome-auditor → improvement-loop → operational-scanner.
-     * All steps run on haiku/sonnet only — no Opus.
-     */
-    activeBacklogManagement: z.object({
-      /** Whether the active-backlog-management workflow is enabled for this project */
-      enabled: z.boolean().default(false),
-      /**
-       * Cron schedule override for this project.
-       * Defaults to hourly ("0 * * * *") when not specified.
-       * Standard cron syntax: minute hour day-of-month month day-of-week.
-       */
-      schedule: z.string().optional(),
-    }).optional(),
-  }).optional(),
 }).refine(
   (data) => !(data.allowedProjects && data.projectPaths),
   { message: 'allowedProjects and projectPaths are mutually exclusive — use one or the other' },

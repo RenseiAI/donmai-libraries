@@ -1504,15 +1504,65 @@ describe('validateAnyWorkflowDefinition', () => {
     expect(result.apiVersion).toBe('v1.1')
   })
 
-  it('loads v2 sdlc-loop.yaml and validates', () => {
-    const sdlcPath = path.join(
-      path.dirname(new URL(import.meta.url).pathname),
-      'defaults',
-      'sdlc-loop.yaml',
-    )
-    const content = fs.readFileSync(sdlcPath, 'utf-8')
-    const data = parseYaml(content)
-    const result = validateAnyWorkflowDefinition(data, sdlcPath)
+  it('validates a v2 workflow with all top-level sections and v1.1 compat fields', () => {
+    // Inline fixture — exercises every v2 top-level section (triggers, providers,
+    // nodes, config, phases, transitions, escalation) using generic grammar.
+    // Action names are illustrative strings; no platform-specific verbs needed.
+    const fixture = {
+      apiVersion: 'v2',
+      kind: 'WorkflowDefinition',
+      metadata: {
+        name: 'v2-grammar-fixture',
+        description: 'Inline grammar test covering all v2 sections.',
+      },
+      triggers: [
+        { name: 'on-backlog', type: 'webhook', source: 'linear', event: 'issue.status_changed', filter: { status: 'Backlog' } },
+        { name: 'nightly', type: 'schedule', schedule: '0 2 * * *' },
+        { name: 'manual', type: 'manual' },
+      ],
+      providers: [
+        { name: 'agent', type: 'claude', config: { model: 'claude-haiku-4-5-20250929' } },
+      ],
+      config: {
+        projectMapping: { Core: './packages/core' },
+      },
+      nodes: [
+        {
+          name: 'step-a',
+          description: 'First step.',
+          provider: 'agent',
+          steps: [
+            { id: 'run', action: 'do-something', with: { issue: '{{ trigger.issue.identifier }}' } },
+          ],
+          outputs: { result: { type: 'string', required: false } },
+        },
+        {
+          name: 'step-b',
+          description: 'Second step — consumes step-a output via cross-node piping.',
+          provider: 'agent',
+          steps: [
+            { id: 'run', action: 'do-something-else', with: { input: '{{ nodes.step-a.output.result }}' } },
+          ],
+        },
+      ],
+      // v1.1 backwards-compat sections
+      phases: [
+        { name: 'development', template: 'development' },
+        { name: 'qa', template: 'qa' },
+      ],
+      transitions: [
+        { from: 'Backlog', to: 'development' },
+        { from: 'Finished', to: 'qa' },
+      ],
+      escalation: {
+        ladder: [
+          { cycle: 1, strategy: 'normal' },
+          { cycle: 2, strategy: 'escalate-human' },
+        ],
+        circuitBreaker: { maxSessionsPerIssue: 4, maxSessionsPerPhase: 2 },
+      },
+    }
+    const result = validateAnyWorkflowDefinition(fixture, '/inline/v2-grammar-fixture.yaml')
     expect(result.apiVersion).toBe('v2')
     if (result.apiVersion === 'v2') {
       expect(result.triggers!.length).toBeGreaterThan(0)
