@@ -20,7 +20,7 @@ interface DashboardShellProps {
 export function DashboardShell({ children, currentPath = '/', className }: DashboardShellProps) {
   return (
     <TooltipProvider>
-      <div className={cn('flex h-screen bg-af-bg-primary overflow-hidden', className)}>
+      <div className={cn('flex h-screen bg-donmai-bg-primary overflow-hidden', className)}>
         {/* Background effects layer */}
         <div className="fixed inset-0 mesh-gradient pointer-events-none" />
         <div className="fixed inset-0 grid-bg pointer-events-none opacity-40" />
@@ -33,20 +33,20 @@ export function DashboardShell({ children, currentPath = '/', className }: Dashb
         {/* Main content area */}
         <div className="flex flex-1 flex-col overflow-hidden relative z-10">
           {/* Mobile header with hamburger */}
-          <div className="flex items-center gap-3 border-b border-af-surface-border bg-af-bg-secondary/80 backdrop-blur-md px-4 py-2.5 md:hidden">
+          <div className="flex items-center gap-3 border-b border-donmai-surface-border bg-donmai-bg-secondary/80 backdrop-blur-md px-4 py-2.5 md:hidden">
             <Sheet>
               <SheetTrigger asChild>
-                <Button variant="ghost" size="icon" className="h-8 w-8 text-af-text-secondary hover:text-af-text-primary">
+                <Button variant="ghost" size="icon" className="h-8 w-8 text-donmai-text-secondary hover:text-donmai-text-primary">
                   <Menu className="h-4 w-4" />
                 </Button>
               </SheetTrigger>
-              <SheetContent side="left" className="w-60 p-0 border-af-surface-border bg-af-bg-secondary">
+              <SheetContent side="left" className="w-60 p-0 border-donmai-surface-border bg-donmai-bg-secondary">
                 <SheetTitle className="sr-only">Navigation</SheetTitle>
                 <Sidebar currentPath={currentPath} />
               </SheetContent>
             </Sheet>
             <Logo size={20} />
-            <span className="text-sm font-display font-semibold text-af-text-primary tracking-tight">
+            <span className="text-sm font-display font-semibold text-donmai-text-primary tracking-tight">
               Donmai
             </span>
           </div>

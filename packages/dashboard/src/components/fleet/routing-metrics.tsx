@@ -96,11 +96,11 @@ export function RoutingMetrics({ className }: RoutingMetricsProps) {
       {/* Section: Summary */}
       <div>
         <div className="mb-4 flex items-center gap-3">
-          <h2 className="font-display text-lg font-bold text-af-text-primary tracking-tight">
+          <h2 className="font-display text-lg font-bold text-donmai-text-primary tracking-tight">
             Routing Analytics
           </h2>
           {!isLoading && data && (
-            <span className="text-2xs font-body text-af-text-tertiary tabular-nums">
+            <span className="text-2xs font-body text-donmai-text-tertiary tabular-nums">
               {data.summary.totalObservations} observation{data.summary.totalObservations !== 1 ? 's' : ''} total
             </span>
           )}
@@ -114,27 +114,27 @@ export function RoutingMetrics({ className }: RoutingMetricsProps) {
           </div>
         ) : data ? (
           <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
-            <div className="rounded-xl border border-af-surface-border/50 bg-af-surface/40 p-4">
-              <p className="text-2xs font-body text-af-text-tertiary">Total Observations</p>
-              <p className="mt-1 font-display text-xl font-bold text-af-text-primary tabular-nums">
+            <div className="rounded-xl border border-donmai-surface-border/50 bg-donmai-surface/40 p-4">
+              <p className="text-2xs font-body text-donmai-text-tertiary">Total Observations</p>
+              <p className="mt-1 font-display text-xl font-bold text-donmai-text-primary tabular-nums">
                 {data.summary.totalObservations}
               </p>
             </div>
-            <div className="rounded-xl border border-af-surface-border/50 bg-af-surface/40 p-4">
-              <p className="text-2xs font-body text-af-text-tertiary">Avg Confidence</p>
+            <div className="rounded-xl border border-donmai-surface-border/50 bg-donmai-surface/40 p-4">
+              <p className="text-2xs font-body text-donmai-text-tertiary">Avg Confidence</p>
               <p className={cn('mt-1 font-display text-xl font-bold tabular-nums', confidenceColor(data.summary.avgConfidence))}>
                 {(data.summary.avgConfidence * 100).toFixed(1)}%
               </p>
             </div>
-            <div className="rounded-xl border border-af-surface-border/50 bg-af-surface/40 p-4">
-              <p className="text-2xs font-body text-af-text-tertiary">Exploration Rate</p>
-              <p className="mt-1 font-display text-xl font-bold text-af-text-primary tabular-nums">
+            <div className="rounded-xl border border-donmai-surface-border/50 bg-donmai-surface/40 p-4">
+              <p className="text-2xs font-body text-donmai-text-tertiary">Exploration Rate</p>
+              <p className="mt-1 font-display text-xl font-bold text-donmai-text-primary tabular-nums">
                 {(data.summary.explorationRate * 100).toFixed(0)}%
               </p>
             </div>
-            <div className="rounded-xl border border-af-surface-border/50 bg-af-surface/40 p-4">
-              <p className="text-2xs font-body text-af-text-tertiary">Providers Tracked</p>
-              <p className="mt-1 font-display text-xl font-bold text-af-text-primary tabular-nums">
+            <div className="rounded-xl border border-donmai-surface-border/50 bg-donmai-surface/40 p-4">
+              <p className="text-2xs font-body text-donmai-text-tertiary">Providers Tracked</p>
+              <p className="mt-1 font-display text-xl font-bold text-donmai-text-primary tabular-nums">
                 {data.posteriors.length}
               </p>
             </div>
@@ -145,8 +145,8 @@ export function RoutingMetrics({ className }: RoutingMetricsProps) {
       {/* Section: Provider Performance Matrix */}
       <div>
         <div className="mb-4 flex items-center gap-3">
-          <TrendingUp className="h-4 w-4 text-af-text-tertiary" />
-          <h2 className="font-display text-lg font-bold text-af-text-primary tracking-tight">
+          <TrendingUp className="h-4 w-4 text-donmai-text-tertiary" />
+          <h2 className="font-display text-lg font-bold text-donmai-text-primary tracking-tight">
             Provider Performance
           </h2>
         </div>
@@ -154,28 +154,28 @@ export function RoutingMetrics({ className }: RoutingMetricsProps) {
         {isLoading ? (
           <Skeleton className="h-[200px] rounded-xl" />
         ) : data && data.posteriors.length > 0 ? (
-          <div className="overflow-x-auto rounded-xl border border-af-surface-border/50 bg-af-surface/40">
+          <div className="overflow-x-auto rounded-xl border border-donmai-surface-border/50 bg-donmai-surface/40">
             <table className="w-full text-left">
               <thead>
-                <tr className="border-b border-af-surface-border/50">
-                  <th className="px-4 py-3 text-2xs font-body font-medium text-af-text-tertiary">Provider</th>
-                  <th className="px-4 py-3 text-2xs font-body font-medium text-af-text-tertiary">Work Type</th>
-                  <th className="px-4 py-3 text-2xs font-body font-medium text-af-text-tertiary text-right">Expected Reward</th>
-                  <th className="px-4 py-3 text-2xs font-body font-medium text-af-text-tertiary text-right">Confidence</th>
-                  <th className="px-4 py-3 text-2xs font-body font-medium text-af-text-tertiary text-right">Observations</th>
-                  <th className="px-4 py-3 text-2xs font-body font-medium text-af-text-tertiary text-right">Avg Cost</th>
-                  <th className="px-4 py-3 text-2xs font-body font-medium text-af-text-tertiary text-right">Alpha / Beta</th>
+                <tr className="border-b border-donmai-surface-border/50">
+                  <th className="px-4 py-3 text-2xs font-body font-medium text-donmai-text-tertiary">Provider</th>
+                  <th className="px-4 py-3 text-2xs font-body font-medium text-donmai-text-tertiary">Work Type</th>
+                  <th className="px-4 py-3 text-2xs font-body font-medium text-donmai-text-tertiary text-right">Expected Reward</th>
+                  <th className="px-4 py-3 text-2xs font-body font-medium text-donmai-text-tertiary text-right">Confidence</th>
+                  <th className="px-4 py-3 text-2xs font-body font-medium text-donmai-text-tertiary text-right">Observations</th>
+                  <th className="px-4 py-3 text-2xs font-body font-medium text-donmai-text-tertiary text-right">Avg Cost</th>
+                  <th className="px-4 py-3 text-2xs font-body font-medium text-donmai-text-tertiary text-right">Alpha / Beta</th>
                 </tr>
               </thead>
               <tbody>
                 {data.posteriors.map((p) => (
                   <tr
                     key={`${p.provider}-${p.workType}`}
-                    className="border-b border-af-surface-border/30 last:border-b-0 hover:bg-af-surface/60 transition-colors"
+                    className="border-b border-donmai-surface-border/30 last:border-b-0 hover:bg-donmai-surface/60 transition-colors"
                   >
-                    <td className="px-4 py-3 text-xs font-body font-medium text-af-text-primary">{p.provider}</td>
-                    <td className="px-4 py-3 text-xs font-body text-af-text-secondary">{p.workType}</td>
-                    <td className="px-4 py-3 text-xs font-body text-af-text-primary text-right tabular-nums">
+                    <td className="px-4 py-3 text-xs font-body font-medium text-donmai-text-primary">{p.provider}</td>
+                    <td className="px-4 py-3 text-xs font-body text-donmai-text-secondary">{p.workType}</td>
+                    <td className="px-4 py-3 text-xs font-body text-donmai-text-primary text-right tabular-nums">
                       {(p.expectedReward * 100).toFixed(1)}%
                     </td>
                     <td className="px-4 py-3 text-right">
@@ -189,13 +189,13 @@ export function RoutingMetrics({ className }: RoutingMetricsProps) {
                         {(p.confidence * 100).toFixed(1)}%
                       </span>
                     </td>
-                    <td className="px-4 py-3 text-xs font-body text-af-text-secondary text-right tabular-nums">
+                    <td className="px-4 py-3 text-xs font-body text-donmai-text-secondary text-right tabular-nums">
                       {p.totalObservations}
                     </td>
-                    <td className="px-4 py-3 text-xs font-body text-af-text-secondary text-right tabular-nums">
+                    <td className="px-4 py-3 text-xs font-body text-donmai-text-secondary text-right tabular-nums">
                       {formatCost(p.avgCostUsd)}
                     </td>
-                    <td className="px-4 py-3 text-xs font-body text-af-text-tertiary text-right tabular-nums">
+                    <td className="px-4 py-3 text-xs font-body text-donmai-text-tertiary text-right tabular-nums">
                       {p.alpha.toFixed(1)} / {p.beta.toFixed(1)}
                     </td>
                   </tr>
@@ -215,19 +215,19 @@ export function RoutingMetrics({ className }: RoutingMetricsProps) {
       <div>
         <div className="mb-4 flex items-center justify-between gap-3">
           <div className="flex items-center gap-3">
-            <Activity className="h-4 w-4 text-af-text-tertiary" />
-            <h2 className="font-display text-lg font-bold text-af-text-primary tracking-tight">
+            <Activity className="h-4 w-4 text-donmai-text-tertiary" />
+            <h2 className="font-display text-lg font-bold text-donmai-text-primary tracking-tight">
               Recent Decisions
             </h2>
             {!isLoading && data && (
-              <span className="text-2xs font-body text-af-text-tertiary tabular-nums">
+              <span className="text-2xs font-body text-donmai-text-tertiary tabular-nums">
                 showing {data.recentDecisions.length}{timeRange ? ` from last ${timeRange}` : ''}
               </span>
             )}
           </div>
           <div className="flex items-center gap-2">
             {/* Time-range selector */}
-            <div className="flex items-center rounded-lg border border-af-surface-border/50 bg-af-surface/20 p-0.5">
+            <div className="flex items-center rounded-lg border border-donmai-surface-border/50 bg-donmai-surface/20 p-0.5">
               {TIME_RANGES.map((range) => (
                 <button
                   key={range.value}
@@ -235,8 +235,8 @@ export function RoutingMetrics({ className }: RoutingMetricsProps) {
                   className={cn(
                     'rounded-md px-2.5 py-1 text-2xs font-body transition-colors',
                     timeRange === range.value
-                      ? 'bg-af-surface/60 text-af-text-primary font-medium'
-                      : 'text-af-text-tertiary hover:text-af-text-secondary',
+                      ? 'bg-donmai-surface/60 text-donmai-text-primary font-medium'
+                      : 'text-donmai-text-tertiary hover:text-donmai-text-secondary',
                   )}
                 >
                   {range.label}
@@ -278,7 +278,7 @@ export function RoutingMetrics({ className }: RoutingMetricsProps) {
             {data.recentDecisions.map((d, i) => (
               <div
                 key={`${d.timestamp}-${i}`}
-                className="flex items-center gap-4 rounded-xl border border-af-surface-border/50 bg-af-surface/40 px-4 py-3"
+                className="flex items-center gap-4 rounded-xl border border-donmai-surface-border/50 bg-donmai-surface/40 px-4 py-3"
               >
                 <div className="flex-shrink-0">
                   {d.taskCompleted ? (
@@ -291,10 +291,10 @@ export function RoutingMetrics({ className }: RoutingMetricsProps) {
                 </div>
                 <div className="min-w-0 flex-1">
                   <div className="flex items-center gap-2">
-                    <span className="text-xs font-body font-medium text-af-text-primary">{d.provider}</span>
-                    <span className="text-2xs font-body text-af-text-tertiary">{d.workType}</span>
+                    <span className="text-xs font-body font-medium text-donmai-text-primary">{d.provider}</span>
+                    <span className="text-2xs font-body text-donmai-text-tertiary">{d.workType}</span>
                     {d.explorationReason && (
-                      <span className="rounded-full bg-af-surface/60 px-1.5 py-0.5 text-2xs font-body text-af-text-tertiary">
+                      <span className="rounded-full bg-donmai-surface/60 px-1.5 py-0.5 text-2xs font-body text-donmai-text-tertiary">
                         {d.explorationReason}
                       </span>
                     )}
@@ -304,10 +304,10 @@ export function RoutingMetrics({ className }: RoutingMetricsProps) {
                   <span className={cn('text-xs font-body tabular-nums', confidenceColor(d.confidence))}>
                     {(d.confidence * 100).toFixed(0)}%
                   </span>
-                  <span className="text-xs font-body text-af-text-secondary tabular-nums">
+                  <span className="text-xs font-body text-donmai-text-secondary tabular-nums">
                     reward {d.reward.toFixed(2)}
                   </span>
-                  <span className="text-2xs font-body text-af-text-tertiary tabular-nums">
+                  <span className="text-2xs font-body text-donmai-text-tertiary tabular-nums">
                     {new Date(d.timestamp).toLocaleTimeString()}
                   </span>
                 </div>

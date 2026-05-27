@@ -112,9 +112,9 @@ const workTypes: Record<string, WorkTypeConfig> = {
 
 const defaultWorkType: WorkTypeConfig = {
   label: 'Unknown',
-  color: 'text-af-text-secondary',
-  bgColor: 'bg-af-text-secondary/8',
-  borderColor: 'border-af-text-secondary/10',
+  color: 'text-donmai-text-secondary',
+  bgColor: 'bg-donmai-text-secondary/8',
+  borderColor: 'border-donmai-text-secondary/10',
 }
 
 export function getWorkTypeConfig(workType: string): WorkTypeConfig {

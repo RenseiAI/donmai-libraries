@@ -16,7 +16,7 @@ export function TopBar({ className }: TopBarProps) {
   return (
     <header
       className={cn(
-        'flex h-11 items-center justify-between border-b border-af-surface-border/50 bg-af-bg-secondary/40 backdrop-blur-md px-5',
+        'flex h-11 items-center justify-between border-b border-donmai-surface-border/50 bg-donmai-bg-secondary/40 backdrop-blur-md px-5',
         className
       )}
     >
@@ -31,29 +31,29 @@ export function TopBar({ className }: TopBarProps) {
           <>
             <div className="flex items-center gap-2">
               <StatusDot status={data?.workersOnline ? 'working' : 'stopped'} showHeartbeat />
-              <span className="text-xs font-body text-af-text-secondary">
-                <span className="font-semibold text-af-text-primary tabular-nums">{data?.workersOnline ?? 0}</span>{' '}
+              <span className="text-xs font-body text-donmai-text-secondary">
+                <span className="font-semibold text-donmai-text-primary tabular-nums">{data?.workersOnline ?? 0}</span>{' '}
                 {data?.workersOnline === 1 ? 'worker' : 'workers'}
               </span>
             </div>
 
-            <div className="h-3 w-px bg-af-surface-border" />
+            <div className="h-3 w-px bg-donmai-surface-border" />
 
-            <span className="text-xs font-body text-af-text-secondary">
-              <span className="font-semibold text-af-teal tabular-nums">{data?.agentsWorking ?? 0}</span> active
+            <span className="text-xs font-body text-donmai-text-secondary">
+              <span className="font-semibold text-donmai-teal tabular-nums">{data?.agentsWorking ?? 0}</span> active
             </span>
 
-            <span className="text-xs font-body text-af-text-secondary">
-              <span className="font-semibold text-af-text-primary tabular-nums">{data?.queueDepth ?? 0}</span> queued
+            <span className="text-xs font-body text-donmai-text-secondary">
+              <span className="font-semibold text-donmai-text-primary tabular-nums">{data?.queueDepth ?? 0}</span> queued
             </span>
           </>
         )}
       </div>
 
-      <div className="flex items-center gap-2 text-xs font-body text-af-text-tertiary">
+      <div className="flex items-center gap-2 text-xs font-body text-donmai-text-tertiary">
         {data?.timestamp && (
           <>
-            <Radio className="h-3 w-3 text-af-teal animate-pulse-dot" />
+            <Radio className="h-3 w-3 text-donmai-teal animate-pulse-dot" />
             <span>{new Date(data.timestamp).toLocaleTimeString()}</span>
           </>
         )}

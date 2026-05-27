@@ -20,7 +20,7 @@ export function PipelineCard({ session, className, onSelect, readOnly }: Pipelin
   return (
     <div
       className={cn(
-        'rounded-lg border border-af-surface-border/40 bg-af-surface/50 p-3 transition-all duration-200',
+        'rounded-lg border border-donmai-surface-border/40 bg-donmai-surface/50 p-3 transition-all duration-200',
         !readOnly && 'hover-glow',
         isInteractive && 'cursor-pointer',
         readOnly && 'pointer-events-none',
@@ -43,8 +43,8 @@ export function PipelineCard({ session, className, onSelect, readOnly }: Pipelin
         <span className={cn(
           'text-xs font-mono font-medium truncate',
           onSelect
-            ? 'text-af-teal hover:underline underline-offset-2'
-            : 'text-af-text-primary'
+            ? 'text-donmai-teal hover:underline underline-offset-2'
+            : 'text-donmai-text-primary'
         )}>
           {session.identifier}
         </span>
@@ -59,7 +59,7 @@ export function PipelineCard({ session, className, onSelect, readOnly }: Pipelin
         >
           {workTypeConfig.label}
         </Badge>
-        <span className="flex items-center gap-1 text-2xs font-body text-af-text-tertiary tabular-nums">
+        <span className="flex items-center gap-1 text-2xs font-body text-donmai-text-tertiary tabular-nums">
           <Clock className="h-2.5 w-2.5" />
           {formatDuration(session.duration)}
         </span>

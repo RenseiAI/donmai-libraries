@@ -57,7 +57,7 @@ export function SessionDetail({ session, onBack, className }: SessionDetailProps
           variant="ghost"
           size="sm"
           onClick={onBack}
-          className="gap-1.5 text-af-text-secondary hover:text-af-text-primary font-body -ml-2"
+          className="gap-1.5 text-donmai-text-secondary hover:text-donmai-text-primary font-body -ml-2"
         >
           <ArrowLeft className="h-3.5 w-3.5" />
           Back
@@ -67,7 +67,7 @@ export function SessionDetail({ session, onBack, className }: SessionDetailProps
       {/* Header */}
       <div className="flex items-center gap-3">
         <StatusDot status={session.status} showHeartbeat={session.status === 'working'} className="h-3 w-3" />
-        <h1 className="font-display text-xl font-bold font-mono text-af-text-primary tracking-tight">
+        <h1 className="font-display text-xl font-bold font-mono text-donmai-text-primary tracking-tight">
           {session.identifier}
         </h1>
         <Badge
@@ -83,14 +83,14 @@ export function SessionDetail({ session, onBack, className }: SessionDetailProps
 
       <div className="grid grid-cols-1 gap-4 lg:grid-cols-3">
         {/* Left: Details */}
-        <div className="lg:col-span-2 rounded-xl border border-af-surface-border/40 bg-af-surface/30 p-6">
-          <h3 className="font-display text-sm font-semibold text-af-text-primary tracking-tight mb-5">
+        <div className="lg:col-span-2 rounded-xl border border-donmai-surface-border/40 bg-donmai-surface/30 p-6">
+          <h3 className="font-display text-sm font-semibold text-donmai-text-primary tracking-tight mb-5">
             Session Details
           </h3>
 
           <div className="grid grid-cols-2 gap-6">
             <div className="space-y-1">
-              <dt className="flex items-center gap-1.5 text-2xs font-body uppercase tracking-wider text-af-text-tertiary">
+              <dt className="flex items-center gap-1.5 text-2xs font-body uppercase tracking-wider text-donmai-text-tertiary">
                 <Tag className="h-3 w-3" />
                 Work Type
               </dt>
@@ -105,31 +105,31 @@ export function SessionDetail({ session, onBack, className }: SessionDetailProps
             </div>
 
             <div className="space-y-1">
-              <dt className="flex items-center gap-1.5 text-2xs font-body uppercase tracking-wider text-af-text-tertiary">
+              <dt className="flex items-center gap-1.5 text-2xs font-body uppercase tracking-wider text-donmai-text-tertiary">
                 <Clock className="h-3 w-3" />
                 Duration
               </dt>
-              <dd className="font-display text-lg font-bold tabular-nums text-af-text-primary">
+              <dd className="font-display text-lg font-bold tabular-nums text-donmai-text-primary">
                 {formatDuration(session.duration)}
               </dd>
             </div>
 
             <div className="space-y-1">
-              <dt className="flex items-center gap-1.5 text-2xs font-body uppercase tracking-wider text-af-text-tertiary">
+              <dt className="flex items-center gap-1.5 text-2xs font-body uppercase tracking-wider text-donmai-text-tertiary">
                 <Coins className="h-3 w-3" />
                 Cost
               </dt>
-              <dd className="font-display text-lg font-bold tabular-nums font-mono text-af-accent">
+              <dd className="font-display text-lg font-bold tabular-nums font-mono text-donmai-accent">
                 {formatCost(session.costUsd)}
               </dd>
             </div>
 
             <div className="space-y-1">
-              <dt className="flex items-center gap-1.5 text-2xs font-body uppercase tracking-wider text-af-text-tertiary">
+              <dt className="flex items-center gap-1.5 text-2xs font-body uppercase tracking-wider text-donmai-text-tertiary">
                 <Calendar className="h-3 w-3" />
                 Started
               </dt>
-              <dd className="text-sm font-body text-af-text-primary">
+              <dd className="text-sm font-body text-donmai-text-primary">
                 {new Date(session.startedAt).toLocaleString()}
               </dd>
             </div>
@@ -141,8 +141,8 @@ export function SessionDetail({ session, onBack, className }: SessionDetailProps
         </div>
 
         {/* Right: Timeline */}
-        <div className="rounded-xl border border-af-surface-border/40 bg-af-surface/30 p-6">
-          <h3 className="font-display text-sm font-semibold text-af-text-primary tracking-tight mb-5">
+        <div className="rounded-xl border border-donmai-surface-border/40 bg-donmai-surface/30 p-6">
+          <h3 className="font-display text-sm font-semibold text-donmai-text-primary tracking-tight mb-5">
             Timeline
           </h3>
           <SessionTimeline events={events} />

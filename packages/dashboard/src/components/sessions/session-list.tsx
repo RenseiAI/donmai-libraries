@@ -43,24 +43,24 @@ export function SessionList({ onSelect, className }: SessionListProps) {
   return (
     <div className={cn('p-6', className)}>
       <div className="mb-5 flex items-center gap-3">
-        <h2 className="font-display text-lg font-bold text-af-text-primary tracking-tight">
+        <h2 className="font-display text-lg font-bold text-donmai-text-primary tracking-tight">
           Sessions
         </h2>
-        <span className="rounded-full bg-af-surface/60 px-2 py-0.5 text-2xs font-body font-medium tabular-nums text-af-text-secondary">
+        <span className="rounded-full bg-donmai-surface/60 px-2 py-0.5 text-2xs font-body font-medium tabular-nums text-donmai-text-secondary">
           {sessions.length}
         </span>
       </div>
 
-      <div className="rounded-xl border border-af-surface-border/40 overflow-hidden">
+      <div className="rounded-xl border border-donmai-surface-border/40 overflow-hidden">
         <table className="w-full text-sm font-body">
           <thead>
-            <tr className="border-b border-af-surface-border/40 bg-af-bg-secondary/50">
-              <th className="px-4 py-3 text-left text-2xs font-semibold uppercase tracking-wider text-af-text-tertiary">Issue</th>
-              <th className="px-4 py-3 text-left text-2xs font-semibold uppercase tracking-wider text-af-text-tertiary">Status</th>
-              <th className="px-4 py-3 text-left text-2xs font-semibold uppercase tracking-wider text-af-text-tertiary">Type</th>
-              <th className="px-4 py-3 text-left text-2xs font-semibold uppercase tracking-wider text-af-text-tertiary">Duration</th>
-              <th className="px-4 py-3 text-left text-2xs font-semibold uppercase tracking-wider text-af-text-tertiary">Cost</th>
-              <th className="px-4 py-3 text-left text-2xs font-semibold uppercase tracking-wider text-af-text-tertiary">Started</th>
+            <tr className="border-b border-donmai-surface-border/40 bg-donmai-bg-secondary/50">
+              <th className="px-4 py-3 text-left text-2xs font-semibold uppercase tracking-wider text-donmai-text-tertiary">Issue</th>
+              <th className="px-4 py-3 text-left text-2xs font-semibold uppercase tracking-wider text-donmai-text-tertiary">Status</th>
+              <th className="px-4 py-3 text-left text-2xs font-semibold uppercase tracking-wider text-donmai-text-tertiary">Type</th>
+              <th className="px-4 py-3 text-left text-2xs font-semibold uppercase tracking-wider text-donmai-text-tertiary">Duration</th>
+              <th className="px-4 py-3 text-left text-2xs font-semibold uppercase tracking-wider text-donmai-text-tertiary">Cost</th>
+              <th className="px-4 py-3 text-left text-2xs font-semibold uppercase tracking-wider text-donmai-text-tertiary">Started</th>
             </tr>
           </thead>
           <tbody>
@@ -71,14 +71,14 @@ export function SessionList({ onSelect, className }: SessionListProps) {
                 <tr
                   key={session.id}
                   className={cn(
-                    'border-b border-af-surface-border/20 last:border-0 cursor-pointer transition-all duration-200',
-                    'hover:bg-af-surface/30'
+                    'border-b border-donmai-surface-border/20 last:border-0 cursor-pointer transition-all duration-200',
+                    'hover:bg-donmai-surface/30'
                   )}
                   onClick={() => onSelect?.(session.id)}
                   style={{ animationDelay: `${i * 30}ms` }}
                 >
                   <td className="px-4 py-3">
-                    <span className="font-mono text-sm text-af-text-primary">{session.identifier}</span>
+                    <span className="font-mono text-sm text-donmai-text-primary">{session.identifier}</span>
                   </td>
                   <td className="px-4 py-3">
                     <div className="flex items-center gap-2">
@@ -100,17 +100,17 @@ export function SessionList({ onSelect, className }: SessionListProps) {
                     </Badge>
                   </td>
                   <td className="px-4 py-3">
-                    <span className="text-xs text-af-text-secondary tabular-nums">
+                    <span className="text-xs text-donmai-text-secondary tabular-nums">
                       {formatDuration(session.duration)}
                     </span>
                   </td>
                   <td className="px-4 py-3">
-                    <span className="text-xs text-af-text-secondary tabular-nums font-mono">
+                    <span className="text-xs text-donmai-text-secondary tabular-nums font-mono">
                       {formatCost(session.costUsd)}
                     </span>
                   </td>
                   <td className="px-4 py-3">
-                    <span className="text-xs text-af-text-tertiary">
+                    <span className="text-xs text-donmai-text-tertiary">
                       {formatRelativeTime(session.startedAt)}
                     </span>
                   </td>

@@ -42,11 +42,11 @@ export function PipelineView({ className, onSessionSelect, readOnly }: PipelineV
   return (
     <div className={cn('p-6', className)}>
       <div className="mb-5 flex items-center gap-3">
-        <h2 className="font-display text-lg font-bold text-af-text-primary tracking-tight">
+        <h2 className="font-display text-lg font-bold text-donmai-text-primary tracking-tight">
           Pipeline
         </h2>
         {!isLoading && (
-          <span className="rounded-full bg-af-surface/60 px-2 py-0.5 text-2xs font-body font-medium tabular-nums text-af-text-secondary">
+          <span className="rounded-full bg-donmai-surface/60 px-2 py-0.5 text-2xs font-body font-medium tabular-nums text-donmai-text-secondary">
             {sessions.length}
           </span>
         )}

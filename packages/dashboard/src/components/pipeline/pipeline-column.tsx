@@ -17,17 +17,17 @@ export function PipelineColumn({ title, sessions, count, accentClass, className,
   return (
     <div
       className={cn(
-        'flex w-72 shrink-0 flex-col rounded-xl border border-af-surface-border/40 bg-af-bg-secondary/50 backdrop-blur-sm',
+        'flex w-72 shrink-0 flex-col rounded-xl border border-donmai-surface-border/40 bg-donmai-bg-secondary/50 backdrop-blur-sm',
         accentClass,
         className
       )}
     >
       {/* Column header */}
       <div className="flex items-center justify-between px-3.5 py-3">
-        <span className="text-xs font-display font-semibold text-af-text-primary tracking-tight">
+        <span className="text-xs font-display font-semibold text-donmai-text-primary tracking-tight">
           {title}
         </span>
-        <span className="flex h-5 min-w-5 items-center justify-center rounded-full bg-af-surface/60 px-1.5 text-2xs font-body font-medium tabular-nums text-af-text-secondary">
+        <span className="flex h-5 min-w-5 items-center justify-center rounded-full bg-donmai-surface/60 px-1.5 text-2xs font-body font-medium tabular-nums text-donmai-text-secondary">
           {count}
         </span>
       </div>

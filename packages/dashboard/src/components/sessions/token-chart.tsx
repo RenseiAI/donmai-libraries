@@ -17,18 +17,18 @@ export function TokenChart({ inputTokens = 0, outputTokens = 0, className }: Tok
   return (
     <div className={cn('space-y-3', className)}>
       <div className="flex items-center justify-between text-2xs font-body">
-        <span className="uppercase tracking-wider text-af-text-tertiary">Token Usage</span>
-        <span className="tabular-nums font-mono text-af-text-secondary">{formatTokens(total)} total</span>
+        <span className="uppercase tracking-wider text-donmai-text-tertiary">Token Usage</span>
+        <span className="tabular-nums font-mono text-donmai-text-secondary">{formatTokens(total)} total</span>
       </div>
 
       {/* Bar */}
-      <div className="flex h-2.5 w-full overflow-hidden rounded-full bg-af-bg-primary/60">
+      <div className="flex h-2.5 w-full overflow-hidden rounded-full bg-donmai-bg-primary/60">
         <div
-          className="bg-af-blue rounded-l-full transition-all duration-500"
+          className="bg-donmai-blue rounded-l-full transition-all duration-500"
           style={{ width: `${inputPct}%` }}
         />
         <div
-          className="bg-af-accent transition-all duration-500"
+          className="bg-donmai-accent transition-all duration-500"
           style={{ width: `${outputPct}%` }}
         />
       </div>
@@ -36,14 +36,14 @@ export function TokenChart({ inputTokens = 0, outputTokens = 0, className }: Tok
       {/* Legend */}
       <div className="flex items-center gap-5 text-2xs font-body">
         <div className="flex items-center gap-1.5">
-          <span className="h-2 w-2 rounded-full bg-af-blue shadow-[0_0_6px_1px_rgba(75,139,245,0.3)]" />
-          <span className="text-af-text-tertiary">Input</span>
-          <span className="tabular-nums font-mono text-af-text-secondary">{formatTokens(inputTokens)}</span>
+          <span className="h-2 w-2 rounded-full bg-donmai-blue shadow-[0_0_6px_1px_rgba(75,139,245,0.3)]" />
+          <span className="text-donmai-text-tertiary">Input</span>
+          <span className="tabular-nums font-mono text-donmai-text-secondary">{formatTokens(inputTokens)}</span>
         </div>
         <div className="flex items-center gap-1.5">
-          <span className="h-2 w-2 rounded-full bg-af-accent shadow-[0_0_6px_1px_rgba(255,107,53,0.3)]" />
-          <span className="text-af-text-tertiary">Output</span>
-          <span className="tabular-nums font-mono text-af-text-secondary">{formatTokens(outputTokens)}</span>
+          <span className="h-2 w-2 rounded-full bg-donmai-accent shadow-[0_0_6px_1px_rgba(255,107,53,0.3)]" />
+          <span className="text-donmai-text-tertiary">Output</span>
+          <span className="tabular-nums font-mono text-donmai-text-secondary">{formatTokens(outputTokens)}</span>
         </div>
       </div>
     </div>

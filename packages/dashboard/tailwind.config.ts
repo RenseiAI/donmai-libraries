@@ -5,38 +5,38 @@ const dashboardPreset: Config = {
   theme: {
     extend: {
       colors: {
-        // Donmai palette mapped onto legacy af-* class names.
-        // Class names kept as af-* to avoid a 200-touch consumer refactor;
+        // Donmai palette mapped onto donmai-* class names.
+        // Class names kept as donmai-* to avoid a 200-touch consumer refactor;
         // hex values are the canonical Donmai brand tokens per
         // runs/2026-05-22-donmai-rebrand/11-NAMING-MAP.md §Color tokens.
         // v0.11+ may rename classes to donmai-* if/when worth the churn.
 
         // Surfaces (inherited Rensei dark palette per brand brief §2)
-        'af-bg-primary': '#09090B',
-        'af-bg-secondary': '#111113',
-        'af-bg-tertiary': '#18181B',
-        'af-surface': '#1F1F23',
-        'af-surface-raised': '#27272A',
-        'af-surface-border': '#27272A',
-        'af-surface-border-bright': '#3F3F46',
+        'donmai-bg-primary': '#09090B',
+        'donmai-bg-secondary': '#111113',
+        'donmai-bg-tertiary': '#18181B',
+        'donmai-surface': '#1F1F23',
+        'donmai-surface-raised': '#27272A',
+        'donmai-surface-border': '#27272A',
+        'donmai-surface-border-bright': '#3F3F46',
 
         // Donmai accent palette
-        'af-accent': '#D94F2A',      // --donmai-accent
-        'af-accent-dim': '#A83820',  // --donmai-dim
-        'af-teal': '#00D4AA',        // kept (not brand palette)
-        'af-teal-dim': '#00A886',
-        'af-blue': '#4B8BF5',
+        'donmai-accent': '#D94F2A',      // --donmai-accent
+        'donmai-accent-dim': '#A83820',  // --donmai-dim
+        'donmai-teal': '#00D4AA',        // kept (not brand palette)
+        'donmai-teal-dim': '#00A886',
+        'donmai-blue': '#4B8BF5',
 
         // Status (Donmai brand brief semantics)
-        'af-status-success': '#22C55E',
-        'af-status-warning': '#F59E0B',
-        'af-status-error': '#EF4444',
+        'donmai-status-success': '#22C55E',
+        'donmai-status-warning': '#F59E0B',
+        'donmai-status-error': '#EF4444',
 
         // Text hierarchy (Donmai brand brief)
-        'af-text-primary': '#FAFAFA',
-        'af-text-secondary': '#A1A1AA',
-        'af-text-tertiary': '#71717A',
-        'af-code': '#A5B4FC',
+        'donmai-text-primary': '#FAFAFA',
+        'donmai-text-secondary': '#A1A1AA',
+        'donmai-text-tertiary': '#71717A',
+        'donmai-code': '#A5B4FC',
 
         // shadcn tokens
         border: 'hsl(var(--border))',

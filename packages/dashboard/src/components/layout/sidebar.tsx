@@ -34,20 +34,20 @@ export function Sidebar({ currentPath = '/', navItems = defaultNavItems, classNa
   return (
     <aside
       className={cn(
-        'flex h-full w-[220px] flex-col border-r border-af-surface-border/60 bg-af-bg-secondary/60 backdrop-blur-xl',
+        'flex h-full w-[220px] flex-col border-r border-donmai-surface-border/60 bg-donmai-bg-secondary/60 backdrop-blur-xl',
         className
       )}
     >
       {/* Logo area */}
       <div className="flex items-center gap-2.5 px-5 py-4">
         <Logo size={22} />
-        <span className="font-display text-sm font-bold text-af-text-primary tracking-tight">
+        <span className="font-display text-sm font-bold text-donmai-text-primary tracking-tight">
           Donmai
         </span>
       </div>
 
       <div className="px-5">
-        <Separator className="bg-af-surface-border/60" />
+        <Separator className="bg-donmai-surface-border/60" />
       </div>
 
       {/* Navigation */}
@@ -61,13 +61,13 @@ export function Sidebar({ currentPath = '/', navItems = defaultNavItems, classNa
               className={cn(
                 'flex items-center gap-2.5 rounded-lg px-3 py-2 text-sm font-body transition-all duration-200',
                 active
-                  ? 'nav-active-indicator bg-af-surface/80 text-af-text-primary font-medium'
-                  : 'text-af-text-secondary hover:bg-af-surface/40 hover:text-af-text-primary'
+                  ? 'nav-active-indicator bg-donmai-surface/80 text-donmai-text-primary font-medium'
+                  : 'text-donmai-text-secondary hover:bg-donmai-surface/40 hover:text-donmai-text-primary'
               )}
             >
               <span className={cn(
                 'transition-colors duration-200',
-                active ? 'text-af-accent' : ''
+                active ? 'text-donmai-accent' : ''
               )}>
                 {item.icon}
               </span>
@@ -78,7 +78,7 @@ export function Sidebar({ currentPath = '/', navItems = defaultNavItems, classNa
       </nav>
 
       <div className="px-5">
-        <Separator className="bg-af-surface-border/60" />
+        <Separator className="bg-donmai-surface-border/60" />
       </div>
 
       {/* Footer */}
@@ -87,7 +87,7 @@ export function Sidebar({ currentPath = '/', navItems = defaultNavItems, classNa
           href="https://github.com/RenseiAI/donmai"
           target="_blank"
           rel="noopener noreferrer"
-          className="group flex items-center gap-1.5 text-2xs font-body text-af-text-tertiary hover:text-af-text-secondary transition-colors"
+          className="group flex items-center gap-1.5 text-2xs font-body text-donmai-text-tertiary hover:text-donmai-text-secondary transition-colors"
         >
           Donmai
           <ExternalLink className="h-2.5 w-2.5 opacity-0 group-hover:opacity-100 transition-opacity" />

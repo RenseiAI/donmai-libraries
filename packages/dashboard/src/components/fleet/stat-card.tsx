@@ -18,7 +18,7 @@ export function StatCard({ label, value, detail, icon, accent, loading, classNam
   if (loading) {
     return (
       <div className={cn(
-        'rounded-xl border border-af-surface-border/50 bg-af-surface/50 p-4',
+        'rounded-xl border border-donmai-surface-border/50 bg-donmai-surface/50 p-4',
         className
       )}>
         <div className="flex items-center justify-between">
@@ -33,18 +33,18 @@ export function StatCard({ label, value, detail, icon, accent, loading, classNam
 
   const card = (
     <div className={cn(
-      'group rounded-xl border border-af-surface-border/50 bg-af-surface/40 p-4 transition-all duration-300 hover-glow',
-      accent && 'border-af-accent/15 bg-af-accent/[0.03]',
+      'group rounded-xl border border-donmai-surface-border/50 bg-donmai-surface/40 p-4 transition-all duration-300 hover-glow',
+      accent && 'border-donmai-accent/15 bg-donmai-accent/[0.03]',
       className
     )}>
       <div className="flex items-center justify-between">
-        <span className="text-2xs font-body font-medium uppercase tracking-wider text-af-text-tertiary">
+        <span className="text-2xs font-body font-medium uppercase tracking-wider text-donmai-text-tertiary">
           {label}
         </span>
         {icon && (
           <span className={cn(
-            'text-af-text-tertiary transition-colors duration-300 group-hover:text-af-text-secondary',
-            accent && 'text-af-accent/40 group-hover:text-af-accent/70'
+            'text-donmai-text-tertiary transition-colors duration-300 group-hover:text-donmai-text-secondary',
+            accent && 'text-donmai-accent/40 group-hover:text-donmai-accent/70'
           )}>
             {icon}
           </span>
@@ -52,12 +52,12 @@ export function StatCard({ label, value, detail, icon, accent, loading, classNam
       </div>
       <div className={cn(
         'mt-2 font-display text-2xl font-bold tabular-nums tracking-tight',
-        accent ? 'text-af-accent' : 'text-af-text-primary'
+        accent ? 'text-donmai-accent' : 'text-donmai-text-primary'
       )}>
         {value}
       </div>
       {detail && (
-        <p className="mt-1 text-2xs font-body text-af-text-tertiary">{detail}</p>
+        <p className="mt-1 text-2xs font-body text-donmai-text-tertiary">{detail}</p>
       )}
     </div>
   )

@@ -23,9 +23,9 @@ export function AgentCard({ session, className, onSelect }: AgentCardProps) {
   return (
     <div
       className={cn(
-        'group relative rounded-xl border border-af-surface-border/50 bg-af-surface/40 p-4 transition-all duration-300 hover-glow',
-        session.status === 'working' && 'border-af-status-success/10',
-        session.status === 'failed' && 'border-af-status-error/10',
+        'group relative rounded-xl border border-donmai-surface-border/50 bg-donmai-surface/40 p-4 transition-all duration-300 hover-glow',
+        session.status === 'working' && 'border-donmai-status-success/10',
+        session.status === 'failed' && 'border-donmai-status-error/10',
         onSelect && 'cursor-pointer',
         className
       )}
@@ -48,8 +48,8 @@ export function AgentCard({ session, className, onSelect }: AgentCardProps) {
           <span className={cn(
             'text-sm font-mono font-medium truncate',
             onSelect
-              ? 'text-af-teal hover:underline underline-offset-2'
-              : 'text-af-text-primary'
+              ? 'text-donmai-teal hover:underline underline-offset-2'
+              : 'text-donmai-text-primary'
           )}>
             {session.identifier}
           </span>
@@ -80,13 +80,13 @@ export function AgentCard({ session, className, onSelect }: AgentCardProps) {
       </div>
 
       {/* Footer metrics */}
-      <div className="mt-3.5 flex items-center justify-between text-2xs font-body text-af-text-tertiary">
+      <div className="mt-3.5 flex items-center justify-between text-2xs font-body text-donmai-text-tertiary">
         <span className="flex items-center gap-1 tabular-nums">
           <Clock className="h-3 w-3" />
           {formatDuration(session.duration)}
         </span>
         {session.costUsd != null && (
-          <span className="flex items-center gap-1 tabular-nums font-mono text-af-text-secondary">
+          <span className="flex items-center gap-1 tabular-nums font-mono text-donmai-text-secondary">
             <Coins className="h-3 w-3" />
             {formatCost(session.costUsd)}
           </span>

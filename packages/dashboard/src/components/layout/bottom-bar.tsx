@@ -16,24 +16,24 @@ export function BottomBar({ className }: BottomBarProps) {
   return (
     <footer
       className={cn(
-        'flex h-8 items-center justify-between border-t border-af-surface-border/40 bg-af-bg-secondary/30 backdrop-blur-sm px-5',
+        'flex h-8 items-center justify-between border-t border-donmai-surface-border/40 bg-donmai-bg-secondary/30 backdrop-blur-sm px-5',
         className
       )}
     >
-      <div className="flex items-center gap-5 text-2xs font-body text-af-text-tertiary">
+      <div className="flex items-center gap-5 text-2xs font-body text-donmai-text-tertiary">
         <span>
-          <span className="text-af-text-secondary tabular-nums">{data?.completedToday ?? 0}</span> completed
+          <span className="text-donmai-text-secondary tabular-nums">{data?.completedToday ?? 0}</span> completed
         </span>
         <span>
-          <span className="text-af-text-secondary tabular-nums">{data?.availableCapacity ?? 0}</span> capacity
+          <span className="text-donmai-text-secondary tabular-nums">{data?.availableCapacity ?? 0}</span> capacity
         </span>
         {data?.totalCostToday != null && (
           <Tooltip>
             <TooltipTrigger asChild>
               <span className="cursor-default">
-                <span className="text-af-accent font-mono tabular-nums">{formatCost(data.totalCostToday)}</span> today
+                <span className="text-donmai-accent font-mono tabular-nums">{formatCost(data.totalCostToday)}</span> today
                 {data.totalCostAllTime != null && data.totalCostAllTime !== data.totalCostToday && (
-                  <span className="text-af-text-tertiary"> · <span className="font-mono tabular-nums">{formatCost(data.totalCostAllTime)}</span> total</span>
+                  <span className="text-donmai-text-tertiary"> · <span className="font-mono tabular-nums">{formatCost(data.totalCostAllTime)}</span> total</span>
                 )}
               </span>
             </TooltipTrigger>
@@ -48,7 +48,7 @@ export function BottomBar({ className }: BottomBarProps) {
         href="https://github.com/RenseiAI/donmai"
         target="_blank"
         rel="noopener noreferrer"
-        className="flex items-center gap-1 text-2xs font-body text-af-text-tertiary hover:text-af-text-secondary transition-colors"
+        className="flex items-center gap-1 text-2xs font-body text-donmai-text-tertiary hover:text-donmai-text-secondary transition-colors"
       >
         <Zap className="h-2.5 w-2.5" />
         Donmai

@@ -12,9 +12,9 @@ const buttonVariants = cva(
       variant: {
         default: 'bg-primary text-primary-foreground hover:bg-primary/90 glow-soft',
         destructive: 'bg-destructive text-destructive-foreground hover:bg-destructive/90',
-        outline: 'border border-af-surface-border/50 bg-transparent hover:bg-af-surface/40 hover:text-accent-foreground',
-        secondary: 'bg-af-surface/60 text-secondary-foreground hover:bg-af-surface/80',
-        ghost: 'hover:bg-af-surface/40 hover:text-accent-foreground',
+        outline: 'border border-donmai-surface-border/50 bg-transparent hover:bg-donmai-surface/40 hover:text-accent-foreground',
+        secondary: 'bg-donmai-surface/60 text-secondary-foreground hover:bg-donmai-surface/80',
+        ghost: 'hover:bg-donmai-surface/40 hover:text-accent-foreground',
         link: 'text-primary underline-offset-4 hover:underline',
       },
       size: {
