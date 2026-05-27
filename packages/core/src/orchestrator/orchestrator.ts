@@ -310,19 +310,19 @@ export class AgentOrchestrator {
   /** @internal */ shuttingDown = false
   // Template registry for configurable workflow prompts
   /** @internal */ readonly templateRegistry: TemplateRegistry | null
-  // Allowlisted project names from .agentfactory/config.yaml
+  // Allowlisted project names from .donmai/config.yaml
   /** @internal */ allowedProjects?: string[]
-  // Full repository config from .agentfactory/config.yaml
+  // Full repository config from .donmai/config.yaml
   /** @internal */ repoConfig?: RepositoryConfig
-  // Project-to-path mapping from .agentfactory/config.yaml (monorepo support)
+  // Project-to-path mapping from .donmai/config.yaml (monorepo support)
   /** @internal */ projectPaths?: Record<string, string>
-  // Shared paths from .agentfactory/config.yaml (monorepo support)
+  // Shared paths from .donmai/config.yaml (monorepo support)
   /** @internal */ sharedPaths?: string[]
-  // Linear CLI command from .agentfactory/config.yaml (non-Node project support)
+  // Linear CLI command from .donmai/config.yaml (non-Node project support)
   /** @internal */ linearCli?: string
-  // Package manager from .agentfactory/config.yaml (non-Node project support)
+  // Package manager from .donmai/config.yaml (non-Node project support)
   /** @internal */ packageManager?: string
-  // Configurable build/test/validate commands from .agentfactory/config.yaml
+  // Configurable build/test/validate commands from .donmai/config.yaml
   /** @internal */ buildCommand?: string
   /** @internal */ testCommand?: string
   /** @internal */ validateCommand?: string
@@ -398,8 +398,8 @@ export class AgentOrchestrator {
       if (config.templateDir) {
         templateDirs.push(config.templateDir)
       }
-      // Auto-detect .agentfactory/templates/ in target repo
-      const projectTemplateDir = resolve(this.gitRoot, '.agentfactory', 'templates')
+      // Auto-detect .donmai/templates/ in target repo
+      const projectTemplateDir = resolve(this.gitRoot, '.donmai', 'templates')
       if (existsSync(projectTemplateDir) && !templateDirs.includes(projectTemplateDir)) {
         templateDirs.push(projectTemplateDir)
       }
@@ -414,7 +414,7 @@ export class AgentOrchestrator {
       this.templateRegistry = null
     }
 
-    // Auto-load .agentfactory/config.yaml from repository root
+    // Auto-load .donmai/config.yaml from repository root
     try {
       const repoRoot = this.gitRoot
       if (repoRoot) {
@@ -489,7 +489,7 @@ export class AgentOrchestrator {
         }
       }
     } catch (err) {
-      console.warn('[orchestrator] Failed to load .agentfactory/config.yaml:', err instanceof Error ? err.message : err)
+      console.warn('[orchestrator] Failed to load .donmai/config.yaml:', err instanceof Error ? err.message : err)
     }
 
     // Warn if legacy .worktrees/ directory exists inside the repo
@@ -663,7 +663,7 @@ export class AgentOrchestrator {
         continue
       }
 
-      // Filter by allowedProjects from .agentfactory/config.yaml
+      // Filter by allowedProjects from .donmai/config.yaml
       if (this.allowedProjects && this.allowedProjects.length > 0) {
         if (!issue.projectName || !this.allowedProjects.includes(issue.projectName)) {
           console.warn(

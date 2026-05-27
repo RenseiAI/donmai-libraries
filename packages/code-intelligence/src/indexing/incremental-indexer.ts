@@ -14,7 +14,7 @@ export interface IndexerOptions {
 
 /**
  * Orchestrates incremental re-indexing of only changed files.
- * Persists index to `.agentfactory/code-index/`.
+ * Persists index to `.donmai/code-index/`.
  */
 export class IncrementalIndexer {
   private hashProvider = new GitHashProvider()
@@ -27,7 +27,7 @@ export class IncrementalIndexer {
 
   constructor(extractor: SymbolExtractor, options: IndexerOptions = {}) {
     this.extractor = extractor
-    this.indexDir = options.indexDir ?? '.agentfactory/code-index'
+    this.indexDir = options.indexDir ?? '.donmai/code-index'
   }
 
   /** Set an optional VectorIndexer for dense vector indexing. */

@@ -273,7 +273,7 @@ export class AppServerProcessManager {
    * Used for orphan detection on startup.
    */
   private static getPidFilePath(): string {
-    const dir = join(homedir(), '.agentfactory')
+    const dir = join(homedir(), '.donmai')
     if (!existsSync(dir)) {
       mkdirSync(dir, { recursive: true })
     }

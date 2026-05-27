@@ -49,7 +49,7 @@ Before adding a new repo to the fleet, ensure:
 
 ## Step-by-Step: Add a New Project
 
-### 1. Create `.agentfactory/config.yaml`
+### 1. Create `.donmai/config.yaml`
 
 In your repository root, create the config file that identifies the repo and scopes which Linear projects it handles.
 
@@ -249,8 +249,8 @@ The worker process requires Node.js. Install AgentFactory's CLI tools either glo
 npm install -g @renseiai/agentfactory-cli
 
 # Option B: local tooling directory
-mkdir -p .agentfactory/tools
-cd .agentfactory/tools
+mkdir -p .donmai/tools
+cd .donmai/tools
 npm init -y
 npm install @renseiai/agentfactory-cli
 ```
@@ -283,7 +283,7 @@ af-linear create-comment PROJ-123 --body "Implementation complete"
 
 ### Custom workflow templates
 
-Override the default templates to allow your project's build tools. Create `.agentfactory/templates/development.yaml`:
+Override the default templates to allow your project's build tools. Create `.donmai/templates/development.yaml`:
 
 ```yaml
 apiVersion: v1
@@ -328,9 +328,9 @@ If `af-linear` isn't on your PATH (e.g., installed locally), create a wrapper sc
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
-# If installed locally in .agentfactory/tools
-if [ -x "$SCRIPT_DIR/.agentfactory/tools/node_modules/.bin/af-linear" ]; then
-  exec "$SCRIPT_DIR/.agentfactory/tools/node_modules/.bin/af-linear" "$@"
+# If installed locally in .donmai/tools
+if [ -x "$SCRIPT_DIR/.donmai/tools/node_modules/.bin/af-linear" ]; then
+  exec "$SCRIPT_DIR/.donmai/tools/node_modules/.bin/af-linear" "$@"
 fi
 
 # If installed globally
@@ -348,7 +348,7 @@ Make it executable: `chmod +x af-linear`
 
 ### Repository config validates scope
 
-The `.agentfactory/config.yaml` file ensures agents only push to the correct repo. The `{{> partials/repo-validation}}` template partial instructs agents to verify `git remote get-url origin` matches the configured `repository` field before pushing.
+The `.donmai/config.yaml` file ensures agents only push to the correct repo. The `{{> partials/repo-validation}}` template partial instructs agents to verify `git remote get-url origin` matches the configured `repository` field before pushing.
 
 ### Path scoping for monorepos
 
@@ -365,7 +365,7 @@ Each agent runs in its own git worktree (e.g., `../myrepo.wt/PROJ-123-DEV`). Thi
 | Worker not claiming work | Verify `WORKER_PROJECTS` matches the Linear project name exactly (case-sensitive) |
 | Worker can't connect | Check `WORKER_API_URL` and `WORKER_API_KEY` match the governor deployment |
 | Redis connection refused | Verify `REDIS_URL` is reachable from the worker machine |
-| Agent pushes to wrong repo | Add/fix the `repository` field in `.agentfactory/config.yaml` |
+| Agent pushes to wrong repo | Add/fix the `repository` field in `.donmai/config.yaml` |
 | Agent modifies wrong files | Use `projectPaths` + `sharedPaths` in config.yaml for monorepos |
 | Governor not dispatching | Verify project is in `GOVERNOR_PROJECTS` and governor has been redeployed |
 | `af-linear` not found | Install CLI tools: `npm install -g @renseiai/agentfactory-cli` |

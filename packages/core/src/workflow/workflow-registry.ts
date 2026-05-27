@@ -6,7 +6,7 @@
  *
  * Resolution order (later sources override earlier):
  *   1. Built-in default (workflow/defaults/workflow.yaml)
- *   2. Project-level override (e.g., .agentfactory/workflow.yaml)
+ *   2. Project-level override (e.g., .donmai/workflow.yaml)
  *   3. Inline config override (programmatic)
  */
 
@@ -108,7 +108,7 @@ export class WorkflowRegistry {
    * Initialize with async store loading.
    * Resolution order (later sources override earlier):
    *   1. Built-in default (workflow/defaults/workflow.yaml)
-   *   2. Project-level override (e.g., .agentfactory/workflow.yaml)
+   *   2. Project-level override (e.g., .donmai/workflow.yaml)
    *   3. Store override (Redis-backed, takes precedence over filesystem)
    *   4. Inline config override (programmatic, highest priority)
    */

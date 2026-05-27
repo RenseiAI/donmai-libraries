@@ -77,7 +77,7 @@ All commands output JSON. First invocation builds the index (~5-10s); subsequent
 
 Without these keys, agents still get full BM25 keyword search, symbol search, repo maps, and dedup.
 
-**Index cache:** The incremental indexer persists to `.agentfactory/code-index/` (add to `.gitignore`). First run builds the index; subsequent runs re-index only changed files via Merkle tree diffing.
+**Index cache:** The incremental indexer persists to `.donmai/code-index/` (add to `.gitignore`). First run builds the index; subsequent runs re-index only changed files via Merkle tree diffing.
 
 ## Linear CLI (CRITICAL)
 
@@ -267,7 +267,7 @@ By default, worktrees are created in a **sibling directory** next to the reposit
 ../donmai-libraries.wt/SUP-123/   # ../{repoName}.wt/{branch}
 ```
 
-This avoids filesystem watcher storms in VSCode/Cursor that occurred with the previous `.worktrees/` (in-repo) layout. The path is configurable via `worktree.directory` in `.agentfactory/config.yaml` using `{repoName}` and `{branch}` template variables.
+This avoids filesystem watcher storms in VSCode/Cursor that occurred with the previous `.worktrees/` (in-repo) layout. The path is configurable via `worktree.directory` in `.donmai/config.yaml` using `{repoName}` and `{branch}` template variables.
 
 **Migrating existing setups:** Run `pnpm af-migrate-worktrees` to move worktrees from `.worktrees/` to the new sibling directory layout.
 
@@ -319,7 +319,7 @@ pnpm orchestrator --project ProjectName --repo github.com/renseiai/agentfactory
 
 The orchestrator validates that agents only push to the correct repository. Configure via:
 
-### .agentfactory/config.yaml
+### .donmai/config.yaml
 
 Checked into each repository to define allowed projects and repository identity:
 
@@ -368,7 +368,7 @@ sharedPaths:
 
 1. **OrchestratorConfig.repository** — validates git remote at constructor time and before spawning agents
 2. **CLI `--repo` flag** — passes repository to OrchestratorConfig from the command line
-3. **.agentfactory/config.yaml** — auto-loaded at startup, filters issues by `allowedProjects` or `projectPaths` keys
+3. **.donmai/config.yaml** — auto-loaded at startup, filters issues by `allowedProjects` or `projectPaths` keys
 4. **Template partial `{{> partials/repo-validation}}`** — agents verify git remote before any push
 5. **Template partial `{{> partials/path-scoping}}`** — agents verify file changes are within project scope
 6. **Linear project metadata** — cross-references project repo link with config
@@ -403,10 +403,10 @@ prompt: |
 
 ### Customizing Templates
 
-Override built-in templates by creating `.agentfactory/templates/` in your project root:
+Override built-in templates by creating `.donmai/templates/` in your project root:
 
 ```
-.agentfactory/
+.donmai/
   templates/
     development.yaml      # Override development workflow
     qa.yaml               # Override QA workflow
@@ -416,7 +416,7 @@ Override built-in templates by creating `.agentfactory/templates/` in your proje
 
 Templates are resolved in layers (later overrides earlier):
 1. Built-in defaults (`packages/core/src/templates/defaults/`)
-2. Project-level overrides (`.agentfactory/templates/`)
+2. Project-level overrides (`.donmai/templates/`)
 3. Programmatic overrides (`WebhookConfig.generatePrompt` still works)
 
 ### CLI Flag

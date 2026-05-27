@@ -3,7 +3,7 @@
  * AgentFactory Config → Kits Migration CLI
  *
  * One-shot migration that converts per-project overrides in
- * `.agentfactory/config.yaml` (`projectPaths` with buildCommand /
+ * `.donmai/config.yaml` (`projectPaths` with buildCommand /
  * testCommand / validateCommand / packageManager) into per-project
  * `.rensei/kits/<project>.kit.toml` manifests.
  *
@@ -72,7 +72,7 @@ function printHelp(): void {
   console.log(`
 AgentFactory Config → Kits Migration
 
-Converts projectPaths overrides in .agentfactory/config.yaml into
+Converts projectPaths overrides in .donmai/config.yaml into
 per-project .rensei/kits/<project>.kit.toml manifests.
 
 Usage:
@@ -144,7 +144,7 @@ export async function runMigration(argv: string[] = process.argv): Promise<void>
   const repoConfig = loadRepositoryConfig(repoRoot)
 
   if (!repoConfig) {
-    console.log(`No .agentfactory/config.yaml found at ${repoRoot}`)
+    console.log(`No .donmai/config.yaml found at ${repoRoot}`)
     console.log('Nothing to migrate.\n')
     return
   }
@@ -259,7 +259,7 @@ export async function runMigration(argv: string[] = process.argv): Promise<void>
   console.log('')
 
   if (!args.dryRun && written > 0) {
-    console.log('Migration complete. The legacy .agentfactory/config.yaml remains valid.')
+    console.log('Migration complete. The legacy .donmai/config.yaml remains valid.')
     console.log('Generated kit manifests are in: ' + kitsDir)
     console.log(
       'The kit composition pipeline will now use both the legacy bridge and the new manifests.\n',

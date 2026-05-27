@@ -23,7 +23,7 @@ describe('loadRepositoryConfig', () => {
     mockExistsSync.mockReturnValue(false)
     const result = loadRepositoryConfig('/some/repo')
     expect(result).toBeNull()
-    expect(mockExistsSync).toHaveBeenCalledWith('/some/repo/.agentfactory/config.yaml')
+    expect(mockExistsSync).toHaveBeenCalledWith('/some/repo/.donmai/config.yaml')
   })
 
   it('parses valid YAML with all fields', () => {

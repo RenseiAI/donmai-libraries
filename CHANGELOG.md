@@ -262,7 +262,7 @@
 
 ### Features
 
-- **Force code-intelligence tool adoption via `canUseTool` interception** — When `codeIntelligence.enforceUsage` is enabled in `.agentfactory/config.yaml`, the Claude provider denies Grep/Glob calls with a redirect message pointing agents to `af_code_*` tools. After the agent uses any code-intelligence tool, Grep/Glob are unlocked as fallback (configurable via `fallbackAfterAttempt`). Replaced the stateless `autonomousCanUseTool` const with a per-session `createAutonomousCanUseTool()` factory that tracks which code-intelligence categories have been attempted.
+- **Force code-intelligence tool adoption via `canUseTool` interception** — When `codeIntelligence.enforceUsage` is enabled in `.donmai/config.yaml`, the Claude provider denies Grep/Glob calls with a redirect message pointing agents to `af_code_*` tools. After the agent uses any code-intelligence tool, Grep/Glob are unlocked as fallback (configurable via `fallbackAfterAttempt`). Replaced the stateless `autonomousCanUseTool` const with a per-session `createAutonomousCanUseTool()` factory that tracks which code-intelligence categories have been attempted.
 
 - **Code intelligence adoption telemetry** — The orchestrator now counts `af_code_*` vs Grep/Glob tool calls per session and logs the ratio at session end when the code-intelligence plugin is registered.
 
@@ -597,7 +597,7 @@
 
 ### Chores
 
-- **Gitignore .agentfactory/ directory** — Project-local `.agentfactory/` config and templates are now excluded from version control.
+- **Gitignore .donmai/ directory** — Project-local `.donmai/` config and templates are now excluded from version control.
 
 ## v0.8.6
 
@@ -954,7 +954,7 @@
 
 ### Features
 
-- **Monorepo path scoping for orchestrator** — New `projectPaths` and `sharedPaths` fields in `.agentfactory/config.yaml` allow mapping Linear projects to specific directories in a monorepo. Agents receive directory scoping instructions via `{{projectPath}}` and `{{sharedPaths}}` template variables, and a new `{{> partials/path-scoping}}` partial validates file changes at push time.
+- **Monorepo path scoping for orchestrator** — New `projectPaths` and `sharedPaths` fields in `.donmai/config.yaml` allow mapping Linear projects to specific directories in a monorepo. Agents receive directory scoping instructions via `{{projectPath}}` and `{{sharedPaths}}` template variables, and a new `{{> partials/path-scoping}}` partial validates file changes at push time.
 
 ### Fixes
 

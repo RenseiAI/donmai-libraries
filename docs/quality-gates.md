@@ -48,7 +48,7 @@ The system has three layers:
 
 ## Configuration
 
-Enable quality gates in `.agentfactory/config.yaml`:
+Enable quality gates in `.donmai/config.yaml`:
 
 ```yaml
 quality:
@@ -118,7 +118,7 @@ When the quality gate fails, the orchestrator:
 
 ## Quality Ratchet
 
-The quality ratchet is a committed JSON file that stores the best-known quality thresholds. It lives at `.agentfactory/quality-ratchet.json`:
+The quality ratchet is a committed JSON file that stores the best-known quality thresholds. It lives at `.donmai/quality-ratchet.json`:
 
 ```json
 {
@@ -158,7 +158,7 @@ import { captureQualityBaseline, initializeQualityRatchet } from '@renseiai/agen
 
 const baseline = captureQualityBaseline('/path/to/repo', { packageManager: 'pnpm' })
 const ratchet = initializeQualityRatchet('/path/to/repo', baseline)
-// Commit .agentfactory/quality-ratchet.json
+// Commit .donmai/quality-ratchet.json
 ```
 
 Or capture baseline metrics manually and create the file by hand.
@@ -215,8 +215,8 @@ Use both: the baseline-diff catches regressions in-session, and the ratchet prev
 | `packages/core/src/orchestrator/orchestrator.ts` | Integration: capture, inject, check |
 | `packages/core/src/merge-queue/merge-worker.ts` | Ratchet enforcement at merge time |
 | `packages/core/src/config/repository-config.ts` | `quality` config section schema |
-| `.agentfactory/config.yaml` | Per-repo quality gate settings |
-| `.agentfactory/quality-ratchet.json` | Committed ratchet thresholds |
+| `.donmai/config.yaml` | Per-repo quality gate settings |
+| `.donmai/quality-ratchet.json` | Committed ratchet thresholds |
 | `.github/workflows/ci.yml` | `quality-ratchet` CI job |
 
 ## API Reference
@@ -245,7 +245,7 @@ Markdown table comparing baseline vs current with pass/fail badge.
 
 ### `loadQualityRatchet(repoRoot)`
 
-Reads and validates `.agentfactory/quality-ratchet.json`. Returns `null` if not found.
+Reads and validates `.donmai/quality-ratchet.json`. Returns `null` if not found.
 
 ### `checkQualityRatchet(ratchet, current)`
 

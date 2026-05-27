@@ -5,7 +5,7 @@
  * Only one merge worker runs per repo (enforced by Redis lock).
  *
  * The sidecar:
- * 1. Reads .agentfactory/config.yaml for merge queue settings
+ * 1. Reads .donmai/config.yaml for merge queue settings
  * 2. Creates a dedicated worktree for merge operations
  * 3. Starts the MergeWorker poll loop
  * 4. Stops gracefully on AbortSignal

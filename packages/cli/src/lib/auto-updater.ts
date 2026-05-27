@@ -8,7 +8,7 @@
  * Configuration (in order of precedence):
  *   1. CLI flag: --auto-update / --no-auto-update
  *   2. .env.local: AF_AUTO_UPDATE=true
- *   3. .agentfactory/config.yaml: autoUpdate: true
+ *   3. .donmai/config.yaml: autoUpdate: true
  */
 
 import { execSync } from 'child_process'

@@ -109,7 +109,7 @@ export interface OrchestratorConfig {
   /**
    * Path to a directory containing custom workflow template YAML files.
    * Templates in this directory override built-in defaults per work type.
-   * Supports .agentfactory/templates/ convention.
+   * Supports .donmai/templates/ convention.
    */
   templateDir?: string
   /**

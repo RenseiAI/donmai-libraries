@@ -206,23 +206,23 @@ export function configureMergeDriver(
 }
 
 /**
- * Update .agentfactory/config.yaml with mergeDriver: mergiraf.
+ * Update .donmai/config.yaml with mergeDriver: mergiraf.
  */
 export function updateRepoConfig(
   gitRoot: string,
   config: SetupMergirafConfig,
 ): boolean {
-  const configDir = resolve(gitRoot, '.agentfactory')
+  const configDir = resolve(gitRoot, '.donmai')
   const configPath = resolve(configDir, 'config.yaml')
 
   if (config.dryRun) {
-    console.log('[DRY RUN] Would set mergeDriver: mergiraf in .agentfactory/config.yaml')
+    console.log('[DRY RUN] Would set mergeDriver: mergiraf in .donmai/config.yaml')
     return false
   }
 
   if (!existsSync(configPath)) {
     // Config file doesn't exist — skip (don't create one from scratch)
-    console.log('  .agentfactory/config.yaml not found — skipping repo config update')
+    console.log('  .donmai/config.yaml not found — skipping repo config update')
     return false
   }
 
@@ -230,7 +230,7 @@ export function updateRepoConfig(
     let content = readFileSync(configPath, 'utf-8')
 
     if (content.includes('mergeDriver: mergiraf')) {
-      console.log('  .agentfactory/config.yaml already has mergeDriver: mergiraf')
+      console.log('  .donmai/config.yaml already has mergeDriver: mergiraf')
       return true
     }
 
@@ -243,7 +243,7 @@ export function updateRepoConfig(
     }
 
     writeFileSync(configPath, content, 'utf-8')
-    console.log('  .agentfactory/config.yaml updated: mergeDriver: mergiraf')
+    console.log('  .donmai/config.yaml updated: mergeDriver: mergiraf')
     return true
   } catch (error) {
     console.error(`  Failed to update repo config: ${error instanceof Error ? error.message : String(error)}`)

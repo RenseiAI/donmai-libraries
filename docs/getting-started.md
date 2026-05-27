@@ -62,7 +62,7 @@ LINEAR_WEBHOOK_SECRET=your-webhook-secret
 
 # Optional: agent provider (default: claude)
 # Also selectable via issue labels (provider:codex), mentions ("use codex"),
-# or .agentfactory/config.yaml — see docs/providers.md for the full cascade.
+# or .donmai/config.yaml — see docs/providers.md for the full cascade.
 AGENT_PROVIDER=claude
 
 # Optional: Linear team/project IDs
@@ -81,7 +81,7 @@ CODEX_USE_APP_SERVER=1
 
 ### Repository Configuration
 
-For repository-level settings, create `.agentfactory/config.yaml` at the root of your repo:
+For repository-level settings, create `.donmai/config.yaml` at the root of your repo:
 
 ```yaml
 apiVersion: v1
@@ -308,7 +308,7 @@ Run `pnpm af-linear help` for the full command list.
 
 ## Quality Gates
 
-Quality gates ensure agents don't regress your codebase. Enable them in `.agentfactory/config.yaml`:
+Quality gates ensure agents don't regress your codebase. Enable them in `.donmai/config.yaml`:
 
 ```yaml
 quality:

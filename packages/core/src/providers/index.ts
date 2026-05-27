@@ -168,10 +168,10 @@ import { A2aProvider } from './a2a-provider.js'
 import { logger } from '../logger.js'
 
 // ---------------------------------------------------------------------------
-// Provider config types (used by .agentfactory/config.yaml)
+// Provider config types (used by .donmai/config.yaml)
 // ---------------------------------------------------------------------------
 
-/** Provider configuration from .agentfactory/config.yaml */
+/** Provider configuration from .donmai/config.yaml */
 export interface ProvidersConfig {
   /** Default provider for all agents */
   default?: AgentProviderName
@@ -181,7 +181,7 @@ export interface ProvidersConfig {
   byProject?: Record<string, AgentProviderName>
 }
 
-/** Model selection configuration from .agentfactory/config.yaml */
+/** Model selection configuration from .donmai/config.yaml */
 export interface ModelsConfig {
   /** Default model for all agents (e.g., 'claude-sonnet-4-6') */
   default?: string
@@ -203,7 +203,7 @@ export interface ProviderResolutionContext {
   labels?: string[]
   /** Mention text (scanned for "use <provider>", "@<provider>", "provider:<provider>") */
   mentionContext?: string
-  /** Config-driven provider settings from .agentfactory/config.yaml */
+  /** Config-driven provider settings from .donmai/config.yaml */
   configProviders?: ProvidersConfig
 }
 
@@ -581,7 +581,7 @@ export interface ModelResolutionContext {
   labels?: string[]
   /** Platform-dispatched model override (from QueuedWork.model) — highest priority */
   dispatchModel?: string
-  /** Config-driven model settings from .agentfactory/config.yaml */
+  /** Config-driven model settings from .donmai/config.yaml */
   configModels?: ModelsConfig
 }
 

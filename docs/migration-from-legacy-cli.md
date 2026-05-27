@@ -46,7 +46,7 @@ These binaries handle utility and migration tasks. They are less frequently used
 | `af-add-dep` | `af add-dep` | Not yet ported | Safe dependency install in agent worktrees; tracking issue pending |
 | `af-sync-routes` | `af sync-routes` | Not yet ported | Next.js route-file generator from manifest; tracking issue pending |
 | `af-migrate-worktrees` | _(migration complete — retire after run)_ | Out of scope | One-shot migration from `.worktrees/` to sibling-dir layout; no Go port planned |
-| `af-migrate-config-to-kits` | _(migration complete — retire after run)_ | Out of scope | One-shot `.agentfactory/config.yaml` → `.rensei/kits/` migration; no Go port planned |
+| `af-migrate-config-to-kits` | _(migration complete — retire after run)_ | Out of scope | One-shot `.donmai/config.yaml` → `.rensei/kits/` migration; no Go port planned |
 | `agentfactory` (root binary) | `af` | Ported | Top-level dispatcher; the `agentfactory` name is the legacy alias |
 | `rensei-daemon` (from `@renseiai/daemon`) | `rensei daemon run` (and `af daemon run`) | Ported | Daemon runtime ported to Go. Single-binary OSS UX — no separate daemon binary. |
 

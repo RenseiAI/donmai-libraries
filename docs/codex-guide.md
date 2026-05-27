@@ -112,11 +112,11 @@ AgentFactory resolves which provider to use per agent spawn using a priority cas
 |----------|--------|---------|
 | 1 | Issue label | `provider:codex` label on the issue |
 | 2 | Mention context | `"use codex"`, `"@codex"`, `"provider:codex"` in prompt/mention text |
-| 3 | Config `providers.byWorkType` | `{ qa: 'codex' }` in `.agentfactory/config.yaml` |
-| 4 | Config `providers.byProject` | `{ Backend: 'codex' }` in `.agentfactory/config.yaml` |
+| 3 | Config `providers.byWorkType` | `{ qa: 'codex' }` in `.donmai/config.yaml` |
+| 4 | Config `providers.byProject` | `{ Backend: 'codex' }` in `.donmai/config.yaml` |
 | 5 | Env var `AGENT_PROVIDER_{WORKTYPE}` | `AGENT_PROVIDER_QA=codex` |
 | 6 | Env var `AGENT_PROVIDER_{PROJECT}` | `AGENT_PROVIDER_BACKEND=codex` |
-| 7 | Config `providers.default` | `default: 'codex'` in `.agentfactory/config.yaml` |
+| 7 | Config `providers.default` | `default: 'codex'` in `.donmai/config.yaml` |
 | 8 | Env var `AGENT_PROVIDER` | `AGENT_PROVIDER=codex` |
 | 9 | Hardcoded fallback | `'claude'` |
 

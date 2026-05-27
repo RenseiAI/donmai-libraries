@@ -53,7 +53,7 @@ Options:
   --filter <workspace>   Target a specific workspace (monorepo)
   --help, -h             Show this help message
 
-The package manager is auto-detected from .agentfactory/config.yaml.
+The package manager is auto-detected from .donmai/config.yaml.
 
 In worktrees, symlinked node_modules are cleaned before running the
 add command. The ORCHESTRATOR_INSTALL=1 env var is set to bypass

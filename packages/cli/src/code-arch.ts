@@ -20,7 +20,7 @@
  *   ANTHROPIC_API_KEY      — Enables live LLM drift assessment.
  *                            Without this key, the CLI uses a stub adapter
  *                            that returns an empty DriftReport with a notice.
- *   RENSEI_ARCH_DB         — Path to the SQLite DB (default: .agentfactory/arch-intelligence/db.sqlite)
+ *   RENSEI_ARCH_DB         — Path to the SQLite DB (default: .donmai/arch-intelligence/db.sqlite)
  *
  * Output:
  *   JSON to stdout. Non-zero exit code when the gate policy is triggered.
@@ -68,7 +68,7 @@ Options:
 Environment:
   RENSEI_DRIFT_GATE            Gate policy (overridden by --gate-policy)
   ANTHROPIC_API_KEY            Enables live LLM assessment (required for real drift detection)
-  RENSEI_ARCH_DB               SQLite DB path (default: .agentfactory/arch-intelligence/db.sqlite)
+  RENSEI_ARCH_DB               SQLite DB path (default: .donmai/arch-intelligence/db.sqlite)
 
 Exit codes:
   0  Clean — no deviations or gate not triggered

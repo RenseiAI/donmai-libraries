@@ -2,7 +2,7 @@
  * Add-dep runner — safely adds dependencies in agent worktrees.
  *
  * Detects worktree vs main repo, resolves the package manager from
- * .agentfactory/config.yaml, cleans symlinked node_modules, and runs
+ * .donmai/config.yaml, cleans symlinked node_modules, and runs
  * the correct add command with ORCHESTRATOR_INSTALL=1 to bypass
  * preinstall guards.
  */

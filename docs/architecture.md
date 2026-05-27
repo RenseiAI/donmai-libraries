@@ -160,7 +160,7 @@ Provider is selected dynamically per agent using a 10-tier resolution cascade:
 ```
 1. Issue label override (provider:codex)          — explicit human override
 2. Mention context override ("use codex")         — explicit human override
-3. Config providers.byWorkType                    — static config (.agentfactory/config.yaml)
+3. Config providers.byWorkType                    — static config (.donmai/config.yaml)
 4. Config providers.byProject                     — static config
 5. MAB-based intelligent routing                  — learned routing (feature-flagged)
 6. Env var AGENT_PROVIDER_{WORKTYPE}              — static fallback
@@ -309,7 +309,7 @@ The Workflow Engine is built on two key components in `packages/core/src/workflo
 **WorkflowRegistry** — an in-memory registry that manages `WorkflowDefinition` resolution with layered overrides, following the same pattern as `TemplateRegistry`. Definitions are loaded from up to four layers (later overrides earlier):
 
 1. Built-in default (`workflow/defaults/workflow.yaml`)
-2. Project-level override (`.agentfactory/workflow.yaml`)
+2. Project-level override (`.donmai/workflow.yaml`)
 3. External store (Redis-backed, for distributed hot-reload)
 4. Inline config override (programmatic, highest priority)
 

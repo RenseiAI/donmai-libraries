@@ -134,7 +134,7 @@ Use the `qa-native` strategy template or the `qa-reviewer-native.md` agent defin
 
 **Option 1: Use the built-in `qa-native` strategy template**
 
-Override `.agentfactory/templates/qa-native.yaml` in your project to customize commands:
+Override `.donmai/templates/qa-native.yaml` in your project to customize commands:
 
 ```yaml
 apiVersion: v1
@@ -158,9 +158,9 @@ prompt: |
   ...
 ```
 
-**Option 2: Use configurable build/test commands via `.agentfactory/config.yaml`**
+**Option 2: Use configurable build/test commands via `.donmai/config.yaml`**
 
-The base `qa.yaml` template supports `buildCommand`, `testCommand`, and `validateCommand` context variables. Set these in `.agentfactory/config.yaml` to customize QA for your project without creating a separate template:
+The base `qa.yaml` template supports `buildCommand`, `testCommand`, and `validateCommand` context variables. Set these in `.donmai/config.yaml` to customize QA for your project without creating a separate template:
 
 ```yaml
 apiVersion: v1

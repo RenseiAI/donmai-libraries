@@ -194,10 +194,10 @@ Variables available for interpolation in templates (`{{variableName}}`):
 
 ### Creating Custom Templates
 
-Place custom templates in `.agentfactory/templates/` at the root of your repo:
+Place custom templates in `.donmai/templates/` at the root of your repo:
 
 ```
-.agentfactory/
+.donmai/
   config.yaml
   templates/
     development.yaml       # Override the development template
@@ -208,10 +208,10 @@ Place custom templates in `.agentfactory/templates/` at the root of your repo:
 
 ### Overriding Built-in Partials
 
-To override a built-in partial, create a file with the same name in your `.agentfactory/templates/partials/` directory:
+To override a built-in partial, create a file with the same name in your `.donmai/templates/partials/` directory:
 
 ```yaml
-# .agentfactory/templates/partials/commit-push-pr.yaml
+# .donmai/templates/partials/commit-push-pr.yaml
 apiVersion: v1
 kind: PartialTemplate
 metadata:
@@ -250,7 +250,7 @@ import { TemplateRegistry } from '@renseiai/agentfactory'
 
 const registry = TemplateRegistry.create({
   // Directories to scan (searched in order)
-  templateDirs: ['.agentfactory/templates'],
+  templateDirs: ['.donmai/templates'],
 
   // Inline overrides (highest priority)
   templates: {

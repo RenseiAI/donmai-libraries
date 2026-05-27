@@ -173,7 +173,7 @@ Matching is case-insensitive and word-boundary aware.
 
 ### Config-File Selection
 
-Set provider routing in `.agentfactory/config.yaml`:
+Set provider routing in `.donmai/config.yaml`:
 
 ```yaml
 providers:

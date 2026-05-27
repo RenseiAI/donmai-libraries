@@ -4,7 +4,7 @@
  * Discovers, parses, and validates workflow templates from YAML files.
  * Supports layered resolution:
  *   1. Built-in defaults (packages/core/src/templates/defaults/)
- *   2. Project-level overrides (.agentfactory/templates/ in repo root)
+ *   2. Project-level overrides (.donmai/templates/ in repo root)
  *   3. Inline config overrides (programmatic)
  */
 

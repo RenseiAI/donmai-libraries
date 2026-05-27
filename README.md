@@ -184,14 +184,14 @@ AGENT_PROVIDER_SOCIAL=spring-ai  # Per-project override
 You can also select providers dynamically:
 - **Issue labels:** Add `provider:codex` to a Linear issue
 - **Mentions:** Include "use codex" or "@codex" in the agent prompt
-- **Config file:** Set `providers.byWorkType` or `providers.byProject` in `.agentfactory/config.yaml`
+- **Config file:** Set `providers.byWorkType` or `providers.byProject` in `.donmai/config.yaml`
 
 ### Intelligent Routing (MAB)
 
 When multiple providers are available, AgentFactory can learn which provider works best for each work type using Thompson Sampling (Multi-Armed Bandit):
 
 ```yaml
-# .agentfactory/config.yaml
+# .donmai/config.yaml
 routing:
   enabled: true
   explorationRate: 0.1          # 10% exploration
@@ -294,7 +294,7 @@ const orchestrator = createOrchestrator({
 AgentFactory includes a built-in merge queue that automatically rebases and merges agent PRs:
 
 ```yaml
-# .agentfactory/config.yaml
+# .donmai/config.yaml
 mergeQueue:
   enabled: true
   provider: local           # local, github-native, mergify, trunk
@@ -379,7 +379,7 @@ This requires the `@renseiai/agentfactory-server` package and a Redis instance.
 
 > **Note:** Set both `LINEAR_ACCESS_TOKEN` and `LINEAR_API_KEY` to the same value, or see [Configuration](./docs/configuration.md) for details.
 
-### Repository Config (`.agentfactory/config.yaml`)
+### Repository Config (`.donmai/config.yaml`)
 
 Declarative configuration for repository-level settings:
 

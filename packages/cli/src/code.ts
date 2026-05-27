@@ -69,7 +69,7 @@ Options (validate-cross-deps):
 
 Index:
   First invocation builds the index from source files (~5-10s).
-  Subsequent calls reuse the persisted index from .agentfactory/code-index/.
+  Subsequent calls reuse the persisted index from .donmai/code-index/.
 
 Examples:
   af-code search-symbols "SearchEngine"

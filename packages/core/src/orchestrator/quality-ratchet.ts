@@ -5,7 +5,7 @@
  * thresholds for the repository. Thresholds can only tighten (improve), never
  * loosen. This prevents cumulative quality drift across many agent sessions.
  *
- * File location: .agentfactory/quality-ratchet.json (committed to repo)
+ * File location: .donmai/quality-ratchet.json (committed to repo)
  *
  * The ratchet is enforced at two points:
  * 1. Merge queue — blocks merge if ratchet thresholds are violated
@@ -47,7 +47,7 @@ export interface RatchetCheckResult {
 // ---------------------------------------------------------------------------
 
 const RATCHET_FILENAME = 'quality-ratchet.json'
-const RATCHET_DIR = '.agentfactory'
+const RATCHET_DIR = '.donmai'
 
 function ratchetPath(repoRoot: string): string {
   return resolve(repoRoot, RATCHET_DIR, RATCHET_FILENAME)

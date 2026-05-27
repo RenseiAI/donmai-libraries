@@ -122,7 +122,7 @@ Mergiraf integrates with AgentFactory at multiple levels:
 
 ### Repository Configuration
 
-Set `mergeDriver: 'mergiraf'` in `.agentfactory/config.yaml` to auto-configure new agent worktrees:
+Set `mergeDriver: 'mergiraf'` in `.donmai/config.yaml` to auto-configure new agent worktrees:
 
 ```yaml
 apiVersion: v1
@@ -165,7 +165,7 @@ git -c merge.mergiraf.driver=true merge <branch>
 Or disable in the repository configuration:
 
 ```yaml
-# .agentfactory/config.yaml
+# .donmai/config.yaml
 mergeDriver: default
 ```
 

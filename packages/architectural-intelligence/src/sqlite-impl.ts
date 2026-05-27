@@ -59,7 +59,7 @@ import { assessChange } from './drift.js'
 export interface SqliteArchConfig {
   /**
    * Absolute path to the SQLite database file.
-   * Defaults to `.agentfactory/arch-intelligence/db.sqlite`.
+   * Defaults to `.donmai/arch-intelligence/db.sqlite`.
    */
   dbPath?: string
 }
@@ -224,7 +224,7 @@ export class SqliteArchitecturalIntelligence implements ArchitecturalIntelligenc
   private readonly _defaultScope: ArchScope
 
   constructor(config: SqliteArchConfig = {}) {
-    const dbPath = config.dbPath ?? '.agentfactory/arch-intelligence/db.sqlite'
+    const dbPath = config.dbPath ?? '.donmai/arch-intelligence/db.sqlite'
 
     // Ensure parent directory exists
     const dir = dirname(dbPath)

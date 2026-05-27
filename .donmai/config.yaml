@@ -1,0 +1,38 @@
+apiVersion: v1
+kind: RepositoryConfig
+repository: github.com/RenseiAI/agentfactory
+allowedProjects:
+  - AgentFactory
+codeIntelligence:
+  enforceUsage: true
+providers:
+  default: claude
+  byWorkType:
+    research: claude
+    qa: claude
+    acceptance: claude
+models:
+    default: claude-opus-4-7
+    byWorkType:
+      coordination: claude-opus-4-7
+    subAgent: claude-sonnet-4-6
+mergeDriver: mergiraf
+mergeQueue:
+  enabled: true
+  provider: local
+  strategy: rebase
+  mergiraf: true
+  lockFileRegenerate: true
+  autoEnqueue: true
+  testCommand: "pnpm test"
+  testTimeout: 300000
+  pollInterval: 10000
+  maxRetries: 2
+  escalation:
+    onConflict: reassign
+    onTestFailure: notify
+quality:
+  baselineEnabled: true
+  ratchetEnabled: true
+  boyscoutRule: true
+  tddWorkflow: true

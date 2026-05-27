@@ -175,7 +175,7 @@ Use these BEFORE falling back to Grep/Glob when exploring unfamiliar code or sea
   Reserve files before editing to prevent merge conflicts with parallel agents.
 
 All commands output JSON to stdout. First invocation builds the index (~5-10s); subsequent
-calls reuse the persisted index from .agentfactory/code-index/.
+calls reuse the persisted index from .donmai/code-index/.
 
 WHEN TO USE THESE COMMANDS:
 - Starting a new task: get-repo-map first, then search-symbols for specific targets

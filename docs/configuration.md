@@ -69,9 +69,9 @@ Complete reference for all AgentFactory configuration options.
 | `GOVERNOR_PROJECTS` | — | Comma-separated projects to scan |
 | `GOVERNOR_POLL_INTERVAL_MS` | `300000` (5 min) | Poll sweep interval for event-driven mode safety net |
 
-## Repository Configuration (`.agentfactory/config.yaml`)
+## Repository Configuration (`.donmai/config.yaml`)
 
-The declarative config file controls repository-level settings. Place it at `.agentfactory/config.yaml` in your repo root.
+The declarative config file controls repository-level settings. Place it at `.donmai/config.yaml` in your repo root.
 
 ### `profiles:` + `dispatch:` — Profile-Based Agent Configuration (preferred)
 
@@ -445,8 +445,8 @@ The cascade below applies only when `profiles` is **not** set and the legacy `pr
 |------|--------|-------------|
 | 1 | Issue label | `provider:codex` label on the Linear issue |
 | 2 | Mention context | "use codex", "@codex", or "provider:codex" in prompt |
-| 3 | Config `providers.byWorkType` | Work-type override from `.agentfactory/config.yaml` |
-| 4 | Config `providers.byProject` | Project override from `.agentfactory/config.yaml` |
+| 3 | Config `providers.byWorkType` | Work-type override from `.donmai/config.yaml` |
+| 4 | Config `providers.byProject` | Project override from `.donmai/config.yaml` |
 | 5 | MAB routing | Thompson Sampling learned routing (when `routing.enabled: true`) |
 | 6 | Env `AGENT_PROVIDER_{WORKTYPE}` | e.g., `AGENT_PROVIDER_QA=codex` |
 | 7 | Env `AGENT_PROVIDER_{PROJECT}` | e.g., `AGENT_PROVIDER_SOCIAL=amp` |
@@ -642,7 +642,7 @@ This replaces the previous `.worktrees/` (in-repo) default, which caused VSCode 
 
 ### `worktree.directory` config key
 
-Override the default in `.agentfactory/config.yaml`:
+Override the default in `.donmai/config.yaml`:
 
 ```yaml
 apiVersion: v1

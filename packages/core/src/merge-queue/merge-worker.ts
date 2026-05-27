@@ -679,7 +679,7 @@ export class MergeWorker {
         if (updated) {
           try {
             await exec(
-              'git add .agentfactory/quality-ratchet.json && git commit -m "chore: tighten quality ratchet"',
+              'git add .donmai/quality-ratchet.json && git commit -m "chore: tighten quality ratchet"',
               { cwd: ctx.worktreePath },
             )
           } catch {

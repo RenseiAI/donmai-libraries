@@ -10,7 +10,7 @@ const SUPPORTED_EXTENSIONS = new Set([
 
 const IGNORE_DIRS = new Set([
   'node_modules', 'dist', '.git', '.next', '.turbo',
-  'build', 'coverage', '__pycache__', '.agentfactory',
+  'build', 'coverage', '__pycache__', '.donmai',
   '.worktrees', 'vendor', 'target',
 ])
 
@@ -118,7 +118,7 @@ async function initializeIndex(cwd: string) {
   } = await import('@renseiai/agentfactory-code-intelligence')
 
   const extractor = new SymbolExtractor()
-  const indexer = new IncrementalIndexer(extractor, { indexDir: '.agentfactory/code-index' })
+  const indexer = new IncrementalIndexer(extractor, { indexDir: '.donmai/code-index' })
   const searchEngine = new SearchEngine()
   const hybridEngine = new HybridSearchEngine(searchEngine, null, null)
   const repoMapGen = new RepoMapGenerator()

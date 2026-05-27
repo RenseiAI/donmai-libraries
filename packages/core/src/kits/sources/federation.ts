@@ -54,7 +54,7 @@ export const DEFAULT_FEDERATION_ORDER: FederationOrder = [
 /**
  * Configuration for the federated kit source loader.
  *
- * Tenant config surfaces this via `.agentfactory/config.yaml`; the loader
+ * Tenant config surfaces this via `.donmai/config.yaml`; the loader
  * merges with sensible defaults.
  *
  * Example config.yaml usage:

@@ -44,12 +44,12 @@ function makeRepoConfig(projectPaths: RepositoryConfig['projectPaths']): Reposit
 function makeTmpRepo(): string {
   const dir = join(tmpdir(), `af-migrate-test-${Date.now()}-${Math.random().toString(36).slice(2)}`)
   mkdirSync(dir, { recursive: true })
-  mkdirSync(join(dir, '.agentfactory'), { recursive: true })
+  mkdirSync(join(dir, '.donmai'), { recursive: true })
   return dir
 }
 
 function writeRepoConfig(repoRoot: string, content: string): void {
-  writeFileSync(join(repoRoot, '.agentfactory', 'config.yaml'), content, 'utf-8')
+  writeFileSync(join(repoRoot, '.donmai', 'config.yaml'), content, 'utf-8')
 }
 
 // ---------------------------------------------------------------------------

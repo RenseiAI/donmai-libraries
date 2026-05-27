@@ -175,7 +175,7 @@ jobs:
       - name: Check if quality ratchet is configured
         id: ratchet-check
         run: |
-          if [ -f .agentfactory/quality-ratchet.json ]; then
+          if [ -f .donmai/quality-ratchet.json ]; then
             echo "exists=true" >> $GITHUB_OUTPUT
           else
             echo "exists=false" >> $GITHUB_OUTPUT
@@ -215,9 +215,9 @@ jobs:
           TEST_FAILED=$(node -e "try { const r=require('./test-results.json'); console.log(r.numFailedTests || 0) } catch { console.log(0) }" 2>/dev/null || echo 0)
 
           # Load ratchet thresholds
-          MIN_TESTS=$(node -e "const r=JSON.parse(require('fs').readFileSync('.agentfactory/quality-ratchet.json','utf8')); console.log(r.thresholds.testCount.min)")
-          MAX_FAILURES=$(node -e "const r=JSON.parse(require('fs').readFileSync('.agentfactory/quality-ratchet.json','utf8')); console.log(r.thresholds.testFailures.max)")
-          MAX_TYPE_ERRORS=$(node -e "const r=JSON.parse(require('fs').readFileSync('.agentfactory/quality-ratchet.json','utf8')); console.log(r.thresholds.typecheckErrors.max)")
+          MIN_TESTS=$(node -e "const r=JSON.parse(require('fs').readFileSync('.donmai/quality-ratchet.json','utf8')); console.log(r.thresholds.testCount.min)")
+          MAX_FAILURES=$(node -e "const r=JSON.parse(require('fs').readFileSync('.donmai/quality-ratchet.json','utf8')); console.log(r.thresholds.testFailures.max)")
+          MAX_TYPE_ERRORS=$(node -e "const r=JSON.parse(require('fs').readFileSync('.donmai/quality-ratchet.json','utf8')); console.log(r.thresholds.typecheckErrors.max)")
 
           echo "Test count: $TEST_TOTAL (min: $MIN_TESTS)"
           echo "Test failures: $TEST_FAILED (max: $MAX_FAILURES)"

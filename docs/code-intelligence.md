@@ -223,4 +223,4 @@ Files larger than 512 KB are skipped during indexing.
 
 ### Incremental Indexing
 
-The `IncrementalIndexer` persists its index to `.agentfactory/code-index/` (add to `.gitignore`). First invocation builds the full index (~5-10s); subsequent runs re-index only changed files via Merkle tree diffing. This makes searches fast even in large codebases.
+The `IncrementalIndexer` persists its index to `.donmai/code-index/` (add to `.gitignore`). First invocation builds the full index (~5-10s); subsequent runs re-index only changed files via Merkle tree diffing. This makes searches fast even in large codebases.

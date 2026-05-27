@@ -44,7 +44,7 @@ import {
 } from '@renseiai/architectural-intelligence'
 
 // 1. Open or create the per-tenant store
-const store = new SqliteArchitecturalIntelligence({ dbPath: '.agentfactory/arch.db' })
+const store = new SqliteArchitecturalIntelligence({ dbPath: '.donmai/arch.db' })
 
 // 2. Run an observation pass over the change set
 const result = await runObservationPass({
