@@ -1,19 +1,19 @@
-# @renseiai/agentfactory
+# @donmai/core
 
 Core orchestrator for multi-agent fleet management. Turns your issue backlog into shipped code by coordinating coding agents (Claude, Codex, Amp) through an automated pipeline.
 
-Part of the [AgentFactory](https://github.com/renseiai/agentfactory) monorepo.
+Part of the [Donmai](https://github.com/RenseiAI/donmai-libraries) monorepo.
 
 ## Installation
 
 ```bash
-npm install @renseiai/agentfactory @renseiai/plugin-linear
+npm install @donmai/core @donmai/plugin-linear
 ```
 
 ## Quick Start
 
 ```typescript
-import { createOrchestrator } from '@renseiai/agentfactory'
+import { createOrchestrator } from '@donmai/core'
 
 const orchestrator = createOrchestrator({
   maxConcurrent: 3,
@@ -87,7 +87,7 @@ import {
   InMemoryEventBus,
   InMemoryEventDeduplicator,
   type GovernorDependencies,
-} from '@renseiai/agentfactory'
+} from '@donmai/core'
 
 // Poll-only mode (simple)
 const governor = new WorkflowGovernor(
@@ -109,14 +109,14 @@ const eventGovernor = new EventDrivenGovernor(
 await eventGovernor.start()
 ```
 
-The governor evaluates each issue against status, active sessions, cooldowns, human overrides (HOLD/RESUME/PRIORITY), and workflow strategy to decide what action to take. See [Architecture docs](https://github.com/renseiai/agentfactory/blob/main/docs/architecture.md#workflow-governor) for details.
+The governor evaluates each issue against status, active sessions, cooldowns, human overrides (HOLD/RESUME/PRIORITY), and workflow strategy to decide what action to take. See [Architecture docs](https://github.com/RenseiAI/donmai-libraries/blob/main/docs/architecture.md#workflow-governor) for details.
 
 ## Related Packages
 
 | Package | Description |
 |---------|-------------|
-| [@renseiai/plugin-linear](https://www.npmjs.com/package/@renseiai/plugin-linear) | Linear issue tracker integration |
-| [@renseiai/agentfactory-server](https://www.npmjs.com/package/@renseiai/agentfactory-server) | Redis work queue, distributed workers |
+| [@donmai/plugin-linear](https://www.npmjs.com/package/@donmai/plugin-linear) | Linear issue tracker integration |
+| [@donmai/server](https://www.npmjs.com/package/@donmai/server) | Redis work queue, distributed workers |
 | [@donmai/cli](https://www.npmjs.com/package/@donmai/cli) | CLI tools |
 | [@donmai/nextjs](https://www.npmjs.com/package/@donmai/nextjs) | Next.js webhook server |
 

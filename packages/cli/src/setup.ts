@@ -118,7 +118,7 @@ function printSummary(result: SetupMergirafResult): void {
   }
 
   if (result.gitattributesWritten && result.mergeDriverConfigured) {
-    console.log('\n  See: https://github.com/RenseiAI/agentfactory/blob/main/docs/guides/mergiraf-setup.md')
+    console.log('\n  See: https://github.com/RenseiAI/donmai-libraries/blob/main/docs/guides/mergiraf-setup.md')
   }
 
   console.log('')

@@ -31,7 +31,7 @@ describe('loadRepositoryConfig', () => {
     mockReadFileSync.mockReturnValue(
       `apiVersion: v1
 kind: RepositoryConfig
-repository: github.com/renseiai/agentfactory
+repository: github.com/RenseiAI/donmai-libraries
 allowedProjects:
   - Agent
   - Dashboard
@@ -41,7 +41,7 @@ allowedProjects:
     expect(result).toEqual({
       apiVersion: 'v1',
       kind: 'RepositoryConfig',
-      repository: 'github.com/renseiai/agentfactory',
+      repository: 'github.com/RenseiAI/donmai-libraries',
       allowedProjects: ['Agent', 'Dashboard'],
     })
   })
@@ -65,7 +65,7 @@ kind: RepositoryConfig
     mockReadFileSync.mockReturnValue(
       `apiVersion: v1
 kind: WorkflowTemplate
-repository: github.com/renseiai/agentfactory
+repository: github.com/RenseiAI/donmai-libraries
 `
     )
     expect(() => loadRepositoryConfig('/some/repo')).toThrow()
@@ -75,7 +75,7 @@ repository: github.com/renseiai/agentfactory
     mockExistsSync.mockReturnValue(true)
     mockReadFileSync.mockReturnValue(
       `kind: RepositoryConfig
-repository: github.com/renseiai/agentfactory
+repository: github.com/RenseiAI/donmai-libraries
 `
     )
     expect(() => loadRepositoryConfig('/some/repo')).toThrow()

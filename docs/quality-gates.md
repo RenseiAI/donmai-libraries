@@ -151,10 +151,10 @@ The quality ratchet is a committed JSON file that stores the best-known quality 
 
 ### Initializing the Ratchet
 
-To create the initial ratchet file, use the `initializeQualityRatchet()` function from `@renseiai/agentfactory`:
+To create the initial ratchet file, use the `initializeQualityRatchet()` function from `@donmai/core`:
 
 ```typescript
-import { captureQualityBaseline, initializeQualityRatchet } from '@renseiai/agentfactory'
+import { captureQualityBaseline, initializeQualityRatchet } from '@donmai/core'
 
 const baseline = captureQualityBaseline('/path/to/repo', { packageManager: 'pnpm' })
 const ratchet = initializeQualityRatchet('/path/to/repo', baseline)

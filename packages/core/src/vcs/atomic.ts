@@ -150,9 +150,9 @@ export class AtomicVCSProvider implements VersionControlProvider {
       description:
         'atomic CLI adapter — patch-theory merge, Ed25519 native attestation, no PR concept',
       author: 'Rensei AI',
-      homepage: 'https://github.com/RenseiAI/agentfactory',
+      homepage: 'https://github.com/RenseiAI/donmai-libraries',
       license: 'MIT',
-      repository: 'https://github.com/RenseiAI/agentfactory',
+      repository: 'https://github.com/RenseiAI/donmai-libraries',
       requires: { rensei: '>=0.8.0' },
       entry: { kind: 'static', modulePath: 'packages/core/src/vcs/atomic.js' },
       capabilitiesDeclared: this.capabilities,

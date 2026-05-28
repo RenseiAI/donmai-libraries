@@ -1,6 +1,6 @@
 # Templates
 
-AgentFactory uses a Handlebars-based template system to generate agent prompts. Each work type has a workflow template that defines the prompt and tool permissions. Templates are composable through partials and customizable through layered resolution.
+Donmai uses a Handlebars-based template system to generate agent prompts. Each work type has a workflow template that defines the prompt and tool permissions. Templates are composable through partials and customizable through layered resolution.
 
 ## Template Structure
 
@@ -228,7 +228,7 @@ content: |
 
 Templates are resolved in order (later layers override earlier):
 
-1. **Built-in defaults** — shipped with AgentFactory (`packages/core/src/templates/defaults/`)
+1. **Built-in defaults** — shipped with Donmai (`packages/core/src/templates/defaults/`)
 2. **Project-level overrides** — each directory in `templateDirs` (in order)
 3. **Inline config overrides** — passed via `TemplateRegistryConfig.templates` (highest priority)
 
@@ -246,7 +246,7 @@ This enables the escalation governor to select different templates as retry stra
 ### Programmatic Configuration
 
 ```typescript
-import { TemplateRegistry } from '@renseiai/agentfactory'
+import { TemplateRegistry } from '@donmai/core'
 
 const registry = TemplateRegistry.create({
   // Directories to scan (searched in order)

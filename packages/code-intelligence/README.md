@@ -1,8 +1,8 @@
 # @donmai/code-intelligence
 
-Code intelligence for AgentFactory agents — regex-based symbol extraction, BM25 search, incremental Merkle-tree indexing, PageRank repo maps, and memory deduplication.
+Code intelligence for Donmai agents — regex-based symbol extraction, BM25 search, incremental Merkle-tree indexing, PageRank repo maps, and memory deduplication.
 
-Part of the [AgentFactory](https://github.com/renseiai/agentfactory) monorepo.
+Part of the [Donmai](https://github.com/RenseiAI/donmai-libraries) monorepo.
 
 ## Installation
 
@@ -101,7 +101,7 @@ const result = await pipeline.check('some code block...')
 
 ## Agent tool plugin
 
-When used with AgentFactory's Claude provider, the package registers four in-process MCP tools:
+When used with Donmai's Claude provider, the package registers four in-process MCP tools:
 
 | Tool | Description |
 |------|-------------|

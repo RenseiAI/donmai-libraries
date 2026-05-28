@@ -15,9 +15,9 @@
     "incremental": true,
     "baseUrl": ".",
     "paths": {
-      "@renseiai/agentfactory-dashboard": ["../src/index.ts"],
-      "@renseiai/agentfactory-dashboard/styles": ["../src/styles/globals.css"],
-      "@renseiai/agentfactory-dashboard/tailwind-preset": ["../tailwind.config.ts"]
+      "@donmai/dashboard": ["../src/index.ts"],
+      "@donmai/dashboard/styles": ["../src/styles/globals.css"],
+      "@donmai/dashboard/tailwind-preset": ["../tailwind.config.ts"]
     },
     "plugins": [{ "name": "next" }]
   },

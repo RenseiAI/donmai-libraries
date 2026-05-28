@@ -1,5 +1,5 @@
 /**
- * AgentFactory Quickstart
+ * Donmai Quickstart
  *
  * Minimal example: spawn one coding agent on a Linear issue.
  *
@@ -11,7 +11,7 @@
  *   npx tsx examples/quickstart/index.ts PROJ-123
  */
 
-import { createOrchestrator } from '@renseiai/agentfactory'
+import { createOrchestrator } from '@donmai/core'
 
 const issueId = process.argv[2]
 if (!issueId) {

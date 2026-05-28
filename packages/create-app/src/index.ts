@@ -141,7 +141,7 @@ async function main() {
     console.log('    pnpm worker           # Start a local worker (in another terminal)')
   }
   console.log()
-  console.log('  Documentation: https://github.com/renseiai/agentfactory')
+  console.log('  Documentation: https://github.com/RenseiAI/donmai-libraries')
   console.log()
 
   rl.close()

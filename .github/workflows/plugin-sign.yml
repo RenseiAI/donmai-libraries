@@ -20,7 +20,7 @@ name: Sign Plugin Tarballs (Sigstore)
 #
 # # OIDC subject (this becomes the trusted issuer claim):
 #
-#   https://github.com/RenseiAI/agentfactory/.github/workflows/plugin-sign.yml@refs/tags/<tag>
+#   https://github.com/RenseiAI/donmai-libraries/.github/workflows/plugin-sign.yml@refs/tags/<tag>
 #
 # Hosts that consume signed plugins must include this subject in their
 # trusted-issuer set (see packages/core/src/plugins/trusted-issuers.ts).

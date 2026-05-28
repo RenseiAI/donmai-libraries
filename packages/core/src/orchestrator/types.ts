@@ -113,7 +113,7 @@ export interface OrchestratorConfig {
    */
   templateDir?: string
   /**
-   * Git remote URL pattern to validate against (e.g. 'github.com/renseiai/agentfactory').
+   * Git remote URL pattern to validate against (e.g. 'github.com/RenseiAI/donmai-libraries').
    * When set, the orchestrator validates that the git remote origin contains this pattern
    * at startup and before spawning agents. Supports both HTTPS and SSH URL formats.
    */

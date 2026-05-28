@@ -7,7 +7,7 @@ import { NextRequest, NextResponse } from 'next/server'
 
 /**
  * Minimal inline validation that mirrors WorkflowDefinitionSchema.
- * We avoid importing from @renseiai/agentfactory or zod directly so the
+ * We avoid importing from @donmai/core or zod directly so the
  * test works without those packages being built.
  */
 function inlineValidate(data: unknown): Record<string, unknown> {

@@ -1,11 +1,11 @@
-# @renseiai/plugin-linear
+# @donmai/plugin-linear
 
-Linear issue tracker integration for [AgentFactory](https://github.com/renseiai/agentfactory). Provides the Linear API client, agent sessions, status transitions, activity streaming, and work type routing.
+Linear issue tracker integration for [Donmai](https://github.com/RenseiAI/donmai-libraries). Provides the Linear API client, agent sessions, status transitions, activity streaming, and work type routing.
 
 ## Installation
 
 ```bash
-npm install @renseiai/plugin-linear
+npm install @donmai/plugin-linear
 ```
 
 ## Quick Start
@@ -13,7 +13,7 @@ npm install @renseiai/plugin-linear
 ### Linear Client
 
 ```typescript
-import { createLinearAgentClient } from '@renseiai/plugin-linear'
+import { createLinearAgentClient } from '@donmai/plugin-linear'
 
 const client = createLinearAgentClient({ apiKey: process.env.LINEAR_API_KEY! })
 
@@ -27,7 +27,7 @@ await client.createComment(issue.id, 'Work in progress...')
 Manage the lifecycle of an agent working on an issue:
 
 ```typescript
-import { createAgentSession } from '@renseiai/plugin-linear'
+import { createAgentSession } from '@donmai/plugin-linear'
 
 const session = createAgentSession({
   client: linearClient.linearClient,
@@ -67,7 +67,7 @@ import {
   defaultGeneratePrompt,
   defaultDetectWorkTypeFromPrompt,
   defaultGetPriority,
-} from '@renseiai/plugin-linear'
+} from '@donmai/plugin-linear'
 ```
 
 ## Key Exports
@@ -83,7 +83,7 @@ import {
 
 | Package | Description |
 |---------|-------------|
-| [@renseiai/agentfactory](https://www.npmjs.com/package/@renseiai/agentfactory) | Core orchestrator |
+| [@donmai/core](https://www.npmjs.com/package/@donmai/core) | Core orchestrator |
 | [@donmai/nextjs](https://www.npmjs.com/package/@donmai/nextjs) | Next.js webhook server |
 
 ## License

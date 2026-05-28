@@ -1,6 +1,6 @@
 # Getting Started
 
-This guide walks through setting up AgentFactory to process Linear issues with coding agents.
+This guide walks through setting up Donmai to process Linear issues with coding agents.
 
 ## Prerequisites
 
@@ -31,20 +31,20 @@ This creates a complete Next.js webhook server with all route handlers, middlewa
 
 ## Manual Installation
 
-If you prefer to add AgentFactory to an existing project:
+If you prefer to add Donmai to an existing project:
 
 ```bash
 # Webhook server (Next.js) — includes all route handlers
 npm install @donmai/nextjs
 
 # Core + Linear integration (for CLI-only usage)
-npm install @renseiai/agentfactory @renseiai/plugin-linear
+npm install @donmai/core @donmai/plugin-linear
 
 # Optional: CLI tools (orchestrator, worker, fleet)
 npm install @donmai/cli
 
 # Optional: Distributed workers (requires Redis)
-npm install @renseiai/agentfactory-server
+npm install @donmai/server
 ```
 
 ## Configuration
@@ -136,7 +136,7 @@ See [Configuration](./configuration.md) for the full reference.
 
 1. In Linear, go to **Settings > API > Webhooks**
 2. Click "New webhook" and configure:
-   - **Label:** AgentFactory (or any name)
+   - **Label:** Donmai (or any name)
    - **URL:** `https://your-app.example.com/webhook` (your deployed app URL + `/webhook`)
    - **Events:** Enable the following:
      - `AgentSession` — created, updated, prompted (triggers agent work)
@@ -159,7 +159,7 @@ Then trigger a test event in Linear (e.g., move an issue to Backlog). Check your
 
 #### OAuth Setup (Optional — Multi-Workspace)
 
-For teams managing multiple Linear workspaces from a single AgentFactory instance:
+For teams managing multiple Linear workspaces from a single Donmai instance:
 
 1. In Linear, go to **Settings > API > OAuth applications**
 2. Create a new OAuth app:
@@ -173,7 +173,7 @@ For teams managing multiple Linear workspaces from a single AgentFactory instanc
    ```
 4. OAuth tokens are stored in Redis (requires `REDIS_URL`) and auto-refreshed before expiration
 
-When an `organizationId` is present on a webhook event, AgentFactory checks Redis for a workspace-specific OAuth token before falling back to `LINEAR_ACCESS_TOKEN`.
+When an `organizationId` is present on a webhook event, Donmai checks Redis for a workspace-specific OAuth token before falling back to `LINEAR_ACCESS_TOKEN`.
 
 #### Troubleshooting
 
@@ -243,7 +243,7 @@ The middleware handles API key authentication, rate limiting, and webhook signat
 ### Process a Single Issue
 
 ```typescript
-import { createOrchestrator } from '@renseiai/agentfactory'
+import { createOrchestrator } from '@donmai/core'
 
 const orchestrator = createOrchestrator({
   maxConcurrent: 1,

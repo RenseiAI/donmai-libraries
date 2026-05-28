@@ -18,12 +18,12 @@ If this project's docs conflict with `../donmai-architecture/`, the corpus wins.
 
 | Package | Path | Purpose |
 |---------|------|---------|
-| `@renseiai/agentfactory` | `packages/core` | Orchestrator, providers, crash recovery, deployment checker |
-| `@renseiai/plugin-linear` | `packages/linear` | Linear SDK client, agent sessions, webhook types |
-| `@renseiai/agentfactory-server` | `packages/server` | Work queue server for webhook-driven execution |
+| `@donmai/core` | `packages/core` | Orchestrator, providers, crash recovery, deployment checker |
+| `@donmai/plugin-linear` | `packages/linear` | Linear SDK client, agent sessions, webhook types |
+| `@donmai/server` | `packages/server` | Work queue server for webhook-driven execution |
 | `@donmai/nextjs` | `packages/nextjs` | Next.js webhook handlers and middleware |
-| `@renseiai/agentfactory-dashboard` | `packages/dashboard` | Fleet management dashboard UI |
-| `@renseiai/agentfactory-mcp-server` | `packages/mcp-server` | MCP server exposing fleet capabilities to external clients |
+| `@donmai/dashboard` | `packages/dashboard` | Fleet management dashboard UI |
+| `@donmai/mcp-server` | `packages/mcp-server` | MCP server exposing fleet capabilities to external clients |
 | `@donmai/code-intelligence` | `packages/code-intelligence` | Tree-sitter AST parsing, BM25 search, incremental indexing |
 | `@donmai/create-app` | `packages/create-app` | Project scaffolding CLI |
 | `@donmai/cli` | `packages/cli` | Orchestrator, worker, Linear CLI, and admin entry points |
@@ -312,7 +312,7 @@ pnpm orchestrator --project ProjectName --dry-run
 pnpm orchestrator --project ProjectName --max 2
 
 # Restrict to a specific git repository
-pnpm orchestrator --project ProjectName --repo github.com/renseiai/agentfactory
+pnpm orchestrator --project ProjectName --repo github.com/RenseiAI/donmai-libraries
 ```
 
 ## Repository-Scoped Orchestration
@@ -327,7 +327,7 @@ Checked into each repository to define allowed projects and repository identity:
 # Single-project repo
 apiVersion: v1
 kind: RepositoryConfig
-repository: github.com/renseiai/agentfactory
+repository: github.com/RenseiAI/donmai-libraries
 allowedProjects:
   - Agent
 

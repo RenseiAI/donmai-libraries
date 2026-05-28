@@ -172,7 +172,7 @@ const AGENT_ENV_BLOCKLIST = [
  * Validate that the git remote origin URL contains the expected repository pattern.
  * Supports both HTTPS (github.com/org/repo) and SSH (git@github.com:org/repo) formats.
  *
- * @param expectedRepo - The expected repository pattern (e.g. 'github.com/renseiai/agentfactory')
+ * @param expectedRepo - The expected repository pattern (e.g. 'github.com/RenseiAI/donmai-libraries')
  * @param cwd - Working directory to run git commands in
  * @throws Error if the git remote does not match the expected repository
  */

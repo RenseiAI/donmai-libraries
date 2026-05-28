@@ -18,7 +18,7 @@ import {
   createOrchestrator,
   createProvider,
   resolveProviderName,
-} from '@renseiai/agentfactory'
+} from '@donmai/core'
 
 const project = process.argv[2]
 if (!project) {

@@ -1,6 +1,6 @@
 # MCP Server
 
-The `@renseiai/agentfactory-mcp-server` package exposes AgentFactory fleet capabilities as an [MCP (Model Context Protocol)](https://modelcontextprotocol.io) server. Any MCP-aware client can interact with the fleet — submit tasks, check status, view costs, and control agents.
+The `@donmai/mcp-server` package exposes Donmai fleet capabilities as an [MCP (Model Context Protocol)](https://modelcontextprotocol.io) server. Any MCP-aware client can interact with the fleet — submit tasks, check status, view costs, and control agents.
 
 ## Quick Start
 
@@ -146,7 +146,7 @@ Or for remote HTTP access:
 
 ### Spring AI Client
 
-Connect a Spring AI application to the AgentFactory fleet:
+Connect a Spring AI application to the Donmai fleet:
 
 ```java
 @Configuration
@@ -164,8 +164,8 @@ public class McpConfig {
 ### Programmatic (Node.js)
 
 ```typescript
-import { createFleetMcpServer } from '@renseiai/agentfactory-mcp-server'
-import { startHttpTransport, startStdioTransport } from '@renseiai/agentfactory-mcp-server'
+import { createFleetMcpServer } from '@donmai/mcp-server'
+import { startHttpTransport, startStdioTransport } from '@donmai/mcp-server'
 
 const server = createFleetMcpServer()
 

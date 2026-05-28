@@ -1,13 +1,13 @@
 ---
 name: Bug Report
-about: Report a bug in AgentFactory
+about: Report a bug in Donmai
 title: ''
 labels: bug
 assignees: ''
 ---
 
 **Package**
-Which package is affected? (e.g., `@renseiai/agentfactory`, `@donmai/nextjs`)
+Which package is affected? (e.g., `@donmai/core`, `@donmai/nextjs`)
 
 **Describe the bug**
 A clear description of what the bug is.

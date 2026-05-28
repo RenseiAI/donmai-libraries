@@ -1,6 +1,6 @@
 # @donmai/cli
 
-CLI tools for [AgentFactory](https://github.com/renseiai/agentfactory). Run a local orchestrator, remote workers, worker fleets, and queue management.
+CLI tools for [Donmai](https://github.com/RenseiAI/donmai-libraries). Run a local orchestrator, remote workers, worker fleets, and queue management.
 
 ## Installation
 
@@ -114,8 +114,8 @@ Each function accepts a config object and returns a Promise — use them to buil
 
 | Package | Description |
 |---------|-------------|
-| [@renseiai/agentfactory](https://www.npmjs.com/package/@renseiai/agentfactory) | Core orchestrator |
-| [@renseiai/agentfactory-server](https://www.npmjs.com/package/@renseiai/agentfactory-server) | Redis work queue |
+| [@donmai/core](https://www.npmjs.com/package/@donmai/core) | Core orchestrator |
+| [@donmai/server](https://www.npmjs.com/package/@donmai/server) | Redis work queue |
 | [@donmai/nextjs](https://www.npmjs.com/package/@donmai/nextjs) | Next.js webhook server |
 
 ## License

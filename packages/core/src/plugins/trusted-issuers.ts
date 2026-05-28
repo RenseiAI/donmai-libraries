@@ -124,7 +124,7 @@ export const PLACEHOLDER_TRUSTED_ISSUERS: TrustedIssuerSet = {
     // Example shape — uncomment + populate at deployment.
     // {
     //   name: 'Rensei Official Plugin Workflow',
-    //   subject: 'https://github.com/RenseiAI/agentfactory/.github/workflows/plugin-sign.yml@refs/heads/main',
+    //   subject: 'https://github.com/RenseiAI/donmai-libraries/.github/workflows/plugin-sign.yml@refs/heads/main',
     //   algorithms: ['sigstore'],
     //   notes: 'Plugins published from the Rensei monorepo via GH Actions OIDC.',
     // },

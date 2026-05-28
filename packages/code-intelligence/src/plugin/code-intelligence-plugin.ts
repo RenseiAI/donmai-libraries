@@ -12,7 +12,7 @@ import { InMemoryStore } from '../memory/memory-store.js'
 import type { FileReservationDelegate } from './file-reservation-delegate.js'
 
 // ---------------------------------------------------------------------------
-// Tool plugin types (structurally identical to @renseiai/agentfactory)
+// Tool plugin types (structurally identical to @donmai/core)
 // Defined locally to avoid compile-time dependency on core.
 // ---------------------------------------------------------------------------
 

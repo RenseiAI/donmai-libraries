@@ -39,7 +39,7 @@ import type {
 
 /**
  * Structurally identical to ToolPlugin in core — defined locally to avoid
- * compile-time dependency on @renseiai/agentfactory. Mirrors the contract
+ * compile-time dependency on @donmai/core. Mirrors the contract
  * used by codeIntelligencePlugin and the memory plugin.
  */
 export interface ArchToolPlugin {

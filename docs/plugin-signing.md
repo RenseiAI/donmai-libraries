@@ -1,6 +1,6 @@
 # Plugin Signing (Sigstore)
 
-Default-signed plugin posture for the AgentFactory platform. Productionizes
+Default-signed plugin posture for the Donmai platform. Productionizes
 the signing CI scaffolding, including keyless Sigstore signing and
 trusted-issuer verification.
 
@@ -78,7 +78,7 @@ the plugin-loader mode handles the trusted-issuer gate.
 Configure on the loader:
 
 ```ts
-import { PluginLoader } from '@renseiai/agentfactory'
+import { PluginLoader } from '@donmai/core'
 
 const loader = new PluginLoader({
   trustMode: 'strict',
@@ -88,7 +88,7 @@ const loader = new PluginLoader({
       {
         name: 'Rensei Plugin Sign Workflow',
         subject:
-          'https://github.com/RenseiAI/agentfactory/.github/workflows/plugin-sign.yml@refs/heads/main',
+          'https://github.com/RenseiAI/donmai-libraries/.github/workflows/plugin-sign.yml@refs/heads/main',
         algorithms: ['sigstore'],
       },
     ],
@@ -100,7 +100,7 @@ const loader = new PluginLoader({
 Or set the module-level singleton at startup:
 
 ```ts
-import { setTrustedIssuerSet } from '@renseiai/agentfactory'
+import { setTrustedIssuerSet } from '@donmai/core'
 
 setTrustedIssuerSet({
   mode: 'production',
@@ -122,8 +122,8 @@ Operators must:
 1. Populate the trusted-issuer list with the OIDC subjects of the GitHub
    Actions workflow(s) that publish official Rensei plugins:
    ```
-   https://github.com/RenseiAI/agentfactory/.github/workflows/plugin-sign.yml@refs/heads/main
-   https://github.com/RenseiAI/agentfactory/.github/workflows/plugin-sign.yml@refs/tags/plugin-vercel-v*
+   https://github.com/RenseiAI/donmai-libraries/.github/workflows/plugin-sign.yml@refs/heads/main
+   https://github.com/RenseiAI/donmai-libraries/.github/workflows/plugin-sign.yml@refs/tags/plugin-vercel-v*
    ```
 2. Add any long-lived publisher DIDs used for non-OIDC channels:
    ```
@@ -187,7 +187,7 @@ gate before the trust check is reached.
 Run:
 
 ```sh
-pnpm --filter @renseiai/agentfactory test -- sigstore-signing
+pnpm --filter @donmai/core test -- sigstore-signing
 ```
 
 ## Activation checklist

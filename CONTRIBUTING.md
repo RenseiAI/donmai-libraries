@@ -8,8 +8,8 @@ Thanks for your interest in contributing! This guide will help you get started.
 
 ```bash
 # Clone the repo
-git clone https://github.com/renseiai/agentfactory.git
-cd agentfactory
+git clone https://github.com/RenseiAI/donmai-libraries.git
+cd donmai-libraries
 
 # Install dependencies
 pnpm install
@@ -28,15 +28,15 @@ pnpm test
 
 ```
 packages/
-  core/                @renseiai/agentfactory                       — orchestrator, providers, crash recovery
-  linear/              @renseiai/plugin-linear                      — Linear issue tracker integration
-  server/              @renseiai/agentfactory-server                — Redis queues, session storage, worker pool
+  core/                @donmai/core                  — orchestrator, providers, crash recovery
+  linear/              @donmai/plugin-linear         — Linear issue tracker integration
+  server/              @donmai/server                — Redis queues, session storage, worker pool
   cli/                 @donmai/cli                   — CLI tools (orchestrator, worker, fleet)
   nextjs/              @donmai/nextjs                — Next.js route handlers, webhook, middleware
-  dashboard/           @renseiai/agentfactory-dashboard             — Fleet management dashboard UI
-  mcp-server/          @renseiai/agentfactory-mcp-server            — MCP server for external clients
+  dashboard/           @donmai/dashboard             — Fleet management dashboard UI
+  mcp-server/          @donmai/mcp-server            — MCP server for external clients
   code-intelligence/   @donmai/code-intelligence     — Tree-sitter AST parsing, BM25 search
-  create-app/          @donmai/create-app                           — Project scaffolding tool
+  create-app/          @donmai/create-app            — Project scaffolding tool
 
 docs/          Documentation
 examples/      Working code samples
@@ -71,10 +71,10 @@ Turborepo handles building packages in the correct order.
 pnpm --filter @donmai/nextjs build
 
 # Typecheck one package
-pnpm --filter @renseiai/agentfactory-server typecheck
+pnpm --filter @donmai/server typecheck
 
 # Watch mode for tests
-pnpm --filter @renseiai/agentfactory test:watch
+pnpm --filter @donmai/core test:watch
 ```
 
 ### ESM Build Pattern
@@ -176,7 +176,7 @@ this.toolRegistry.register(myPlugin)
 
 ## Reporting Issues
 
-Use [GitHub Issues](https://github.com/renseiai/agentfactory/issues) to report bugs or request features. Include:
+Use [GitHub Issues](https://github.com/RenseiAI/donmai-libraries/issues) to report bugs or request features. Include:
 
 - Steps to reproduce (for bugs)
 - Expected vs actual behavior

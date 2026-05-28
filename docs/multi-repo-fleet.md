@@ -1,6 +1,6 @@
 # Multi-Repo Fleet Pattern
 
-Run a shared AgentFactory governor with per-repo workers across multiple repositories.
+Run a shared Donmai governor with per-repo workers across multiple repositories.
 
 ## Architecture
 
@@ -130,12 +130,12 @@ GOVERNOR_PROJECTS=Agent,Social,Family,YourProject
 
 Redeploy the governor for the change to take effect.
 
-### 4. Install AgentFactory packages
+### 4. Install Donmai packages
 
 **TypeScript projects:**
 
 ```bash
-npm install @renseiai/agentfactory @renseiai/plugin-linear @donmai/cli @renseiai/agentfactory-server
+npm install @donmai/core @donmai/plugin-linear @donmai/cli @donmai/server
 ```
 
 Or scaffold a full project with the CLI:
@@ -238,11 +238,11 @@ Set on the shared governor deployment only:
 
 ## Non-TypeScript Projects
 
-AgentFactory's worker and governor are Node.js processes, but the agents they spawn can work on any language. For non-TypeScript repos (C++, Rust, Python, etc.), the setup differs slightly.
+Donmai's worker and governor are Node.js processes, but the agents they spawn can work on any language. For non-TypeScript repos (C++, Rust, Python, etc.), the setup differs slightly.
 
 ### Install Node.js tooling alongside your project
 
-The worker process requires Node.js. Install AgentFactory's CLI tools either globally or in a dedicated directory:
+The worker process requires Node.js. Install Donmai's CLI tools either globally or in a dedicated directory:
 
 ```bash
 # Option A: global install
@@ -323,7 +323,7 @@ If `af-linear` isn't on your PATH (e.g., installed locally), create a wrapper sc
 
 ```bash
 #!/usr/bin/env bash
-# af-linear — wrapper for AgentFactory Linear CLI
+# af-linear — wrapper for Donmai Linear CLI
 # Place in repo root or add to PATH
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"

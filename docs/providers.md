@@ -1,6 +1,6 @@
 # Providers
 
-AgentFactory abstracts coding agents behind a unified `AgentProvider` interface. This allows you to use different agents for different tasks and swap providers without changing orchestration logic.
+Donmai abstracts coding agents behind a unified `AgentProvider` interface. This allows you to use different agents for different tasks and swap providers without changing orchestration logic.
 
 ## Supported Providers
 
@@ -193,7 +193,7 @@ When `routing.enabled: true` in config, Thompson Sampling selects the optimal pr
 ### Programmatic Selection
 
 ```typescript
-import { createProvider, resolveProviderName } from '@renseiai/agentfactory'
+import { createProvider, resolveProviderName } from '@donmai/core'
 
 // Create a specific provider
 const claude = createProvider('claude')
@@ -287,7 +287,7 @@ query({ mcpServers: { 'af-linear': createSdkMcpServer({ tools: [...] }) } })
 
 Tool plugins only activate for the Claude provider. Non-Claude providers (Codex, Amp) continue using the Bash-based CLI -- their prompts receive the `{{linearCli}}` CLI instructions as before. This is controlled by the `useToolPlugins` template variable.
 
-**Codex** does not support in-process MCP servers. However, Codex agents can invoke MCP tools via the Codex CLI's own MCP server configuration. AgentFactory passively observes these calls and maps them to normalized `tool_use` / `tool_result` events (item type `mcpToolCall` in App Server mode, `mcp_tool_call` in Exec mode). See [`docs/codex-guide.md`](codex-guide.md) for details on Codex capabilities and limitations.
+**Codex** does not support in-process MCP servers. However, Codex agents can invoke MCP tools via the Codex CLI's own MCP server configuration. Donmai passively observes these calls and maps them to normalized `tool_use` / `tool_result` events (item type `mcpToolCall` in App Server mode, `mcp_tool_call` in Exec mode). See [`docs/codex-guide.md`](codex-guide.md) for details on Codex capabilities and limitations.
 
 ### Available Plugins
 
@@ -300,8 +300,8 @@ Tool plugins only activate for the Claude provider. Non-Claude providers (Codex,
 The orchestrator automatically registers built-in plugins. To add custom plugins programmatically:
 
 ```typescript
-import { ToolRegistry, linearPlugin } from '@renseiai/agentfactory'
-import type { ToolPlugin } from '@renseiai/agentfactory'
+import { ToolRegistry, linearPlugin } from '@donmai/core'
+import type { ToolPlugin } from '@donmai/core'
 
 const myPlugin: ToolPlugin = {
   name: 'my-tools',
@@ -330,7 +330,7 @@ To add support for a new coding agent:
 3. Return an `AgentHandle` with the async iterable stream
 
 ```typescript
-import type { AgentProvider, AgentSpawnConfig, AgentHandle, AgentEvent } from '@renseiai/agentfactory'
+import type { AgentProvider, AgentSpawnConfig, AgentHandle, AgentEvent } from '@donmai/core'
 
 class MyProvider implements AgentProvider {
   readonly name = 'my-agent' as any // Extend AgentProviderName first

@@ -6,7 +6,7 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/RenseiAI/agentfactory.git",
+    "url": "git+https://github.com/RenseiAI/donmai-libraries.git",
     "directory": "packages/kits/default-ts-nextjs"
   },
   "homepage": "https://rensei.ai",

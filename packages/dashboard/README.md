@@ -1,24 +1,24 @@
-# @renseiai/agentfactory-dashboard
+# @donmai/dashboard
 
-A self-contained React component library for AgentFactory fleet management. Provides a complete dashboard UI with real-time data fetching, a dark design system with orange accent, and four page-level components.
+A self-contained React component library for Donmai fleet management. Provides a complete dashboard UI with real-time data fetching, a dark design system with orange accent, and four page-level components.
 
 ## Deploy
 
 Want to run the dashboard without building from source? Use the one-click deploy template:
 
-[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https%3A%2F%2Fgithub.com%2Frenseiai%2Fagentfactory%2Ftree%2Fmain%2Ftemplates%2Fdashboard&project-name=agentfactory-dashboard&env=LINEAR_ACCESS_TOKEN,LINEAR_WEBHOOK_SECRET,REDIS_URL&envDescription=Environment%20variables%20needed%20for%20AgentFactory%20Dashboard&envLink=https%3A%2F%2Fgithub.com%2Frenseiai%2Fagentfactory%2Ftree%2Fmain%2Ftemplates%2Fdashboard%23environment-variables)
+[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https%3A%2F%2Fgithub.com%2FRenseiAI%2Fdonmai-libraries%2Ftree%2Fmain%2Ftemplates%2Fdashboard&project-name=donmai-dashboard&env=LINEAR_ACCESS_TOKEN,LINEAR_WEBHOOK_SECRET,REDIS_URL&envDescription=Environment%20variables%20needed%20for%20Donmai%20Dashboard&envLink=https%3A%2F%2Fgithub.com%2FRenseiAI%2Fdonmai-libraries%2Ftree%2Fmain%2Ftemplates%2Fdashboard%23environment-variables)
 [![Deploy on Railway](https://railway.com/button.svg)](https://railway.com/deploy/A7hIuF?referralCode=MwgIWL)
 
 > Railway includes Redis automatically. Vercel requires adding [Vercel KV](https://vercel.com/docs/storage/vercel-kv) or [Upstash Redis](https://upstash.com/) after deployment.
 
-See the [dashboard template](https://github.com/renseiai/agentfactory/tree/main/templates/dashboard) for full setup instructions.
+See the [dashboard template](https://github.com/RenseiAI/donmai-libraries/tree/main/templates/dashboard) for full setup instructions.
 
 ## Installation
 
 ```bash
-npm install @renseiai/agentfactory-dashboard
+npm install @donmai/dashboard
 # or
-pnpm add @renseiai/agentfactory-dashboard
+pnpm add @donmai/dashboard
 ```
 
 ### Peer Dependencies
@@ -35,7 +35,7 @@ The package distributes TypeScript source — no build step. Add it to `transpil
 ```typescript
 // next.config.ts
 const nextConfig: NextConfig = {
-  transpilePackages: ['@renseiai/agentfactory-dashboard'],
+  transpilePackages: ['@donmai/dashboard'],
 }
 ```
 
@@ -45,18 +45,18 @@ Import the globals CSS and use the tailwind preset:
 
 ```css
 /* globals.css */
-@import '@renseiai/agentfactory-dashboard/styles';
+@import '@donmai/dashboard/styles';
 ```
 
 ```typescript
 // tailwind.config.ts
-import dashboardPreset from '@renseiai/agentfactory-dashboard/tailwind-preset'
+import dashboardPreset from '@donmai/dashboard/tailwind-preset'
 
 export default {
   presets: [dashboardPreset],
   content: [
     './src/**/*.{ts,tsx}',
-    './node_modules/@renseiai/agentfactory-dashboard/src/**/*.{ts,tsx}',
+    './node_modules/@donmai/dashboard/src/**/*.{ts,tsx}',
   ],
 }
 ```
@@ -66,7 +66,7 @@ export default {
 Skip the preset and globals import. Instead, register the design tokens directly in your `globals.css`:
 
 ```css
-@source "../../node_modules/@renseiai/agentfactory-dashboard/src";
+@source "../../node_modules/@donmai/dashboard/src";
 
 @theme {
   /* Dashboard colors */
@@ -125,7 +125,7 @@ import {
   PipelinePage,
   SessionPage,
   SettingsPage,
-} from '@renseiai/agentfactory-dashboard'
+} from '@donmai/dashboard'
 ```
 
 | Component | Route | Description |
@@ -144,7 +144,7 @@ Wrap each page in `DashboardShell` for the sidebar layout:
 // app/page.tsx
 'use client'
 
-import { DashboardShell, DashboardPage as FleetPage } from '@renseiai/agentfactory-dashboard'
+import { DashboardShell, DashboardPage as FleetPage } from '@donmai/dashboard'
 import { usePathname } from 'next/navigation'
 
 export default function Home() {
@@ -161,7 +161,7 @@ export default function Home() {
 // app/sessions/[id]/page.tsx
 'use client'
 
-import { DashboardShell, SessionPage } from '@renseiai/agentfactory-dashboard'
+import { DashboardShell, SessionPage } from '@donmai/dashboard'
 import { usePathname, useParams } from 'next/navigation'
 
 export default function SessionDetail() {
@@ -178,7 +178,7 @@ export default function SessionDetail() {
 ## Layout Components
 
 ```tsx
-import { DashboardShell, Sidebar, TopBar, BottomBar } from '@renseiai/agentfactory-dashboard'
+import { DashboardShell, Sidebar, TopBar, BottomBar } from '@donmai/dashboard'
 ```
 
 - **DashboardShell** — Full layout with sidebar, top bar, bottom bar, and mobile hamburger menu
@@ -189,27 +189,27 @@ import { DashboardShell, Sidebar, TopBar, BottomBar } from '@renseiai/agentfacto
 ## Fleet Components
 
 ```tsx
-import { FleetOverview, AgentCard, StatCard, StatusDot, ProviderIcon } from '@renseiai/agentfactory-dashboard'
+import { FleetOverview, AgentCard, StatCard, StatusDot, ProviderIcon } from '@donmai/dashboard'
 ```
 
 ## Pipeline Components
 
 ```tsx
-import { PipelineView, PipelineColumn, PipelineCard } from '@renseiai/agentfactory-dashboard'
+import { PipelineView, PipelineColumn, PipelineCard } from '@donmai/dashboard'
 ```
 
 ## Session Components
 
 ```tsx
-import { SessionList, SessionDetail, SessionTimeline, TokenChart } from '@renseiai/agentfactory-dashboard'
+import { SessionList, SessionDetail, SessionTimeline, TokenChart } from '@donmai/dashboard'
 ```
 
 ## Data Hooks
 
-SWR-based hooks that fetch from AgentFactory API routes with automatic 5-second refresh:
+SWR-based hooks that fetch from Donmai API routes with automatic 5-second refresh:
 
 ```tsx
-import { useStats, useSessions, useWorkers } from '@renseiai/agentfactory-dashboard'
+import { useStats, useSessions, useWorkers } from '@donmai/dashboard'
 ```
 
 | Hook | Endpoint | Returns |
@@ -221,8 +221,8 @@ import { useStats, useSessions, useWorkers } from '@renseiai/agentfactory-dashbo
 ## Utilities
 
 ```tsx
-import { cn, formatDuration, formatCost, formatTokens, formatRelativeTime } from '@renseiai/agentfactory-dashboard'
-import { getWorkTypeConfig, getStatusConfig } from '@renseiai/agentfactory-dashboard'
+import { cn, formatDuration, formatCost, formatTokens, formatRelativeTime } from '@donmai/dashboard'
+import { getWorkTypeConfig, getStatusConfig } from '@donmai/dashboard'
 ```
 
 ## UI Primitives
@@ -233,7 +233,7 @@ Re-exports of Radix-based primitives styled for the dashboard:
 import {
   Button, Card, Badge, Skeleton, Separator,
   ScrollArea, Tabs, Tooltip, Sheet, DropdownMenu,
-} from '@renseiai/agentfactory-dashboard'
+} from '@donmai/dashboard'
 ```
 
 ## Design System

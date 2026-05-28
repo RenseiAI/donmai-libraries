@@ -1,5 +1,5 @@
 blank_issues_enabled: true
 contact_links:
   - name: Documentation
-    url: https://github.com/renseiai/agentfactory/blob/main/docs/getting-started.md
+    url: https://github.com/RenseiAI/donmai-libraries/blob/main/docs/getting-started.md
     about: Check the docs before opening an issue

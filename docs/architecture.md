@@ -1,6 +1,6 @@
 # Architecture
 
-AgentFactory is a multi-agent orchestrator that turns issue backlogs into shipped code. This document covers the system architecture and how the components fit together.
+Donmai is a multi-agent orchestrator that turns issue backlogs into shipped code. This document covers the system architecture and how the components fit together.
 
 ## System Overview
 
@@ -32,17 +32,17 @@ AgentFactory is a multi-agent orchestrator that turns issue backlogs into shippe
 
 ## Package Architecture
 
-AgentFactory is split into nine packages:
+Donmai is split into nine packages:
 
 | Package | Responsibility |
 |---------|---------------|
-| `@renseiai/agentfactory` | Core orchestrator, provider abstraction, crash recovery |
-| `@renseiai/plugin-linear` | Linear API integration, sessions, status transitions |
-| `@renseiai/agentfactory-server` | Redis work queue, session storage, distributed workers |
+| `@donmai/core` | Core orchestrator, provider abstraction, crash recovery |
+| `@donmai/plugin-linear` | Linear API integration, sessions, status transitions |
+| `@donmai/server` | Redis work queue, session storage, distributed workers |
 | `@donmai/cli` | CLI tools for local and remote operation |
 | `@donmai/nextjs` | Next.js route handlers, webhook processor, OAuth, middleware |
-| `@renseiai/agentfactory-dashboard` | Fleet management dashboard UI |
-| `@renseiai/agentfactory-mcp-server` | MCP server exposing fleet capabilities to external clients |
+| `@donmai/dashboard` | Fleet management dashboard UI |
+| `@donmai/mcp-server` | MCP server exposing fleet capabilities to external clients |
 | `@donmai/code-intelligence` | Tree-sitter AST parsing, BM25 search, incremental indexing |
 | `@donmai/create-app` | Project scaffolding tool (`npx @donmai/create-app`) |
 
@@ -52,21 +52,21 @@ AgentFactory is split into nine packages:
 @donmai/create-app (scaffolding, no runtime deps)
 
 @donmai/nextjs
-  ├── @renseiai/agentfactory (core)
-  ├── @renseiai/plugin-linear
-  └── @renseiai/agentfactory-server
+  ├── @donmai/core (core)
+  ├── @donmai/plugin-linear
+  └── @donmai/server
 
 @donmai/cli
-  ├── @renseiai/agentfactory (core)
-  ├── @renseiai/plugin-linear
-  └── @renseiai/agentfactory-server
+  ├── @donmai/core (core)
+  ├── @donmai/plugin-linear
+  └── @donmai/server
 
-@renseiai/agentfactory-server
-  ├── @renseiai/agentfactory (core)
-  └── @renseiai/plugin-linear
+@donmai/server
+  ├── @donmai/core (core)
+  └── @donmai/plugin-linear
 ```
 
-For a full webhook-driven setup, install `@donmai/nextjs` (it pulls in all dependencies). For CLI-only local orchestration, install `@renseiai/agentfactory` and `@renseiai/plugin-linear`.
+For a full webhook-driven setup, install `@donmai/nextjs` (it pulls in all dependencies). For CLI-only local orchestration, install `@donmai/core` and `@donmai/plugin-linear`.
 
 ## Core Components
 
@@ -222,7 +222,7 @@ Additional coordination types exist for parent issues with sub-issues:
 
 ## Crash Recovery
 
-AgentFactory includes built-in crash recovery:
+Donmai includes built-in crash recovery:
 
 1. **State persistence** — each worktree contains `.agent/state.json` with session state
 2. **Heartbeat monitoring** — agents write `.agent/heartbeat.json` every 10 seconds
@@ -242,7 +242,7 @@ State file structure:
 
 ## Inactivity Timeout
 
-Instead of fixed session timeouts, AgentFactory uses inactivity-based monitoring:
+Instead of fixed session timeouts, Donmai uses inactivity-based monitoring:
 
 - Each agent tracks `lastActivityAt` from provider events
 - A background timer checks all agents periodically
@@ -511,7 +511,7 @@ See [Code Intelligence](./code-intelligence.md) for tool usage and configuration
 
 ## Distributed Architecture
 
-For horizontal scaling, AgentFactory supports a coordinator + worker topology:
+For horizontal scaling, Donmai supports a coordinator + worker topology:
 
 ```
 ┌─────────────────┐     ┌──────────┐     ┌──────────────────┐

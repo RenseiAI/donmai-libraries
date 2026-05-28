@@ -1,6 +1,6 @@
 # Configuration Reference
 
-Complete reference for all AgentFactory configuration options.
+Complete reference for all Donmai configuration options.
 
 ## Environment Variables
 
@@ -332,7 +332,7 @@ mergeDriver: mergiraf              # Syntax-aware merging (default: "default")
 | `default` | Standard git line-based merge (the default) |
 | `mergiraf` | Syntax-aware merging via [mergiraf](https://mergiraf.org/) for supported file types |
 
-When set to `mergiraf`, AgentFactory configures the worktree's `.gitattributes` and `.git/config` to use mergiraf as a custom merge driver. This reduces merge conflicts in structured files (TypeScript, JSON, YAML, etc.). See the [mergiraf setup guide](./guides/mergiraf-setup.md) for installation instructions.
+When set to `mergiraf`, Donmai configures the worktree's `.gitattributes` and `.git/config` to use mergiraf as a custom merge driver. This reduces merge conflicts in structured files (TypeScript, JSON, YAML, etc.). See the [mergiraf setup guide](./guides/mergiraf-setup.md) for installation instructions.
 
 ### `packageManager:` — Package Manager
 
@@ -605,7 +605,7 @@ When an `organizationId` is provided, it checks Redis for a stored OAuth token (
 ### `createOrchestrator(config)`
 
 ```typescript
-import { createOrchestrator } from '@renseiai/agentfactory'
+import { createOrchestrator } from '@donmai/core'
 
 const orchestrator = createOrchestrator({
   provider: myProvider,              // Agent provider instance
@@ -690,7 +690,7 @@ This moves active worktrees to the new sibling directory and updates git worktre
 [Worktrunk](https://github.com/nicholasgasior/worktrunk) (`wt`, MIT, Rust, v0.31+) uses the same `../{repoName}.wt/` sibling directory pattern by default. The two tools complement each other:
 
 - **`wt`** -- manual worktree management (create, list, switch, clean up)
-- **AgentFactory** -- automated worktree management for orchestrated agent fleets
+- **Donmai** -- automated worktree management for orchestrated agent fleets
 
 They work side by side in the same directory without conflict. `wt` is recommended as a companion tool for manual worktree operations when developing alongside an agent fleet.
 

@@ -1,8 +1,8 @@
-# @renseiai/architectural-intelligence
+# @donmai/architectural-intelligence
 
 System-level synthesis of patterns, conventions, decisions, and drift across a codebase.
 
-Part of the [Rensei AgentFactory](https://github.com/RenseiAI/agentfactory) toolchain.
+Part of the [Donmai](https://github.com/RenseiAI/donmai-libraries) toolchain.
 
 ## What it does
 
@@ -29,7 +29,7 @@ The package ships:
 ## Installation
 
 ```bash
-pnpm add @renseiai/architectural-intelligence
+pnpm add @donmai/architectural-intelligence
 ```
 
 Node >= 22 required.
@@ -41,7 +41,7 @@ import {
   SqliteArchitecturalIntelligence,
   runObservationPass,
   assessChange,
-} from '@renseiai/architectural-intelligence'
+} from '@donmai/architectural-intelligence'
 
 // 1. Open or create the per-tenant store
 const store = new SqliteArchitecturalIntelligence({ dbPath: '.donmai/arch.db' })
@@ -61,10 +61,10 @@ if (drift.driftScore > drift.policy.maxDrift) {
 
 ## Workflow verb integration
 
-For platform consumers that drive AgentFactory through the workflow engine, register the `assess-change` verb:
+For platform consumers that drive Donmai through the workflow engine, register the `assess-change` verb:
 
 ```ts
-import { registerArchitectureVerbs } from '@renseiai/architectural-intelligence'
+import { registerArchitectureVerbs } from '@donmai/architectural-intelligence'
 
 registerArchitectureVerbs(verbRegistry)
 ```
@@ -84,7 +84,7 @@ Provide a `transaction` runner on your adapter. The reference postgres-js helper
 
 ```ts
 import postgres from 'postgres'
-import { adapterFromPostgresJs, PostgresArchitecturalIntelligence } from '@renseiai/architectural-intelligence'
+import { adapterFromPostgresJs, PostgresArchitecturalIntelligence } from '@donmai/architectural-intelligence'
 
 const sql = postgres(process.env.DATABASE_URL!)
 const arch = new PostgresArchitecturalIntelligence({
@@ -101,7 +101,7 @@ When the adapter does not expose `transaction`, the SDK falls back to plain quer
 Apply this DDL once per database (via your migration tool of choice — drizzle, dbmate, sqitch, etc.). The SDK does NOT run DDL itself.
 
 ```sql
--- Multi-tenant RLS for @renseiai/architectural-intelligence
+-- Multi-tenant RLS for @donmai/architectural-intelligence
 ALTER TABLE observations ENABLE ROW LEVEL SECURITY;
 ALTER TABLE graph_nodes  ENABLE ROW LEVEL SECURITY;
 
@@ -129,7 +129,7 @@ Requirements:
 
 ## Status
 
-Consumed at runtime by [`@renseiai/agentfactory`](https://www.npmjs.com/package/@renseiai/agentfactory) (orchestrator + context injection).
+Consumed at runtime by [`@donmai/core`](https://www.npmjs.com/package/@donmai/core) (orchestrator + context injection).
 
 ## License
 

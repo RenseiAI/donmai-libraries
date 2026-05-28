@@ -10,12 +10,12 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/RenseiAI/agentfactory.git",
+    "url": "git+https://github.com/RenseiAI/donmai-libraries.git",
     "directory": "packages/create-app"
   },
-  "homepage": "https://github.com/RenseiAI/agentfactory/tree/main/packages/create-app",
+  "homepage": "https://github.com/RenseiAI/donmai-libraries/tree/main/packages/create-app",
   "bugs": {
-    "url": "https://github.com/RenseiAI/agentfactory/issues"
+    "url": "https://github.com/RenseiAI/donmai-libraries/issues"
   },
   "publishConfig": {
     "access": "public"

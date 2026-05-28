@@ -20,7 +20,7 @@ import type { Observation } from './observations.js'
 
 /**
  * Structurally identical to ToolPlugin in core — defined locally
- * to avoid compile-time dependency on @renseiai/agentfactory.
+ * to avoid compile-time dependency on @donmai/core.
  */
 export interface MemoryToolPlugin {
   name: string

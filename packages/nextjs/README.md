@@ -1,6 +1,6 @@
 # @donmai/nextjs
 
-Next.js route handlers, webhook processor, middleware, and OAuth for [AgentFactory](https://github.com/renseiai/agentfactory). Drop-in API routes that turn a Next.js app into a full agent fleet server.
+Next.js route handlers, webhook processor, middleware, and OAuth for [Donmai](https://github.com/RenseiAI/donmai-libraries). Drop-in API routes that turn a Next.js app into a full agent fleet server.
 
 ## Installation
 
@@ -110,7 +110,7 @@ const routes = createAllRoutes({
 When `governorMode` is `event-bridge` or `governor-only`, webhook handlers publish events to a `GovernorEventBus`. Wire the bus at server startup:
 
 ```typescript
-import { RedisEventBus } from '@renseiai/agentfactory-server'
+import { RedisEventBus } from '@donmai/server'
 import { setGovernorEventBus } from '@donmai/nextjs'
 
 const eventBus = new RedisEventBus()
@@ -149,9 +149,9 @@ const { middleware } = createAgentFactoryMiddleware({
 
 | Package | Description |
 |---------|-------------|
-| [@renseiai/agentfactory](https://www.npmjs.com/package/@renseiai/agentfactory) | Core orchestrator |
-| [@renseiai/plugin-linear](https://www.npmjs.com/package/@renseiai/plugin-linear) | Linear integration |
-| [@renseiai/agentfactory-server](https://www.npmjs.com/package/@renseiai/agentfactory-server) | Redis infrastructure |
+| [@donmai/core](https://www.npmjs.com/package/@donmai/core) | Core orchestrator |
+| [@donmai/plugin-linear](https://www.npmjs.com/package/@donmai/plugin-linear) | Linear integration |
+| [@donmai/server](https://www.npmjs.com/package/@donmai/server) | Redis infrastructure |
 | [@donmai/cli](https://www.npmjs.com/package/@donmai/cli) | CLI tools |
 
 ## License

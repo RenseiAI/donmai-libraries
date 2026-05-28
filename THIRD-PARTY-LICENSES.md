@@ -13,7 +13,7 @@ allowlist (`MIT`, `Apache-2.0`, `BSD-*`, `ISC`, etc.) and require manual review.
 | **Actual license** | Proprietary — "All rights reserved" |
 | **License text** | `LICENSE.md`: *"© Anthropic PBC. All rights reserved. Use is subject to the Legal Agreements outlined here: https://code.claude.com/docs/en/legal-and-compliance."* |
 | **Governing terms** | [Anthropic Commercial Terms](https://www.anthropic.com/legal/commercial-terms) (API/Team/Enterprise) or [Consumer Terms](https://www.anthropic.com/legal/consumer-terms) (Free/Pro/Max) |
-| **Used by** | `@renseiai/agentfactory` (core), `@renseiai/plugin-linear` |
+| **Used by** | `@donmai/core` (core), `@donmai/plugin-linear` |
 | **CI status** | Excluded from automated license-checker via `--excludePackages` flag |
 | **Review status** | APPROVED (reviewed 2026-03-23, see SUP-1227) |
 

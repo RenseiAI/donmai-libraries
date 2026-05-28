@@ -101,14 +101,14 @@ describe('merge queue integration', () => {
       }
 
       // Simulate the PR URL parsing logic from the orchestrator
-      const pullRequestUrl = 'https://github.com/RenseiAI/agentfactory/pull/31'
+      const pullRequestUrl = 'https://github.com/RenseiAI/donmai-libraries/pull/31'
       const prMatch = pullRequestUrl.match(/\/([^/]+)\/([^/]+)\/pull\/(\d+)/)
       expect(prMatch).not.toBeNull()
 
       if (prMatch) {
         const [, owner, repo, prNum] = prMatch
         expect(owner).toBe('RenseiAI')
-        expect(repo).toBe('agentfactory')
+        expect(repo).toBe('donmai-libraries')
         expect(prNum).toBe('31')
 
         const canEnqueue = await mockAdapter.canEnqueue(owner, repo, parseInt(prNum, 10))
@@ -132,13 +132,13 @@ describe('merge queue integration', () => {
       }
 
       // Simulate the failure dequeue logic from the orchestrator
-      const pullRequestUrl = 'https://github.com/RenseiAI/agentfactory/pull/31'
+      const pullRequestUrl = 'https://github.com/RenseiAI/donmai-libraries/pull/31'
       const prMatch = pullRequestUrl.match(/\/([^/]+)\/([^/]+)\/pull\/(\d+)/)
 
       if (prMatch) {
         const [, owner, repo, prNum] = prMatch
         await mockAdapter.dequeue(owner, repo, parseInt(prNum, 10))
-        expect(mockAdapter.dequeue).toHaveBeenCalledWith('RenseiAI', 'agentfactory', 31)
+        expect(mockAdapter.dequeue).toHaveBeenCalledWith('RenseiAI', 'donmai-libraries', 31)
       }
     })
 

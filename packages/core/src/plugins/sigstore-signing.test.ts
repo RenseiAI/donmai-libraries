@@ -32,7 +32,7 @@ import type { PluginManifest } from './manifest.js'
 // ---------------------------------------------------------------------------
 
 const TRUSTED_SUBJECT =
-  'https://github.com/RenseiAI/agentfactory/.github/workflows/plugin-sign.yml@refs/heads/main'
+  'https://github.com/RenseiAI/donmai-libraries/.github/workflows/plugin-sign.yml@refs/heads/main'
 
 const RENSEI_TRUSTED_SET: TrustedIssuerSet = {
   mode: 'production',

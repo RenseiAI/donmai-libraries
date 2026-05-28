@@ -1,14 +1,14 @@
-# @renseiai/agentfactory-mcp-server
+# @donmai/mcp-server
 
-MCP server that exposes [AgentFactory](https://github.com/renseiai/agentfactory) fleet management capabilities to any MCP-aware client (Claude Desktop, Cursor, etc.).
+MCP server that exposes [Donmai](https://github.com/RenseiAI/donmai-libraries) fleet management capabilities to any MCP-aware client (Claude Desktop, Cursor, etc.).
 
 ## Installation
 
 ```bash
-npm install @renseiai/agentfactory-mcp-server
+npm install @donmai/mcp-server
 ```
 
-Requires a running Redis instance and the `@renseiai/agentfactory-server` package for session storage.
+Requires a running Redis instance and the `@donmai/server` package for session storage.
 
 ## Tools
 
@@ -34,7 +34,7 @@ Add to your `claude_desktop_config.json`:
   "mcpServers": {
     "agentfactory": {
       "command": "npx",
-      "args": ["@renseiai/agentfactory-mcp-server", "--stdio"]
+      "args": ["@donmai/mcp-server", "--stdio"]
     }
   }
 }
@@ -67,8 +67,8 @@ af-mcp-server --port 3100
 
 | Package | Description |
 |---------|-------------|
-| [@renseiai/agentfactory](https://www.npmjs.com/package/@renseiai/agentfactory) | Core orchestrator |
-| [@renseiai/agentfactory-server](https://www.npmjs.com/package/@renseiai/agentfactory-server) | Redis-backed work queue and session storage |
+| [@donmai/core](https://www.npmjs.com/package/@donmai/core) | Core orchestrator |
+| [@donmai/server](https://www.npmjs.com/package/@donmai/server) | Redis-backed work queue and session storage |
 | [@donmai/cli](https://www.npmjs.com/package/@donmai/cli) | CLI tools (worker, orchestrator) |
 | [@donmai/nextjs](https://www.npmjs.com/package/@donmai/nextjs) | Next.js webhook server |
 

@@ -15,7 +15,7 @@
   "services": {
     "web": {
       "source": {
-        "repo": "renseiai/agentfactory"
+        "repo": "RenseiAI/donmai-libraries"
       },
       "variables": {
         "LINEAR_ACCESS_TOKEN": {
