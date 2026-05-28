@@ -6,9 +6,9 @@
  * which depend on @donmai/server (Node.js crypto/ioredis).
  *
  * Use this subpath import in middleware.ts:
- *   import { createAgentFactoryMiddleware } from '@renseiai/agentfactory-nextjs/middleware'
+ *   import { createAgentFactoryMiddleware } from '@donmai/nextjs/middleware'
  *
- * Do NOT import from the main barrel ('@renseiai/agentfactory-nextjs')
+ * Do NOT import from the main barrel ('@donmai/nextjs')
  * in Edge Runtime — it pulls in Node.js-only modules.
  */
 

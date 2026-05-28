@@ -135,7 +135,7 @@ Redeploy the governor for the change to take effect.
 **TypeScript projects:**
 
 ```bash
-npm install @renseiai/agentfactory @renseiai/plugin-linear @renseiai/agentfactory-cli @renseiai/agentfactory-server
+npm install @renseiai/agentfactory @renseiai/plugin-linear @donmai/cli @renseiai/agentfactory-server
 ```
 
 Or scaffold a full project with the CLI:
@@ -246,13 +246,13 @@ The worker process requires Node.js. Install AgentFactory's CLI tools either glo
 
 ```bash
 # Option A: global install
-npm install -g @renseiai/agentfactory-cli
+npm install -g @donmai/cli
 
 # Option B: local tooling directory
 mkdir -p .donmai/tools
 cd .donmai/tools
 npm init -y
-npm install @renseiai/agentfactory-cli
+npm install @donmai/cli
 ```
 
 ### Create a CLAUDE.md (or equivalent)
@@ -338,7 +338,7 @@ if command -v af-linear &>/dev/null; then
   exec af-linear "$@"
 fi
 
-echo "Error: af-linear not found. Install with: npm install -g @renseiai/agentfactory-cli" >&2
+echo "Error: af-linear not found. Install with: npm install -g @donmai/cli" >&2
 exit 1
 ```
 
@@ -368,7 +368,7 @@ Each agent runs in its own git worktree (e.g., `../myrepo.wt/PROJ-123-DEV`). Thi
 | Agent pushes to wrong repo | Add/fix the `repository` field in `.donmai/config.yaml` |
 | Agent modifies wrong files | Use `projectPaths` + `sharedPaths` in config.yaml for monorepos |
 | Governor not dispatching | Verify project is in `GOVERNOR_PROJECTS` and governor has been redeployed |
-| `af-linear` not found | Install CLI tools: `npm install -g @renseiai/agentfactory-cli` |
+| `af-linear` not found | Install CLI tools: `npm install -g @donmai/cli` |
 
 ## Next Steps
 

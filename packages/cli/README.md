@@ -1,4 +1,4 @@
-# @renseiai/agentfactory-cli
+# @donmai/cli
 
 CLI tools for [AgentFactory](https://github.com/renseiai/agentfactory). Run a local orchestrator, remote workers, worker fleets, and queue management.
 
@@ -6,10 +6,10 @@ CLI tools for [AgentFactory](https://github.com/renseiai/agentfactory). Run a lo
 
 ```bash
 # Global (CLI commands)
-npm install -g @renseiai/agentfactory-cli
+npm install -g @donmai/cli
 
 # Local (programmatic runner functions)
-npm install @renseiai/agentfactory-cli
+npm install @donmai/cli
 ```
 
 ## CLI Commands
@@ -79,7 +79,7 @@ When `LINEAR_API_KEY` and `REDIS_URL` are set, the governor uses real dependenci
 All CLI tools are available as importable functions via subpath exports:
 
 ```typescript
-import { runOrchestrator } from '@renseiai/agentfactory-cli/orchestrator'
+import { runOrchestrator } from '@donmai/cli/orchestrator'
 
 await runOrchestrator({
   project: 'MyProject',
@@ -91,12 +91,12 @@ await runOrchestrator({
 ### Available Runner Functions
 
 ```typescript
-import { runOrchestrator } from '@renseiai/agentfactory-cli/orchestrator'
-import { runWorker } from '@renseiai/agentfactory-cli/worker'
-import { runWorkerFleet } from '@renseiai/agentfactory-cli/worker-fleet'
-import { runCleanup } from '@renseiai/agentfactory-cli/cleanup'
-import { runQueueAdmin } from '@renseiai/agentfactory-cli/queue-admin'
-import { runLogAnalyzer } from '@renseiai/agentfactory-cli/analyze-logs'
+import { runOrchestrator } from '@donmai/cli/orchestrator'
+import { runWorker } from '@donmai/cli/worker'
+import { runWorkerFleet } from '@donmai/cli/worker-fleet'
+import { runCleanup } from '@donmai/cli/cleanup'
+import { runQueueAdmin } from '@donmai/cli/queue-admin'
+import { runLogAnalyzer } from '@donmai/cli/analyze-logs'
 ```
 
 Each function accepts a config object and returns a Promise — use them to build thin wrappers with your own env loading and argument parsing.
@@ -116,7 +116,7 @@ Each function accepts a config object and returns a Promise — use them to buil
 |---------|-------------|
 | [@renseiai/agentfactory](https://www.npmjs.com/package/@renseiai/agentfactory) | Core orchestrator |
 | [@renseiai/agentfactory-server](https://www.npmjs.com/package/@renseiai/agentfactory-server) | Redis work queue |
-| [@renseiai/agentfactory-nextjs](https://www.npmjs.com/package/@renseiai/agentfactory-nextjs) | Next.js webhook server |
+| [@donmai/nextjs](https://www.npmjs.com/package/@donmai/nextjs) | Next.js webhook server |
 
 ## License
 

@@ -65,12 +65,12 @@ export function isAutoUpdateEnabled(cliFlag?: boolean): boolean {
  * Returns true if the update succeeded.
  */
 function installUpdate(targetVersion: string): boolean {
-  const pkg = `@renseiai/agentfactory-cli@${targetVersion}`
+  const pkg = `@donmai/cli@${targetVersion}`
   console.log(`${c.cyan}Updating to ${pkg}...${c.reset}`)
 
   try {
     // Detect package manager used for global install
-    execSync(`npm ls -g @renseiai/agentfactory-cli --depth=0 2>/dev/null`, { stdio: 'ignore' })
+    execSync(`npm ls -g @donmai/cli --depth=0 2>/dev/null`, { stdio: 'ignore' })
     execSync(`npm install -g ${pkg}`, { stdio: 'inherit' })
     return true
   } catch {

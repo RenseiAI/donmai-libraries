@@ -45,7 +45,7 @@ import { createProxyFileReservationDelegate } from '@donmai/core'
 
 let codeIntelligencePlugin: ToolPlugin | undefined
 try {
-  ;({ codeIntelligencePlugin } = await import('@renseiai/agentfactory-code-intelligence'))
+  ;({ codeIntelligencePlugin } = await import('@donmai/code-intelligence'))
 } catch {
   // code-intelligence is optional — agents run without af_code_* tools
 }

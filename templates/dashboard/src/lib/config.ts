@@ -5,7 +5,7 @@
  * Customize generatePrompt and other hooks to match your workflow.
  */
 
-import { createAllRoutes, createDefaultLinearClientResolver } from '@renseiai/agentfactory-nextjs'
+import { createAllRoutes, createDefaultLinearClientResolver } from '@donmai/nextjs'
 
 export const routes = createAllRoutes({
   linearClient: createDefaultLinearClientResolver(),

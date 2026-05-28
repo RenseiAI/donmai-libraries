@@ -2,7 +2,7 @@
   "name": "@donmai/plugin-linear",
   "version": "0.9.0",
   "type": "module",
-  "description": "Linear issue tracker integration for AgentFactory — status transitions, agent sessions, work routing",
+  "description": "Linear issue tracker integration for Donmai. Status transitions, agent sessions, work routing",
   "author": "Rensei AI (https://rensei.ai)",
   "license": "MIT",
   "engines": {

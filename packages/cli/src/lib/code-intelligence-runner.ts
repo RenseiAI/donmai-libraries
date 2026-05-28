@@ -115,7 +115,7 @@ async function initializeIndex(cwd: string) {
     RepoMapGenerator,
     DedupPipeline,
     InMemoryStore,
-  } = await import('@renseiai/agentfactory-code-intelligence')
+  } = await import('@donmai/code-intelligence')
 
   const extractor = new SymbolExtractor()
   const indexer = new IncrementalIndexer(extractor, { indexDir: '.donmai/code-index' })

@@ -2,7 +2,7 @@
   "name": "@donmai/mcp-server",
   "version": "0.9.0",
   "type": "module",
-  "description": "MCP server exposing AgentFactory fleet capabilities to MCP-aware clients",
+  "description": "MCP server exposing Donmai fleet capabilities to MCP-aware clients",
   "author": "Rensei AI (https://rensei.ai)",
   "license": "MIT",
   "engines": {

@@ -123,7 +123,7 @@ const DEFAULT_PASSTHROUGH_ROUTES = ['/api/cleanup']
  * @example
  * ```typescript
  * // In middleware.ts:
- * import { createAgentFactoryMiddleware } from '@renseiai/agentfactory-nextjs'
+ * import { createAgentFactoryMiddleware } from '@donmai/nextjs'
  *
  * const { middleware, matcherConfig } = createAgentFactoryMiddleware()
  * export { middleware }

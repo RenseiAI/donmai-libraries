@@ -113,7 +113,7 @@ This is a [Next.js](https://nextjs.org) application that provides:
 
 | Package | Purpose |
 |---------|---------|
-| `@renseiai/agentfactory-nextjs` | Route handlers and middleware |
+| `@donmai/nextjs` | Route handlers and middleware |
 | `@renseiai/agentfactory-dashboard` | UI components and pages |
 | `@renseiai/agentfactory-server` | Redis-backed session/worker persistence |
 | `@renseiai/plugin-linear` | Linear SDK client |
@@ -139,8 +139,8 @@ To manually update package versions:
 
 ```bash
 npm install @renseiai/agentfactory@latest @renseiai/plugin-linear@latest \
-  @renseiai/agentfactory-nextjs@latest @renseiai/agentfactory-server@latest \
-  @renseiai/agentfactory-dashboard@latest @renseiai/agentfactory-cli@latest
+  @donmai/nextjs@latest @renseiai/agentfactory-server@latest \
+  @renseiai/agentfactory-dashboard@latest @donmai/cli@latest
 ```
 
 ## License

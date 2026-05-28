@@ -14,7 +14,7 @@ import os from 'os'
 // Current version
 // ---------------------------------------------------------------------------
 
-const PACKAGE_NAME = '@renseiai/agentfactory-cli'
+const PACKAGE_NAME = '@donmai/cli'
 
 /**
  * Read the current package version from the CLI's package.json.
@@ -196,6 +196,6 @@ export function printUpdateNotification(result: UpdateCheckResult | null): void 
 
   console.log(
     `\n${c.yellow}${c.bold}Update available:${c.reset} ${c.dim}v${result.currentVersion}${c.reset} → ${c.green}v${result.latestVersion}${c.reset}` +
-    `  ${c.dim}Run${c.reset} ${c.cyan}npm i -g @renseiai/agentfactory-cli@latest${c.reset} ${c.dim}to update${c.reset}\n`,
+    `  ${c.dim}Run${c.reset} ${c.cyan}npm i -g @donmai/cli@latest${c.reset} ${c.dim}to update${c.reset}\n`,
   )
 }

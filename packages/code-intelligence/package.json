@@ -1,8 +1,8 @@
 {
-  "name": "@renseiai/agentfactory-code-intelligence",
+  "name": "@donmai/code-intelligence",
   "version": "0.9.0",
   "type": "module",
-  "description": "Code intelligence for AgentFactory — tree-sitter AST parsing, BM25 search, incremental indexing, memory deduplication",
+  "description": "Code intelligence for Donmai. Tree-sitter AST parsing, BM25 search, incremental indexing, memory deduplication",
   "author": "Rensei AI (https://rensei.ai)",
   "license": "MIT",
   "engines": {
@@ -10,12 +10,12 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/RenseiAI/agentfactory.git",
+    "url": "git+https://github.com/RenseiAI/donmai-libraries.git",
     "directory": "packages/code-intelligence"
   },
-  "homepage": "https://github.com/RenseiAI/agentfactory/tree/main/packages/code-intelligence",
+  "homepage": "https://github.com/RenseiAI/donmai-libraries/tree/main/packages/code-intelligence",
   "bugs": {
-    "url": "https://github.com/RenseiAI/agentfactory/issues"
+    "url": "https://github.com/RenseiAI/donmai-libraries/issues"
   },
   "publishConfig": {
     "access": "public"

@@ -160,7 +160,7 @@ export const RepositoryConfigSchema = z.object({
   /**
    * Command to invoke the Linear CLI (default: "pnpm af-linear").
    * For non-Node projects, set to a path or wrapper script, e.g.:
-   *   "npx -y @renseiai/agentfactory-cli af-linear"
+   *   "npx -y @donmai/cli af-linear"
    *   "./tools/af-linear.sh"
    *   "/usr/local/bin/af-linear"
    */

@@ -171,7 +171,7 @@ async function loadPlugin(name: string): Promise<ToolPluginLike | null> {
       export: 'linearPlugin',
     },
     'af-code-intelligence': {
-      module: '@renseiai/agentfactory-code-intelligence',
+      module: '@donmai/code-intelligence',
       export: 'codeIntelligencePlugin',
     },
   }

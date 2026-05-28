@@ -1,5 +1,5 @@
 /**
- * Core types for @renseiai/agentfactory-nextjs
+ * Core types for @donmai/nextjs
  *
  * These types define the configuration interfaces that consumers
  * must implement to use the extracted route handlers.

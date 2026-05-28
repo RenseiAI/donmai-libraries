@@ -31,11 +31,11 @@ packages/
   core/                @renseiai/agentfactory                       — orchestrator, providers, crash recovery
   linear/              @renseiai/plugin-linear                      — Linear issue tracker integration
   server/              @renseiai/agentfactory-server                — Redis queues, session storage, worker pool
-  cli/                 @renseiai/agentfactory-cli                   — CLI tools (orchestrator, worker, fleet)
-  nextjs/              @renseiai/agentfactory-nextjs                — Next.js route handlers, webhook, middleware
+  cli/                 @donmai/cli                   — CLI tools (orchestrator, worker, fleet)
+  nextjs/              @donmai/nextjs                — Next.js route handlers, webhook, middleware
   dashboard/           @renseiai/agentfactory-dashboard             — Fleet management dashboard UI
   mcp-server/          @renseiai/agentfactory-mcp-server            — MCP server for external clients
-  code-intelligence/   @renseiai/agentfactory-code-intelligence     — Tree-sitter AST parsing, BM25 search
+  code-intelligence/   @donmai/code-intelligence     — Tree-sitter AST parsing, BM25 search
   create-app/          @donmai/create-app                           — Project scaffolding tool
 
 docs/          Documentation
@@ -68,7 +68,7 @@ Turborepo handles building packages in the correct order.
 
 ```bash
 # Build just one package (and its dependencies)
-pnpm --filter @renseiai/agentfactory-nextjs build
+pnpm --filter @donmai/nextjs build
 
 # Typecheck one package
 pnpm --filter @renseiai/agentfactory-server typecheck

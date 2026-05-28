@@ -119,9 +119,9 @@ function routeReexport(post: string | null, get?: string, del?: string): string 
 function packageJson(opts: TemplateOptions): string {
   const deps: Record<string, string> = {
     '@donmai/core': '^0.8.4',
-    '@renseiai/agentfactory-cli': '^0.8.4',
+    '@donmai/cli': '^0.8.4',
     '@donmai/plugin-linear': '^0.8.4',
-    '@renseiai/agentfactory-nextjs': '^0.8.4',
+    '@donmai/nextjs': '^0.8.4',
     '@donmai/server': '^0.8.4',
     'next': '^16.1.0',
     'react': '^19.0.0',
@@ -283,7 +283,7 @@ function configTs(): string {
  * Customize generatePrompt and other hooks to match your workflow.
  */
 
-import { createAllRoutes, createDefaultLinearClientResolver } from '@renseiai/agentfactory-nextjs'
+import { createAllRoutes, createDefaultLinearClientResolver } from '@donmai/nextjs'
 
 export const routes = createAllRoutes({
   linearClient: createDefaultLinearClientResolver(),
@@ -311,11 +311,11 @@ function middlewareTs(): string {
  * Next.js Middleware — Edge Runtime Compatible
  *
  * Uses the /middleware subpath export which only loads Edge-compatible
- * modules. Do NOT import from the main barrel ('@renseiai/agentfactory-nextjs')
+ * modules. Do NOT import from the main barrel ('@donmai/nextjs')
  * — it pulls in Node.js-only dependencies via re-exports.
  */
 
-import { createAgentFactoryMiddleware } from '@renseiai/agentfactory-nextjs/middleware'
+import { createAgentFactoryMiddleware } from '@donmai/nextjs/middleware'
 
 const { middleware } = createAgentFactoryMiddleware()
 
@@ -493,7 +493,7 @@ import { config } from 'dotenv'
 
 config({ path: path.resolve(import.meta.dirname, '..', '.env.local'), quiet: true })
 
-import { runWorker } from '@renseiai/agentfactory-cli/worker'
+import { runWorker } from '@donmai/cli/worker'
 
 function parseArgs() {
   const args = process.argv.slice(2)
@@ -565,7 +565,7 @@ import { config } from 'dotenv'
 
 config({ path: path.resolve(import.meta.dirname, '..', '.env.local'), quiet: true })
 
-import { runOrchestrator } from '@renseiai/agentfactory-cli/orchestrator'
+import { runOrchestrator } from '@donmai/cli/orchestrator'
 
 function parseArgs() {
   const args = process.argv.slice(2)
@@ -612,7 +612,7 @@ import { config } from 'dotenv'
 
 config({ path: path.resolve(import.meta.dirname, '..', '.env.local'), quiet: true })
 
-import { runWorkerFleet } from '@renseiai/agentfactory-cli/worker-fleet'
+import { runWorkerFleet } from '@donmai/cli/worker-fleet'
 
 function parseArgs() {
   const args = process.argv.slice(2)
@@ -682,7 +682,7 @@ runWorkerFleet(
 
 function cliCleanup(): string {
   return `#!/usr/bin/env tsx
-import { runCleanup, type CleanupRunnerConfig } from '@renseiai/agentfactory-cli/cleanup'
+import { runCleanup, type CleanupRunnerConfig } from '@donmai/cli/cleanup'
 
 function parseArgs(): CleanupRunnerConfig {
   const args = process.argv.slice(2)

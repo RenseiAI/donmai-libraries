@@ -4,7 +4,7 @@ import { config } from 'dotenv'
 
 config({ path: path.resolve(import.meta.dirname, '..', '.env.local'), quiet: true })
 
-import { runWorkerFleet } from '@renseiai/agentfactory-cli/worker-fleet'
+import { runWorkerFleet } from '@donmai/cli/worker-fleet'
 
 function parseArgs() {
   const args = process.argv.slice(2)

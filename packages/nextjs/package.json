@@ -1,8 +1,8 @@
 {
-  "name": "@renseiai/agentfactory-nextjs",
+  "name": "@donmai/nextjs",
   "version": "0.9.0",
   "type": "module",
-  "description": "Next.js API route handlers for AgentFactory — webhook processor, worker/session management, public stats",
+  "description": "Next.js API route handlers for Donmai. Webhook processor, worker/session management, public stats",
   "author": "Rensei AI (https://rensei.ai)",
   "license": "MIT",
   "engines": {
@@ -10,12 +10,12 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/RenseiAI/agentfactory.git",
+    "url": "git+https://github.com/RenseiAI/donmai-libraries.git",
     "directory": "packages/nextjs"
   },
-  "homepage": "https://github.com/RenseiAI/agentfactory/tree/main/packages/nextjs",
+  "homepage": "https://github.com/RenseiAI/donmai-libraries/tree/main/packages/nextjs",
   "bugs": {
-    "url": "https://github.com/RenseiAI/agentfactory/issues"
+    "url": "https://github.com/RenseiAI/donmai-libraries/issues"
   },
   "publishConfig": {
     "access": "public"

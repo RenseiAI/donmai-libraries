@@ -212,7 +212,7 @@ export class SessionEventBus {
 
 /**
  * The process-global session event bus.  Production wiring (the worker
- * runner in `@renseiai/agentfactory-cli`) emits onto this bus; the
+ * runner in `@donmai/cli`) emits onto this bus; the
  * platform's `heartbeat-mirror.ts` subscribes to it via the
  * `attachHeartbeatMirror(bus)` helper.
  */

@@ -15,7 +15,7 @@
  *
  * Wiring (consumer side):
  * ```ts
- * import { createArchitecturalIntelligencePlugin } from '@renseiai/agentfactory-code-intelligence'
+ * import { createArchitecturalIntelligencePlugin } from '@donmai/code-intelligence'
  * const plugin = createArchitecturalIntelligencePlugin({ architecturalIntelligence: ai })
  * // pass `plugin` in OrchestratorConfig.toolPlugins
  * ```

@@ -40,7 +40,7 @@ const baseLogger = createLogger('oauth-callback')
  * @example
  * ```typescript
  * // In app/callback/route.ts:
- * import { createOAuthCallbackHandler } from '@renseiai/agentfactory-nextjs'
+ * import { createOAuthCallbackHandler } from '@donmai/nextjs'
  * export const { GET } = createOAuthCallbackHandler()
  * ```
  */

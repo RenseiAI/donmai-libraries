@@ -163,7 +163,7 @@ describe.each(configs)(
         for (const cliFile of cliFiles) {
           const content = readFileSync(join(dir, cliFile), 'utf-8')
           expect(content, `${cliFile} missing shebang`).toContain('#!/usr/bin/env tsx')
-          expect(content, `${cliFile} missing @renseiai import`).toContain('@renseiai/agentfactory-cli')
+          expect(content, `${cliFile} missing @renseiai import`).toContain('@donmai/cli')
         }
       })
     }

@@ -1,4 +1,4 @@
-# @renseiai/agentfactory-code-intelligence
+# @donmai/code-intelligence
 
 Code intelligence for AgentFactory agents — regex-based symbol extraction, BM25 search, incremental Merkle-tree indexing, PageRank repo maps, and memory deduplication.
 
@@ -7,7 +7,7 @@ Part of the [AgentFactory](https://github.com/renseiai/agentfactory) monorepo.
 ## Installation
 
 ```bash
-npm install @renseiai/agentfactory-code-intelligence
+npm install @donmai/code-intelligence
 ```
 
 ## Features
@@ -25,7 +25,7 @@ npm install @renseiai/agentfactory-code-intelligence
 ### Symbol extraction
 
 ```typescript
-import { SymbolExtractor } from '@renseiai/agentfactory-code-intelligence'
+import { SymbolExtractor } from '@donmai/code-intelligence'
 
 const extractor = new SymbolExtractor()
 const ast = extractor.extractFromSource(sourceCode, 'src/index.ts')
@@ -38,7 +38,7 @@ for (const symbol of ast.symbols) {
 ### Code search
 
 ```typescript
-import { SearchEngine, SymbolExtractor } from '@renseiai/agentfactory-code-intelligence'
+import { SearchEngine, SymbolExtractor } from '@donmai/code-intelligence'
 
 const extractor = new SymbolExtractor()
 const engine = new SearchEngine()
@@ -53,7 +53,7 @@ const results = engine.search({ query: 'handleRequest', maxResults: 10 })
 ### Incremental indexing
 
 ```typescript
-import { IncrementalIndexer, SymbolExtractor } from '@renseiai/agentfactory-code-intelligence'
+import { IncrementalIndexer, SymbolExtractor } from '@donmai/code-intelligence'
 
 const indexer = new IncrementalIndexer(new SymbolExtractor())
 
@@ -73,7 +73,7 @@ await indexer.save(process.cwd())
 ### Repository map
 
 ```typescript
-import { SymbolExtractor, RepoMapGenerator } from '@renseiai/agentfactory-code-intelligence'
+import { SymbolExtractor, RepoMapGenerator } from '@donmai/code-intelligence'
 
 const extractor = new SymbolExtractor()
 const generator = new RepoMapGenerator()
@@ -87,7 +87,7 @@ console.log(generator.format(entries))
 ### Memory deduplication
 
 ```typescript
-import { DedupPipeline, InMemoryStore } from '@renseiai/agentfactory-code-intelligence'
+import { DedupPipeline, InMemoryStore } from '@donmai/code-intelligence'
 
 const pipeline = new DedupPipeline(new InMemoryStore())
 
@@ -111,7 +111,7 @@ When used with AgentFactory's Claude provider, the package registers four in-pro
 | `af_code_check_duplicate` | xxHash64 exact + SimHash near-duplicate detection |
 
 ```typescript
-import { codeIntelligencePlugin } from '@renseiai/agentfactory-code-intelligence'
+import { codeIntelligencePlugin } from '@donmai/code-intelligence'
 
 // Register with orchestrator
 const orchestrator = createOrchestrator({

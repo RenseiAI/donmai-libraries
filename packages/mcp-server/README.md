@@ -69,8 +69,8 @@ af-mcp-server --port 3100
 |---------|-------------|
 | [@renseiai/agentfactory](https://www.npmjs.com/package/@renseiai/agentfactory) | Core orchestrator |
 | [@renseiai/agentfactory-server](https://www.npmjs.com/package/@renseiai/agentfactory-server) | Redis-backed work queue and session storage |
-| [@renseiai/agentfactory-cli](https://www.npmjs.com/package/@renseiai/agentfactory-cli) | CLI tools (worker, orchestrator) |
-| [@renseiai/agentfactory-nextjs](https://www.npmjs.com/package/@renseiai/agentfactory-nextjs) | Next.js webhook server |
+| [@donmai/cli](https://www.npmjs.com/package/@donmai/cli) | CLI tools (worker, orchestrator) |
+| [@donmai/nextjs](https://www.npmjs.com/package/@donmai/nextjs) | Next.js webhook server |
 
 ## License
 

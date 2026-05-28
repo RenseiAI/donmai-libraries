@@ -1,5 +1,5 @@
 /**
- * @renseiai/agentfactory-nextjs
+ * @donmai/nextjs
  *
  * Next.js API route handlers for AgentFactory.
  * Provides webhook processing, worker/session management, public stats,

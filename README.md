@@ -1,27 +1,27 @@
-# Rensei AI AgentFactory
+# Donmai
 
-[![npm version](https://img.shields.io/npm/v/@renseiai/agentfactory)](https://www.npmjs.com/package/@renseiai/agentfactory)
+[![npm version](https://img.shields.io/npm/v/@donmai/core)](https://www.npmjs.com/package/@donmai/core)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.0+-blue?logo=typescript)](https://www.typescriptlang.org/)
 [![Linear](https://img.shields.io/badge/Linear-Integrated-5E6AD2?logo=linear)](https://linear.app)
-[![Built with AgentFactory](https://raw.githubusercontent.com/renseiai/agentfactory/main/docs/assets/badge-built-with-dark.svg)](https://github.com/renseiai/agentfactory)
+[![Built with Donmai](https://raw.githubusercontent.com/RenseiAI/donmai-libraries/main/docs/assets/badge-built-with-dark.svg)](https://github.com/RenseiAI/donmai-libraries)
 
-**The open-source software factory — multi-agent fleet management for coding agents.**
+**The open-source coding-agent fleet runtime. Multi-agent fleet management for coding agents.**
 
-AgentFactory turns your issue backlog into shipped code. It orchestrates a fleet of coding agents (Claude, Codex, Spring AI, or any A2A-compatible agent) through an automated pipeline: development, QA, and acceptance — like an assembly line for software.
+Donmai turns your issue backlog into shipped code. It orchestrates a fleet of coding agents (Claude, Codex, Spring AI, or any A2A-compatible agent) through an automated pipeline: development, QA, and acceptance, like an assembly line for software.
 
 ## Packages
 
 | Package | npm | Description |
 |---------|-----|-------------|
-| **[@renseiai/agentfactory](./packages/core)** | `@renseiai/agentfactory` | Core orchestrator, provider abstraction, crash recovery |
-| **[@renseiai/plugin-linear](./packages/linear)** | `@renseiai/plugin-linear` | Linear issue tracker integration |
-| **[@renseiai/agentfactory-server](./packages/server)** | `@renseiai/agentfactory-server` | Redis work queue, session storage, worker pool |
-| **[@renseiai/agentfactory-cli](./packages/cli)** | `@renseiai/agentfactory-cli` | CLI tools: orchestrator, workers, Linear CLI (`af-linear`) |
-| **[@renseiai/agentfactory-nextjs](./packages/nextjs)** | `@renseiai/agentfactory-nextjs` | Next.js route handlers, webhook processor, middleware |
-| **[@renseiai/agentfactory-dashboard](./packages/dashboard)** | `@renseiai/agentfactory-dashboard` | Fleet management dashboard UI |
-| **[@renseiai/agentfactory-mcp-server](./packages/mcp-server)** | `@renseiai/agentfactory-mcp-server` | MCP server exposing fleet capabilities to external clients |
-| **[@renseiai/agentfactory-code-intelligence](./packages/code-intelligence)** | `@renseiai/agentfactory-code-intelligence` | Tree-sitter AST parsing, BM25 search, incremental indexing |
+| **[@donmai/core](./packages/core)** | `@donmai/core` | Core orchestrator, provider abstraction, crash recovery |
+| **[@donmai/plugin-linear](./packages/linear)** | `@donmai/plugin-linear` | Linear issue tracker integration |
+| **[@donmai/server](./packages/server)** | `@donmai/server` | Redis work queue, session storage, worker pool |
+| **[@donmai/cli](./packages/cli)** | `@donmai/cli` | CLI tools: orchestrator, workers, Linear CLI (`af-linear`) |
+| **[@donmai/nextjs](./packages/nextjs)** | `@donmai/nextjs` | Next.js route handlers, webhook processor, middleware |
+| **[@donmai/dashboard](./packages/dashboard)** | `@donmai/dashboard` | Fleet management dashboard UI |
+| **[@donmai/mcp-server](./packages/mcp-server)** | `@donmai/mcp-server` | MCP server exposing fleet capabilities to external clients |
+| **[@donmai/code-intelligence](./packages/code-intelligence)** | `@donmai/code-intelligence` | Tree-sitter AST parsing, BM25 search, incremental indexing |
 | **[@donmai/create-app](./packages/create-app)** | `@donmai/create-app` | Project scaffolding tool |
 
 ## Quick Start
@@ -32,10 +32,10 @@ Deploy the dashboard with a single click — no local setup required:
 
 | Platform | Deploy | Redis |
 |----------|--------|-------|
-| **Vercel** | [![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https%3A%2F%2Fgithub.com%2Frenseiai%2Fagentfactory%2Ftree%2Fmain%2Ftemplates%2Fdashboard&project-name=agentfactory-dashboard&env=LINEAR_ACCESS_TOKEN,LINEAR_WEBHOOK_SECRET,REDIS_URL&envDescription=Environment%20variables%20needed%20for%20AgentFactory%20Dashboard&envLink=https%3A%2F%2Fgithub.com%2Frenseiai%2Fagentfactory%2Ftree%2Fmain%2Ftemplates%2Fdashboard%23environment-variables) | Add [Vercel KV](https://vercel.com/docs/storage/vercel-kv) or [Upstash](https://upstash.com/) after deploy |
+| **Vercel** | [![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https%3A%2F%2Fgithub.com%2FRenseiAI%2Fdonmai-libraries%2Ftree%2Fmain%2Ftemplates%2Fdashboard&project-name=donmai-dashboard&env=LINEAR_ACCESS_TOKEN,LINEAR_WEBHOOK_SECRET,REDIS_URL&envDescription=Environment%20variables%20needed%20for%20Donmai%20Dashboard&envLink=https%3A%2F%2Fgithub.com%2FRenseiAI%2Fdonmai-libraries%2Ftree%2Fmain%2Ftemplates%2Fdashboard%23environment-variables) | Add [Vercel KV](https://vercel.com/docs/storage/vercel-kv) or [Upstash](https://upstash.com/) after deploy |
 | **Railway** | [![Deploy on Railway](https://railway.com/button.svg)](https://railway.com/deploy/A7hIuF?referralCode=MwgIWL) | Bundled automatically |
 
-> See the [dashboard template](https://github.com/renseiai/agentfactory/tree/main/templates/dashboard) for full setup instructions.
+> See the [dashboard template](https://github.com/RenseiAI/donmai-libraries/tree/main/templates/dashboard) for full setup instructions.
 
 ### Create a new project (recommended for customization)
 
@@ -50,11 +50,11 @@ pnpm worker                   # Start local worker (in another terminal)
 
 ### Webhook Server (Next.js)
 
-For production use, AgentFactory provides a webhook server that receives Linear events and dispatches agents:
+For production use, Donmai provides a webhook server that receives Linear events and dispatches agents:
 
 ```typescript
 // src/lib/config.ts
-import { createAllRoutes, createDefaultLinearClientResolver } from '@renseiai/agentfactory-nextjs'
+import { createAllRoutes, createDefaultLinearClientResolver } from '@donmai/nextjs'
 
 export const routes = createAllRoutes({
   linearClient: createDefaultLinearClientResolver(),
@@ -71,7 +71,7 @@ export const GET = routes.webhook.GET
 ### Spawn an agent on a single issue
 
 ```typescript
-import { createOrchestrator } from '@renseiai/agentfactory'
+import { createOrchestrator } from '@donmai/core'
 
 const orchestrator = createOrchestrator({
   maxConcurrent: 3,
@@ -154,7 +154,7 @@ rensei linear create-comment PROJ-123 --body "Work complete"
 
 ### Provider Abstraction
 
-AgentFactory supports multiple coding agent providers through a unified interface:
+Donmai supports multiple coding agent providers through a unified interface:
 
 ```typescript
 interface AgentProvider {
@@ -188,7 +188,7 @@ You can also select providers dynamically:
 
 ### Intelligent Routing (MAB)
 
-When multiple providers are available, AgentFactory can learn which provider works best for each work type using Thompson Sampling (Multi-Armed Bandit):
+When multiple providers are available, Donmai can learn which provider works best for each work type using Thompson Sampling (Multi-Armed Bandit):
 
 ```yaml
 # .donmai/config.yaml
@@ -204,7 +204,7 @@ The routing engine tracks task completion, PR creation, QA pass rates, cost, and
 
 ### Agent-to-Agent Protocol (A2A)
 
-AgentFactory implements the [A2A protocol](https://a2a-protocol.org) (v0.3.0), operating as both client and server.
+Donmai implements the [A2A protocol](https://a2a-protocol.org) (v0.3.0), operating as both client and server.
 
 - **Client mode:** Invoke remote A2A agents (Spring AI or any A2A-compliant agent) as part of an orchestrated fleet. Route specific work types to external agents via environment config.
 - **Server mode:** Expose fleet capabilities via `/.well-known/agent-card.json` discovery and JSON-RPC task submission. Any A2A-aware tool can submit work to the fleet.
@@ -238,7 +238,7 @@ Transport: Streamable HTTP for remote access, STDIO for local CLI.
 
 ### Spring AI Bench
 
-AgentFactory agents can be evaluated through [Spring AI Bench](https://github.com/spring-ai-community/spring-ai-bench). The multi-agent pipeline (dev, QA, acceptance) improves benchmark reliability over single-agent runs.
+Donmai agents can be evaluated through [Spring AI Bench](https://github.com/spring-ai-community/spring-ai-bench). The multi-agent pipeline (dev, QA, acceptance) improves benchmark reliability over single-agent runs.
 
 ### Work Types
 
@@ -268,7 +268,7 @@ Issues flow through work stations based on their status:
 
 ### Crash Recovery
 
-AgentFactory includes built-in crash recovery:
+Donmai includes built-in crash recovery:
 
 1. **Heartbeat monitoring** — agents send periodic health signals
 2. **State persistence** — session state saved to `.agent/` directory
@@ -291,7 +291,7 @@ const orchestrator = createOrchestrator({
 
 ### Merge Queue
 
-AgentFactory includes a built-in merge queue that automatically rebases and merges agent PRs:
+Donmai includes a built-in merge queue that automatically rebases and merges agent PRs:
 
 ```yaml
 # .donmai/config.yaml
@@ -312,7 +312,7 @@ The local provider handles the full rebase-test-merge cycle within the orchestra
 
 ### Code Intelligence
 
-The `@renseiai/agentfactory-code-intelligence` package provides 6 core tools for codebase navigation (plus 3 optional file reservation tools for parallel agent safety):
+The `@donmai/code-intelligence` package provides 6 core tools for codebase navigation (plus 3 optional file reservation tools for parallel agent safety):
 
 | Tool | Description |
 |------|-------------|
@@ -350,7 +350,7 @@ These phases are triggered by the governor's workflow strategy. The governor che
 
 ## Distributed Workers
 
-For teams that need horizontal scaling, AgentFactory supports a distributed worker pool:
+For teams that need horizontal scaling, Donmai supports a distributed worker pool:
 
 ```
 ┌────────────────┐     ┌─────────┐     ┌────────────────┐
@@ -363,7 +363,7 @@ For teams that need horizontal scaling, AgentFactory supports a distributed work
                        └─────────┘     └────────────────┘
 ```
 
-This requires the `@renseiai/agentfactory-server` package and a Redis instance.
+This requires the `@donmai/server` package and a Redis instance.
 
 ## Configuration
 
@@ -432,7 +432,7 @@ interface OrchestratorConfig {
 
 ## Linear Integration
 
-The `@renseiai/plugin-linear` package provides:
+The `@donmai/plugin-linear` package provides:
 
 - **Agent sessions** — lifecycle management with status transitions
 - **Activity streaming** — thoughts, actions, and responses visible in Linear
@@ -441,7 +441,7 @@ The `@renseiai/plugin-linear` package provides:
 - **Sub-issue coordination** — dependency-aware parallel execution
 
 ```typescript
-import { createLinearAgentClient, createAgentSession } from '@renseiai/plugin-linear'
+import { createLinearAgentClient, createAgentSession } from '@donmai/plugin-linear'
 
 const client = createLinearAgentClient({ apiKey: process.env.LINEAR_API_KEY! })
 const session = createAgentSession({
@@ -518,42 +518,42 @@ pnpm typecheck
 pnpm test
 ```
 
-## Built with AgentFactory
+## Built with Donmai
 
-AgentFactory powers real products in production:
+Donmai powers real products in production:
 
 | Project                                                | What it does                              |
 |--------------------------------------------------------|-------------------------------------------|
 | [Supaku Family](https://family.supaku.com)             | Privacy focused Personal CRM              |
 | [Recoil Engine](https://github.com/supaku/RecoilEngine)| Adding Mac Metal support to BAR           |
 
-Building with AgentFactory? Add the badge to your project and [share it in Discussions](https://github.com/renseiai/agentfactory/discussions).
+Building with Donmai? Add the badge to your project and [share it in Discussions](https://github.com/RenseiAI/donmai-libraries/discussions).
 
 ## Badge
 
-If you're building with AgentFactory, add the badge to your README:
+If you're building with Donmai, add the badge to your README:
 
 <!-- Dark badge (default) -->
-[![Built with AgentFactory](https://raw.githubusercontent.com/renseiai/agentfactory/main/docs/assets/badge-built-with.svg)](https://github.com/renseiai/agentfactory)
+[![Built with Donmai](https://raw.githubusercontent.com/RenseiAI/donmai-libraries/main/docs/assets/badge-built-with.svg)](https://github.com/RenseiAI/donmai-libraries)
 
 <!-- Light badge (for dark READMEs) -->
-[![Built with AgentFactory](https://raw.githubusercontent.com/renseiai/agentfactory/main/docs/assets/badge-built-with-light.svg)](https://github.com/renseiai/agentfactory)
+[![Built with Donmai](https://raw.githubusercontent.com/RenseiAI/donmai-libraries/main/docs/assets/badge-built-with-light.svg)](https://github.com/RenseiAI/donmai-libraries)
 
 Or use HTML for GitHub theme-switching (auto light/dark):
 
 ```html
-<a href="https://github.com/renseiai/agentfactory">
+<a href="https://github.com/RenseiAI/donmai-libraries">
   <picture>
-    <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/renseiai/agentfactory/main/docs/assets/badge-built-with-dark.svg">
-    <source media="(prefers-color-scheme: light)" srcset="https://raw.githubusercontent.com/renseiai/agentfactory/main/docs/assets/badge-built-with-light.svg">
-    <img alt="Built with AgentFactory" src="https://raw.githubusercontent.com/renseiai/agentfactory/main/docs/assets/badge-built-with.svg">
+    <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/RenseiAI/donmai-libraries/main/docs/assets/badge-built-with-dark.svg">
+    <source media="(prefers-color-scheme: light)" srcset="https://raw.githubusercontent.com/RenseiAI/donmai-libraries/main/docs/assets/badge-built-with-light.svg">
+    <img alt="Built with Donmai" src="https://raw.githubusercontent.com/RenseiAI/donmai-libraries/main/docs/assets/badge-built-with.svg">
   </picture>
 </a>
 ```
 
 ## Migrating from the legacy Node CLI
 
-If you are upgrading from `@renseiai/agentfactory-cli` (the Node/TypeScript binaries), see the [migration guide](./docs/migration-from-legacy-cli.md) for:
+If you are upgrading from `@donmai/cli` (the Node/TypeScript binaries), see the [migration guide](./docs/migration-from-legacy-cli.md) for:
 
 - A full table mapping each legacy binary (`af-orchestrator`, `af-linear`, `af-analyze-logs`, `af-cleanup`, `af-queue-admin`, `af-merge-queue`, `af-code`, `af-arch`, and more) to its Go `af` equivalent
 - Side-by-side flag comparisons for the most-used commands

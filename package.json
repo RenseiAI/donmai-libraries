@@ -2,7 +2,7 @@
   "name": "donmai-libraries",
   "private": true,
   "packageManager": "pnpm@10.28.0",
-  "description": "The open-source software factory — multi-agent fleet management for coding agents",
+  "description": "The open-source coding-agent fleet runtime. Multi-agent fleet management for coding agents.",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/RenseiAI/donmai-libraries.git"

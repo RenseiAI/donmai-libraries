@@ -72,7 +72,7 @@ export interface DefaultLinearClientResolverConfig {
  *
  * @example
  * ```typescript
- * import { createDefaultLinearClientResolver } from '@renseiai/agentfactory-nextjs'
+ * import { createDefaultLinearClientResolver } from '@donmai/nextjs'
  *
  * const resolver = createDefaultLinearClientResolver()
  * // Use in route config:

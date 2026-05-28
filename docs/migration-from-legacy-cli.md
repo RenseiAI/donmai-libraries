@@ -1,8 +1,8 @@
-# Migration from `@renseiai/agentfactory-cli` Legacy Binaries
+# Migration from `@donmai/cli` Legacy Binaries
 
 > **Status:** In progress — most high-traffic binaries are already ported. See the tables below for the current state.
 
-OSS users upgrading from the legacy Node/TypeScript `@renseiai/agentfactory-cli` binaries to the Go `af` CLI should use this guide as their reference. The Go `af` binary ships as a single static executable with no Node.js runtime dependency.
+OSS users upgrading from the legacy Node/TypeScript `@donmai/cli` binaries to the Go `af` CLI should use this guide as their reference. The Go `af` binary ships as a single static executable with no Node.js runtime dependency.
 
 ---
 
@@ -160,7 +160,7 @@ Copy the relevant block into your `CHANGELOG.md` when retiring each binary.
 ```markdown
 ### Deprecated: `af-orchestrator`
 
-The `af-orchestrator` binary (from `@renseiai/agentfactory-cli`) is deprecated
+The `af-orchestrator` binary (from `@donmai/cli`) is deprecated
 and will be removed in a future release. Use the Go `af orchestrator` command
 instead — flags are identical.
 ```
@@ -170,7 +170,7 @@ instead — flags are identical.
 ```markdown
 ### Deprecated: `af-linear`
 
-The `af-linear` binary (from `@renseiai/agentfactory-cli`) is deprecated and
+The `af-linear` binary (from `@donmai/cli`) is deprecated and
 will be removed in a future release. Use `af linear` instead — all subcommands
 and flags are preserved.
 ```
@@ -180,7 +180,7 @@ and flags are preserved.
 ```markdown
 ### Deprecated: `af-analyze-logs`
 
-The `af-analyze-logs` binary (from `@renseiai/agentfactory-cli`) is deprecated.
+The `af-analyze-logs` binary (from `@donmai/cli`) is deprecated.
 Use `af logs analyze` instead. Note the subcommand path change: the top-level
 `logs` group now houses all log-related commands.
 ```
@@ -190,7 +190,7 @@ Use `af logs analyze` instead. Note the subcommand path change: the top-level
 ```markdown
 ### Deprecated: `af-cleanup`
 
-The `af-cleanup` binary (from `@renseiai/agentfactory-cli`) is deprecated. Use
+The `af-cleanup` binary (from `@donmai/cli`) is deprecated. Use
 `af admin cleanup` instead — flags (`--dry-run`, `--force`, `--path`, etc.) are
 preserved.
 ```
@@ -200,7 +200,7 @@ preserved.
 ```markdown
 ### Deprecated: `af-queue-admin`
 
-The `af-queue-admin` binary (from `@renseiai/agentfactory-cli`) is deprecated.
+The `af-queue-admin` binary (from `@donmai/cli`) is deprecated.
 Use `af admin queue` instead — all subcommands (`list`, `sessions`, `workers`,
 `clear-claims`, `clear-queue`, `reset`, `remove`) are preserved.
 ```
@@ -210,7 +210,7 @@ Use `af admin queue` instead — all subcommands (`list`, `sessions`, `workers`,
 ```markdown
 ### Deprecated: `af-merge-queue`
 
-The `af-merge-queue` binary (from `@renseiai/agentfactory-cli`) is deprecated.
+The `af-merge-queue` binary (from `@donmai/cli`) is deprecated.
 Use `af admin merge-queue` instead — subcommands (`status`, `list`, `retry`,
 `skip`, `pause`, `resume`, `priority`) and flags are preserved.
 ```
@@ -220,7 +220,7 @@ Use `af admin merge-queue` instead — subcommands (`status`, `list`, `retry`,
 ```markdown
 ### Deprecated: `af-code`
 
-The `af-code` binary (from `@renseiai/agentfactory-cli`) is deprecated. Use
+The `af-code` binary (from `@donmai/cli`) is deprecated. Use
 `af code` instead — all subcommands and flags are preserved.
 ```
 
@@ -229,7 +229,7 @@ The `af-code` binary (from `@renseiai/agentfactory-cli`) is deprecated. Use
 ```markdown
 ### Deprecated: `af-arch`
 
-The `af-arch` binary (from `@renseiai/agentfactory-cli`) is deprecated. Use
+The `af-arch` binary (from `@donmai/cli`) is deprecated. Use
 `af arch` instead — the `assess` subcommand and all flags are preserved.
 ```
 
@@ -253,7 +253,7 @@ for 7 consecutive nights.
 ### Legacy (Node.js)
 
 ```bash
-npm install -g @renseiai/agentfactory-cli
+npm install -g @donmai/cli
 # Provides: af-orchestrator, af-linear, af-analyze-logs, af-cleanup, ...
 # Requires: Node.js >= 22
 ```

@@ -2,7 +2,7 @@
 
 Multi-agent fleet management for coding agents. This is a pnpm monorepo using Turborepo.
 
-> **Migrating from the legacy Node CLI?** See [`docs/migration-from-legacy-cli.md`](./docs/migration-from-legacy-cli.md) for the full `@renseiai/agentfactory-cli` → Go `af` binary mapping.
+> **Migrating from the legacy Node CLI?** See [`docs/migration-from-legacy-cli.md`](./docs/migration-from-legacy-cli.md) for the full `@donmai/cli` → Go `af` binary mapping.
 
 ## Architecture
 
@@ -21,16 +21,16 @@ If this project's docs conflict with `../donmai-architecture/`, the corpus wins.
 | `@renseiai/agentfactory` | `packages/core` | Orchestrator, providers, crash recovery, deployment checker |
 | `@renseiai/plugin-linear` | `packages/linear` | Linear SDK client, agent sessions, webhook types |
 | `@renseiai/agentfactory-server` | `packages/server` | Work queue server for webhook-driven execution |
-| `@renseiai/agentfactory-nextjs` | `packages/nextjs` | Next.js webhook handlers and middleware |
+| `@donmai/nextjs` | `packages/nextjs` | Next.js webhook handlers and middleware |
 | `@renseiai/agentfactory-dashboard` | `packages/dashboard` | Fleet management dashboard UI |
 | `@renseiai/agentfactory-mcp-server` | `packages/mcp-server` | MCP server exposing fleet capabilities to external clients |
-| `@renseiai/agentfactory-code-intelligence` | `packages/code-intelligence` | Tree-sitter AST parsing, BM25 search, incremental indexing |
+| `@donmai/code-intelligence` | `packages/code-intelligence` | Tree-sitter AST parsing, BM25 search, incremental indexing |
 | `@donmai/create-app` | `packages/create-app` | Project scaffolding CLI |
-| `@renseiai/agentfactory-cli` | `packages/cli` | Orchestrator, worker, Linear CLI, and admin entry points |
+| `@donmai/cli` | `packages/cli` | Orchestrator, worker, Linear CLI, and admin entry points |
 
 ## Code Intelligence (Optional)
 
-`@renseiai/agentfactory-code-intelligence` is an **optional dependency** of the CLI. When installed, agents running via the Claude provider receive 6 in-process MCP tools:
+`@donmai/code-intelligence` is an **optional dependency** of the CLI. When installed, agents running via the Claude provider receive 6 in-process MCP tools:
 
 | Tool | Purpose |
 |------|---------|

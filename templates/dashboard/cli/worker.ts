@@ -4,7 +4,7 @@ import { config } from 'dotenv'
 
 config({ path: path.resolve(import.meta.dirname, '..', '.env.local'), quiet: true })
 
-import { runWorker } from '@renseiai/agentfactory-cli/worker'
+import { runWorker } from '@donmai/cli/worker'
 
 function parseArgs() {
   const args = process.argv.slice(2)

@@ -35,13 +35,13 @@ If you prefer to add AgentFactory to an existing project:
 
 ```bash
 # Webhook server (Next.js) — includes all route handlers
-npm install @renseiai/agentfactory-nextjs
+npm install @donmai/nextjs
 
 # Core + Linear integration (for CLI-only usage)
 npm install @renseiai/agentfactory @renseiai/plugin-linear
 
 # Optional: CLI tools (orchestrator, worker, fleet)
-npm install @renseiai/agentfactory-cli
+npm install @donmai/cli
 
 # Optional: Distributed workers (requires Redis)
 npm install @renseiai/agentfactory-server
@@ -194,7 +194,7 @@ If you used `@donmai/create-app`, this is already configured. For manual setup:
 Create `src/lib/config.ts`:
 
 ```typescript
-import { createAllRoutes, createDefaultLinearClientResolver } from '@renseiai/agentfactory-nextjs'
+import { createAllRoutes, createDefaultLinearClientResolver } from '@donmai/nextjs'
 
 export const routes = createAllRoutes({
   linearClient: createDefaultLinearClientResolver(),
@@ -225,7 +225,7 @@ export const GET = routes.sessions.list.GET
 Create `src/middleware.ts`:
 
 ```typescript
-import { createAgentFactoryMiddleware } from '@renseiai/agentfactory-nextjs'
+import { createAgentFactoryMiddleware } from '@donmai/nextjs'
 
 const { middleware } = createAgentFactoryMiddleware()
 

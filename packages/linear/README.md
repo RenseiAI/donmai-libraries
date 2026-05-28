@@ -84,7 +84,7 @@ import {
 | Package | Description |
 |---------|-------------|
 | [@renseiai/agentfactory](https://www.npmjs.com/package/@renseiai/agentfactory) | Core orchestrator |
-| [@renseiai/agentfactory-nextjs](https://www.npmjs.com/package/@renseiai/agentfactory-nextjs) | Next.js webhook server |
+| [@donmai/nextjs](https://www.npmjs.com/package/@donmai/nextjs) | Next.js webhook server |
 
 ## License
 

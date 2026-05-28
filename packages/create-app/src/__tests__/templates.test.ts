@@ -164,12 +164,12 @@ describe.each(COMBOS)(
     const files = getTemplates(opts({ includeDashboard: dashboard, includeCli: cli, useRedis: redis }))
     const pkg = JSON.parse(files['package.json'])
 
-    it('has non-stale @renseiai/* dependency versions', () => {
-      const renseiDeps = Object.entries(pkg.dependencies as Record<string, string>)
-        .filter(([name]) => name.startsWith('@renseiai/'))
+    it('has non-stale @donmai/* dependency versions', () => {
+      const donmaiDeps = Object.entries(pkg.dependencies as Record<string, string>)
+        .filter(([name]) => name.startsWith('@donmai/'))
 
-      expect(renseiDeps.length).toBeGreaterThan(0)
-      for (const [name, version] of renseiDeps) {
+      expect(donmaiDeps.length).toBeGreaterThan(0)
+      for (const [name, version] of donmaiDeps) {
         // Versions must not be the old ^0.7.6
         expect(version, `${name} has stale version ${version}`).not.toBe('^0.7.6')
       }

@@ -39,11 +39,11 @@ AgentFactory is split into nine packages:
 | `@renseiai/agentfactory` | Core orchestrator, provider abstraction, crash recovery |
 | `@renseiai/plugin-linear` | Linear API integration, sessions, status transitions |
 | `@renseiai/agentfactory-server` | Redis work queue, session storage, distributed workers |
-| `@renseiai/agentfactory-cli` | CLI tools for local and remote operation |
-| `@renseiai/agentfactory-nextjs` | Next.js route handlers, webhook processor, OAuth, middleware |
+| `@donmai/cli` | CLI tools for local and remote operation |
+| `@donmai/nextjs` | Next.js route handlers, webhook processor, OAuth, middleware |
 | `@renseiai/agentfactory-dashboard` | Fleet management dashboard UI |
 | `@renseiai/agentfactory-mcp-server` | MCP server exposing fleet capabilities to external clients |
-| `@renseiai/agentfactory-code-intelligence` | Tree-sitter AST parsing, BM25 search, incremental indexing |
+| `@donmai/code-intelligence` | Tree-sitter AST parsing, BM25 search, incremental indexing |
 | `@donmai/create-app` | Project scaffolding tool (`npx @donmai/create-app`) |
 
 ### Dependency Graph
@@ -51,12 +51,12 @@ AgentFactory is split into nine packages:
 ```
 @donmai/create-app (scaffolding, no runtime deps)
 
-@renseiai/agentfactory-nextjs
+@donmai/nextjs
   ├── @renseiai/agentfactory (core)
   ├── @renseiai/plugin-linear
   └── @renseiai/agentfactory-server
 
-@renseiai/agentfactory-cli
+@donmai/cli
   ├── @renseiai/agentfactory (core)
   ├── @renseiai/plugin-linear
   └── @renseiai/agentfactory-server
@@ -66,7 +66,7 @@ AgentFactory is split into nine packages:
   └── @renseiai/plugin-linear
 ```
 
-For a full webhook-driven setup, install `@renseiai/agentfactory-nextjs` (it pulls in all dependencies). For CLI-only local orchestration, install `@renseiai/agentfactory` and `@renseiai/plugin-linear`.
+For a full webhook-driven setup, install `@donmai/nextjs` (it pulls in all dependencies). For CLI-only local orchestration, install `@renseiai/agentfactory` and `@renseiai/plugin-linear`.
 
 ## Core Components
 

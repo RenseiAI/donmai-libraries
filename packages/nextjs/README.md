@@ -1,11 +1,11 @@
-# @renseiai/agentfactory-nextjs
+# @donmai/nextjs
 
 Next.js route handlers, webhook processor, middleware, and OAuth for [AgentFactory](https://github.com/renseiai/agentfactory). Drop-in API routes that turn a Next.js app into a full agent fleet server.
 
 ## Installation
 
 ```bash
-npm install @renseiai/agentfactory-nextjs
+npm install @donmai/nextjs
 ```
 
 Or scaffold a complete project:
@@ -20,7 +20,7 @@ npx @donmai/create-app my-agent
 
 ```typescript
 // src/lib/config.ts
-import { createAllRoutes, createDefaultLinearClientResolver } from '@renseiai/agentfactory-nextjs'
+import { createAllRoutes, createDefaultLinearClientResolver } from '@donmai/nextjs'
 
 export const routes = createAllRoutes({
   linearClient: createDefaultLinearClientResolver(),
@@ -40,7 +40,7 @@ export const GET = routes.webhook.GET
 
 ```typescript
 // src/middleware.ts
-import { createAgentFactoryMiddleware } from '@renseiai/agentfactory-nextjs'
+import { createAgentFactoryMiddleware } from '@donmai/nextjs'
 
 const { middleware } = createAgentFactoryMiddleware()
 export { middleware }
@@ -111,7 +111,7 @@ When `governorMode` is `event-bridge` or `governor-only`, webhook handlers publi
 
 ```typescript
 import { RedisEventBus } from '@renseiai/agentfactory-server'
-import { setGovernorEventBus } from '@renseiai/agentfactory-nextjs'
+import { setGovernorEventBus } from '@donmai/nextjs'
 
 const eventBus = new RedisEventBus()
 setGovernorEventBus(eventBus)
@@ -152,7 +152,7 @@ const { middleware } = createAgentFactoryMiddleware({
 | [@renseiai/agentfactory](https://www.npmjs.com/package/@renseiai/agentfactory) | Core orchestrator |
 | [@renseiai/plugin-linear](https://www.npmjs.com/package/@renseiai/plugin-linear) | Linear integration |
 | [@renseiai/agentfactory-server](https://www.npmjs.com/package/@renseiai/agentfactory-server) | Redis infrastructure |
-| [@renseiai/agentfactory-cli](https://www.npmjs.com/package/@renseiai/agentfactory-cli) | CLI tools |
+| [@donmai/cli](https://www.npmjs.com/package/@donmai/cli) | CLI tools |
 
 ## License
 

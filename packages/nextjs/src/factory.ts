@@ -1,5 +1,5 @@
 /**
- * Factory — @renseiai/agentfactory-nextjs
+ * Factory — @donmai/nextjs
  *
  * Wires all handlers together from a single configuration object.
  * Consumers call `createAllRoutes(config)` and get back a nested
@@ -153,7 +153,7 @@ export interface AllRoutesConfig extends WebhookConfig, CronConfig {
  *
  * @example
  * ```typescript
- * import { createAllRoutes, createDefaultLinearClientResolver } from '@renseiai/agentfactory-nextjs'
+ * import { createAllRoutes, createDefaultLinearClientResolver } from '@donmai/nextjs'
  *
  * // Minimal — everything uses defaults
  * const routes = createAllRoutes({

@@ -117,8 +117,8 @@ The governor evaluates each issue against status, active sessions, cooldowns, hu
 |---------|-------------|
 | [@renseiai/plugin-linear](https://www.npmjs.com/package/@renseiai/plugin-linear) | Linear issue tracker integration |
 | [@renseiai/agentfactory-server](https://www.npmjs.com/package/@renseiai/agentfactory-server) | Redis work queue, distributed workers |
-| [@renseiai/agentfactory-cli](https://www.npmjs.com/package/@renseiai/agentfactory-cli) | CLI tools |
-| [@renseiai/agentfactory-nextjs](https://www.npmjs.com/package/@renseiai/agentfactory-nextjs) | Next.js webhook server |
+| [@donmai/cli](https://www.npmjs.com/package/@donmai/cli) | CLI tools |
+| [@donmai/nextjs](https://www.npmjs.com/package/@donmai/nextjs) | Next.js webhook server |
 
 ## License
 

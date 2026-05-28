@@ -71,7 +71,7 @@ importers:
         specifier: ^3.2.3
         version: 3.2.4(@types/node@22.19.10)(jiti@1.21.7)(tsx@4.21.0)(yaml@2.8.2)
     optionalDependencies:
-      '@renseiai/agentfactory-code-intelligence':
+      '@donmai/code-intelligence':
         specifier: workspace:*
         version: link:../code-intelligence
 

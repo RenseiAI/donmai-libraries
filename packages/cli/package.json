@@ -1,8 +1,8 @@
 {
-  "name": "@renseiai/agentfactory-cli",
+  "name": "@donmai/cli",
   "version": "0.9.0",
   "type": "module",
-  "description": "CLI tools for AgentFactory — local orchestrator, remote worker, queue admin",
+  "description": "CLI tools for Donmai. Local orchestrator, remote worker, queue admin",
   "author": "Rensei AI (https://rensei.ai)",
   "license": "MIT",
   "engines": {
@@ -10,12 +10,12 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/RenseiAI/agentfactory.git",
+    "url": "git+https://github.com/RenseiAI/donmai-libraries.git",
     "directory": "packages/cli"
   },
-  "homepage": "https://github.com/RenseiAI/agentfactory/tree/main/packages/cli",
+  "homepage": "https://github.com/RenseiAI/donmai-libraries/tree/main/packages/cli",
   "bugs": {
-    "url": "https://github.com/RenseiAI/agentfactory/issues"
+    "url": "https://github.com/RenseiAI/donmai-libraries/issues"
   },
   "publishConfig": {
     "access": "public"
@@ -129,7 +129,7 @@
     "dotenv": "^17.2.3"
   },
   "optionalDependencies": {
-    "@renseiai/agentfactory-code-intelligence": "workspace:*"
+    "@donmai/code-intelligence": "workspace:*"
   },
   "devDependencies": {
     "@types/node": "^22.5.4",

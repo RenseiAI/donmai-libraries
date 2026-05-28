@@ -357,14 +357,14 @@ Injected into workflow templates as `{{packageManager}}`. Set to `none` for non-
 Override the command used to invoke the Linear CLI:
 
 ```yaml
-linearCli: "npx -y @renseiai/agentfactory-cli af-linear"
+linearCli: "npx -y @donmai/cli af-linear"
 ```
 
 Default: `"pnpm af-linear"`. Override this for non-Node projects or custom setups:
 
 ```yaml
 # Non-Node project — use npx to run without local install
-linearCli: "npx -y @renseiai/agentfactory-cli af-linear"
+linearCli: "npx -y @donmai/cli af-linear"
 
 # Custom wrapper script
 linearCli: "./tools/af-linear.sh"
@@ -463,7 +463,7 @@ Without MAB routing enabled, the synchronous cascade skips tier 5 (9 tiers total
 Central factory that creates all 21+ route handlers from a single config:
 
 ```typescript
-import { createAllRoutes, createDefaultLinearClientResolver } from '@renseiai/agentfactory-nextjs'
+import { createAllRoutes, createDefaultLinearClientResolver } from '@donmai/nextjs'
 
 const routes = createAllRoutes({
   // Required: how to resolve a Linear API client
@@ -555,7 +555,7 @@ routes.cleanup.GET           → /api/cleanup
 ### `createAgentFactoryMiddleware(config?)`
 
 ```typescript
-import { createAgentFactoryMiddleware } from '@renseiai/agentfactory-nextjs'
+import { createAgentFactoryMiddleware } from '@donmai/nextjs'
 
 const { middleware } = createAgentFactoryMiddleware({
   // Optional: customize route classification
@@ -579,7 +579,7 @@ const { middleware } = createAgentFactoryMiddleware({
 Resolves a Linear API client from environment variables, with workspace OAuth token fallback:
 
 ```typescript
-import { createDefaultLinearClientResolver } from '@renseiai/agentfactory-nextjs'
+import { createDefaultLinearClientResolver } from '@donmai/nextjs'
 
 // Uses LINEAR_ACCESS_TOKEN env by default
 const resolver = createDefaultLinearClientResolver()
@@ -699,13 +699,13 @@ They work side by side in the same directory without conflict. `wt` is recommend
 All CLI tools are available as programmatic functions via subpath exports:
 
 ```typescript
-import { runOrchestrator } from '@renseiai/agentfactory-cli/orchestrator'
-import { runWorker } from '@renseiai/agentfactory-cli/worker'
-import { runWorkerFleet } from '@renseiai/agentfactory-cli/worker-fleet'
-import { runCleanup } from '@renseiai/agentfactory-cli/cleanup'
-import { runQueueAdmin } from '@renseiai/agentfactory-cli/queue-admin'
-import { runLogAnalyzer } from '@renseiai/agentfactory-cli/analyze-logs'
-import { runLinear, parseLinearArgs } from '@renseiai/agentfactory-cli/linear'
+import { runOrchestrator } from '@donmai/cli/orchestrator'
+import { runWorker } from '@donmai/cli/worker'
+import { runWorkerFleet } from '@donmai/cli/worker-fleet'
+import { runCleanup } from '@donmai/cli/cleanup'
+import { runQueueAdmin } from '@donmai/cli/queue-admin'
+import { runLogAnalyzer } from '@donmai/cli/analyze-logs'
+import { runLinear, parseLinearArgs } from '@donmai/cli/linear'
 ```
 
 These functions accept config objects and return Promises — use them to build thin CLI wrappers with your own env loading strategy.
@@ -715,7 +715,7 @@ These functions accept config objects and return Promises — use them to build 
 Executes Linear CLI commands programmatically:
 
 ```typescript
-import { runLinear } from '@renseiai/agentfactory-cli/linear'
+import { runLinear } from '@donmai/cli/linear'
 
 const result = await runLinear({
   command: 'get-issue',

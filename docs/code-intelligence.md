@@ -1,6 +1,6 @@
 # Code Intelligence
 
-The `@renseiai/agentfactory-code-intelligence` package provides 6 core tools for codebase navigation, search, and analysis, plus 3 optional file reservation tools for parallel agent safety. These tools help agents understand large codebases quickly and make informed implementation decisions.
+The `@donmai/code-intelligence` package provides 6 core tools for codebase navigation, search, and analysis, plus 3 optional file reservation tools for parallel agent safety. These tools help agents understand large codebases quickly and make informed implementation decisions.
 
 ## Tools
 

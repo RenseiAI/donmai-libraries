@@ -375,7 +375,7 @@
 
 ### Fixes
 
-- **Republish `@renseiai/agentfactory-code-intelligence`** — Tarball for v0.8.20 was missing on npm (ghost publish). Bumped all packages to v0.8.21 to work around npm's 24-hour republish restriction.
+- **Republish `@donmai/code-intelligence`** — Tarball for v0.8.20 was missing on npm (ghost publish). Bumped all packages to v0.8.21 to work around npm's 24-hour republish restriction.
 
 ## v0.8.20
 
@@ -490,7 +490,7 @@
 ### Features
 
 - **Code intelligence template integration** — New `code-intelligence-instructions` partial added to all 16 workflow templates. Agents now receive guidance to use `af_code_*` tools (repo map, symbol search, code search, duplicate check) when exploring codebases.
-- **Graceful degradation for code-intelligence** — `@renseiai/agentfactory-code-intelligence` is now an optional dependency of the CLI. If not installed, the orchestrator/worker start normally without `af_code_*` tools.
+- **Graceful degradation for code-intelligence** — `@donmai/code-intelligence` is now an optional dependency of the CLI. If not installed, the orchestrator/worker start normally without `af_code_*` tools.
 
 ### Chores
 
@@ -583,14 +583,14 @@
 
 ### Features
 
-- **Add code-intelligence package** — New `@renseiai/agentfactory-code-intelligence` package with regex-based symbol extraction (TypeScript, Python, Go, Rust), BM25 code search, incremental Merkle-tree indexing, PageRank repo maps, and xxHash64/SimHash memory deduplication. Registers four MCP tools for Claude agents.
+- **Add code-intelligence package** — New `@donmai/code-intelligence` package with regex-based symbol extraction (TypeScript, Python, Go, Rust), BM25 code search, incremental Merkle-tree indexing, PageRank repo maps, and xxHash64/SimHash memory deduplication. Registers four MCP tools for Claude agents.
 - **Add inflight-coordination work type** — Parent issues already in Started status now receive an `inflight-coordination` workflow instead of being skipped, allowing the orchestrator to manage sub-agent dispatch mid-flight.
 - **Add cleanup CLI with branch pruning** — `pnpm af-cleanup` now supports `--skip-worktrees` and `--skip-branches` flags, with merged/gone branch detection and IDE safety checks.
 
 ### Fixes
 
 - **Fix release workflow for renamed plugin-linear package** — Release CI referenced the old `@renseiai/agentfactory-linear` name in 4 places; updated to `@renseiai/plugin-linear`.
-- **Add code-intelligence to release pipeline** — `@renseiai/agentfactory-code-intelligence` was missing from the release workflow's version bump and publish steps.
+- **Add code-intelligence to release pipeline** — `@donmai/code-intelligence` was missing from the release workflow's version bump and publish steps.
 - **Prevent code-producing agents from completing without committing** — Agents that produce code changes but skip the commit step are now caught before marking work as complete.
 - **Re-validate coordination upgrade when workType is provided** — `spawnAgentForIssue` now rechecks whether an issue should be upgraded to coordination even when an explicit work type is passed.
 - **Remove plugin-linear compile-time dependency on core** — `@renseiai/plugin-linear` no longer imports from `@renseiai/agentfactory` at build time, fixing circular dependency issues.
@@ -993,7 +993,7 @@
 - **Redis-backed shared rate limiter** — New `RedisTokenBucket` in `@renseiai/agentfactory-server` uses atomic Lua scripts to share a single token bucket across all processes (dashboard, governor, agents). Key: `linear:rate-limit:{workspaceId}`.
 - **Redis-backed shared circuit breaker** — New `RedisCircuitBreaker` in `@renseiai/agentfactory-server` shares circuit state across processes via Redis. Supports exponential backoff on reset timeout.
 - **Linear quota tracker** — New `QuotaTracker` in `@renseiai/agentfactory-server` reads and stores Linear's `X-RateLimit-Requests-Remaining` and `X-RateLimit-Complexity-Remaining` headers in Redis for proactive throttling. Warns when quota drops below threshold.
-- **Centralized issue tracker proxy** — New `POST /api/issue-tracker-proxy` endpoint in `@renseiai/agentfactory-nextjs` acts as a single gateway for all Linear API calls. Agents, governors, and CLI tools call this endpoint instead of Linear directly, centralizing rate limiting, circuit breaking, and OAuth token management. Includes a health endpoint at `GET /api/issue-tracker-proxy`.
+- **Centralized issue tracker proxy** — New `POST /api/issue-tracker-proxy` endpoint in `@donmai/nextjs` acts as a single gateway for all Linear API calls. Agents, governors, and CLI tools call this endpoint instead of Linear directly, centralizing rate limiting, circuit breaking, and OAuth token management. Includes a health endpoint at `GET /api/issue-tracker-proxy`.
 - **Platform-agnostic proxy types** — New `IssueTrackerMethod`, `SerializedIssue`, `SerializedComment`, `ProxyRequest`, and `ProxyResponse` types in `@renseiai/plugin-linear` are Linear-agnostic, enabling future issue tracker backends without changing consumer code.
 - **Proxy client** — New `ProxyIssueTrackerClient` in `@renseiai/plugin-linear` is a drop-in replacement that routes all calls through the dashboard proxy. Activated when `AGENTFACTORY_API_URL` env var is set.
 
@@ -1053,7 +1053,7 @@
 
 ### Features
 
-- **`af-sync-routes` CLI command** — New command that auto-generates missing `route.ts` and `page.tsx` files in consumer projects after upgrading `@renseiai` packages. Reads from a central route manifest in `@renseiai/agentfactory` and creates only missing files (never overwrites). Use `--pages` to also sync dashboard pages, `--dry-run` to preview. Available as `af-sync-routes` binary and `@renseiai/agentfactory-cli/sync-routes` subpath export.
+- **`af-sync-routes` CLI command** — New command that auto-generates missing `route.ts` and `page.tsx` files in consumer projects after upgrading `@renseiai` packages. Reads from a central route manifest in `@renseiai/agentfactory` and creates only missing files (never overwrites). Use `--pages` to also sync dashboard pages, `--dry-run` to preview. Available as `af-sync-routes` binary and `@donmai/cli/sync-routes` subpath export.
 - **Route manifest** — New `ROUTE_MANIFEST` in `@renseiai/agentfactory` defines all 24 API routes and 5 dashboard pages as structured data. Includes `generateRouteContent()` and `generatePageContent()` generators that produce output identical to the `create-app` templates.
 
 ### Tests
@@ -1072,7 +1072,7 @@
 ### Features
 
 - **Linear API rate limiter** — New `TokenBucket` rate limiter in `@renseiai/plugin-linear` proactively throttles requests below Linear's ~100 req/min limit. Uses a token bucket algorithm (80 burst capacity, 1.5 tokens/sec refill). All `LinearAgentClient` API calls now pass through the rate limiter with automatic backpressure. Includes `Retry-After` header parsing for 429 responses.
-- **Auto-detect app URL on Vercel** — `getAppUrl()` and OAuth callback in `@renseiai/agentfactory-nextjs` now fall back to `VERCEL_PROJECT_PRODUCTION_URL` / `VERCEL_URL` when `NEXT_PUBLIC_APP_URL` is not set. Removes the need to manually configure app URL on Vercel deployments.
+- **Auto-detect app URL on Vercel** — `getAppUrl()` and OAuth callback in `@donmai/nextjs` now fall back to `VERCEL_PROJECT_PRODUCTION_URL` / `VERCEL_URL` when `NEXT_PUBLIC_APP_URL` is not set. Removes the need to manually configure app URL on Vercel deployments.
 - **One-click deploy buttons** — Vercel and Railway deploy buttons are now fully functional across all READMEs. Vercel deploys from the monorepo subdirectory (`agentfactory/tree/main/templates/dashboard`), eliminating the need for a separate template repository. Railway deploy uses a published template with bundled Redis.
 
 ### Fixes
@@ -1198,13 +1198,13 @@
 
 ### Features
 
-- **`af-linear` CLI** — Promoted the Linear CLI to a published binary in `@renseiai/agentfactory-cli`. All 15 commands (`get-issue`, `create-issue`, `update-issue`, `list-comments`, `create-comment`, `list-backlog-issues`, `list-unblocked-backlog`, `check-blocked`, `add-relation`, `list-relations`, `remove-relation`, `list-sub-issues`, `list-sub-issue-statuses`, `update-sub-issue`, `check-deployment`) are now available via `npx af-linear` or `pnpm af-linear` after installing `@renseiai/agentfactory-cli`. Previously, the Linear CLI only existed as an internal script in `packages/core/` and consumers had to bundle their own copy.
-- **`@renseiai/agentfactory-cli/linear` subpath export** — `runLinear()` and `parseLinearArgs()` are available as a programmatic API for building custom CLI wrappers.
+- **`af-linear` CLI** — Promoted the Linear CLI to a published binary in `@donmai/cli`. All 15 commands (`get-issue`, `create-issue`, `update-issue`, `list-comments`, `create-comment`, `list-backlog-issues`, `list-unblocked-backlog`, `check-blocked`, `add-relation`, `list-relations`, `remove-relation`, `list-sub-issues`, `list-sub-issue-statuses`, `update-sub-issue`, `check-deployment`) are now available via `npx af-linear` or `pnpm af-linear` after installing `@donmai/cli`. Previously, the Linear CLI only existed as an internal script in `packages/core/` and consumers had to bundle their own copy.
+- **`@donmai/cli/linear` subpath export** — `runLinear()` and `parseLinearArgs()` are available as a programmatic API for building custom CLI wrappers.
 - **`create-agentfactory-app` improvements** — Scaffolded projects now include `pnpm af-linear` out of the box (via `af-linear`), a `.claude/CLAUDE.md` with Linear CLI reference, and an enhanced developer agent definition with Linear status update workflows.
 
 ### Chores
 
-- `@renseiai/agentfactory-cli` is now a required dependency for all scaffolded projects (not just when `includeCli` is selected).
+- `@donmai/cli` is now a required dependency for all scaffolded projects (not just when `includeCli` is selected).
 - Deprecated `packages/core/src/linear-cli.ts` in favor of the CLI package.
 - Aligned all package versions to 0.7.6 across the monorepo.
 
@@ -1234,7 +1234,7 @@
 ### Fixes
 
 - **`create-agentfactory-app` scaffold overhaul** — Fixed multiple issues that caused scaffolded projects to fail at build time or crash on deployment:
-  - **Edge Runtime middleware crash** — Changed middleware import from `@renseiai/agentfactory-nextjs` (main barrel, pulls in Node.js-only deps like ioredis) to `@renseiai/agentfactory-nextjs/middleware` (Edge-compatible subpath). Without this fix, every Vercel deployment crashes with `MIDDLEWARE_INVOCATION_FAILED` / `charCodeAt` errors.
+  - **Edge Runtime middleware crash** — Changed middleware import from `@donmai/nextjs` (main barrel, pulls in Node.js-only deps like ioredis) to `@donmai/nextjs/middleware` (Edge-compatible subpath). Without this fix, every Vercel deployment crashes with `MIDDLEWARE_INVOCATION_FAILED` / `charCodeAt` errors.
   - **Tailwind v3 → v4** — Replaced deprecated Tailwind v3 setup (`tailwind.config.ts` + `postcss.config.js` + autoprefixer) with Tailwind v4 CSS-based config (`postcss.config.mjs` + `@tailwindcss/postcss`). Updated `globals.css` from `@tailwind` directives to `@import "tailwindcss"` + `@source`.
   - **CLI orchestrator missing `linearApiKey`** — `runOrchestrator()` requires `linearApiKey` but the scaffold omitted it, causing a TypeScript error.
   - **CLI cleanup called `.catch()` on sync return** — `runCleanup()` returns `CleanupResult` synchronously, not a Promise. The scaffold treated it as async.
