@@ -109,6 +109,20 @@ export interface AgentSessionState {
   lastToolCalledAt?: number
   /** Consecutive calls to the same tool */
   toolCallCount?: number
+
+  /**
+   * Workflow instance ID that initiated this session, when the session was
+   * dispatched via the workflow engine (e.g. `agent.dispatch_stage` node).
+   * Absent for sessions created by direct webhook dispatch (Linear @-mention
+   * with no workflow subscription, governor-generated stages, etc.).
+   *
+   * Read by per-workflow opt-in surfaces: the platform's activity route
+   * uses this to look up the workflow's `workflowConfig` and gate behaviors
+   * like Linear activity streaming on the author's per-workflow preference.
+   *
+   * Plan: runs/2026-05-27-linear-agentsession-integration-plan.md §2.10 (F2)
+   */
+  workflowInstanceId?: string
 }
 
 /**
