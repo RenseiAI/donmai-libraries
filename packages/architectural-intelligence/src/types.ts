@@ -37,12 +37,29 @@
  * Four-level scope model matching core's ProviderScope.
  * Scoped so that project-level nodes are invisible at tenant scope unless
  * explicitly federated (RLS-enforced in the SaaS Postgres impl).
+ *
+ * Repo dimension (full repo-scoped synthesis):
+ *   `repo` is an OPTIONAL refinement within a project/org scope. A project
+ *   may aggregate multiple git repositories (a multi-repo "corpus"); tagging
+ *   observations with the originating `repo` lets a query return synthesis
+ *   for one repo's corpus rather than the whole project.
+ *
+ *   Backward compatibility: when `repo` is unset, behaviour is identical to
+ *   the pre-repo-dimension SDK — writes carry no repo tag and reads return
+ *   the full project/org corpus. Setting `repo` is purely additive.
  */
 export interface ArchScope {
   level: 'project' | 'org' | 'tenant' | 'global'
   projectId?: string
   orgId?: string
   tenantId?: string
+  /**
+   * Optional repository identifier (e.g. "github.com/renseiai/platform").
+   * When present on a contributed observation's scope, the observation is
+   * tagged with this repo. When present on a query scope, the query narrows
+   * to that repo's corpus. Unset → no repo tag / whole-project corpus.
+   */
+  repo?: string
 }
 
 /**
@@ -93,6 +110,31 @@ export const CITATION_CONFIDENCE_RANK: Record<CitationConfidence, number> = {
   'inferred-medium':   2,
   'inferred-low':      1,
 } as const
+
+/**
+ * Compute the effective set of repos a query is scoped to (full repo-scoped
+ * synthesis). Unions `spec.scope.repo` (single-repo shorthand) with
+ * `spec.repos` (explicit list), de-dups, and drops empties.
+ *
+ * Returns an empty array when no repo refinement is present — callers MUST
+ * treat that as "whole project/org corpus" (backward-compatible default),
+ * NOT as "match zero repos".
+ *
+ * Exported so all storage backends (sqlite, postgres) share one definition
+ * of the repo-filter precedence rules.
+ */
+export function effectiveRepos(spec: ArchQuerySpec): string[] {
+  const out = new Set<string>()
+  if (typeof spec.scope.repo === 'string' && spec.scope.repo.length > 0) {
+    out.add(spec.scope.repo)
+  }
+  if (Array.isArray(spec.repos)) {
+    for (const r of spec.repos) {
+      if (typeof r === 'string' && r.length > 0) out.add(r)
+    }
+  }
+  return [...out]
+}
 
 /**
  * A citation traces an architectural assertion back to its origin.
@@ -390,6 +432,27 @@ export interface ArchQuerySpec {
   scope: ArchScope
   maxTokens?: number
   includeActiveDrift?: boolean
+  /**
+   * Optional per-repo scoping refinement (full repo-scoped synthesis).
+   *
+   * When set, the query returns ONLY the architectural corpus for the named
+   * repository/repositories — i.e. observations/nodes whose stored `repo`
+   * tag matches one of these values. This is a TRUE corpus scope, distinct
+   * from `paths` (which is a within-repo/within-project narrowing applied
+   * on top of the corpus selection).
+   *
+   * Semantics:
+   *   - `repos` unset (and `scope.repo` unset) → whole project/org corpus
+   *     (backward-compatible default; repo-untagged rows are all returned).
+   *   - `repos: ['github.com/acme/api']` → only that repo's corpus.
+   *   - `repos: ['a', 'b']` → the union of both repos' corpora.
+   *   - A single repo may also be expressed via `scope.repo`; when both are
+   *     given, the effective filter is the union of `scope.repo` and `repos`.
+   *
+   * Composability with `paths`: `repos` selects which repo corpora are in
+   * scope; `paths` then narrows within that selection. They are AND-ed.
+   */
+  repos?: string[]
 }
 
 // ---------------------------------------------------------------------------
@@ -409,6 +472,12 @@ export interface ArchQuerySpec {
  *   >= 0.7 → 'inferred-high'
  *   >= 0.4 → 'inferred-medium'
  *   <  0.4 → 'inferred-low'
+ *
+ * Repo tagging (full repo-scoped synthesis): set `scope.repo` to associate
+ * the observation with a specific repository. Repo-tagged observations are
+ * filterable via `ArchQuerySpec.repos` / `ArchQuerySpec.scope.repo`. Leaving
+ * `scope.repo` unset keeps the observation project/org-scoped only
+ * (backward-compatible).
  */
 export interface ArchObservation {
   kind: 'pattern' | 'convention' | 'decision' | 'deviation'
@@ -460,6 +529,10 @@ export interface ArchitecturalIntelligence {
    *
    * Priority ordering for bounded context (maxTokens):
    *   drift warnings > active issue patterns > project-wide conventions > org-wide patterns
+   *
+   * Repo scoping: when `spec.repos` (or `spec.scope.repo`) is set, the
+   * returned view is restricted to the named repositories' corpora. When
+   * unset, the full project/org corpus is returned (backward-compatible).
    */
   query(spec: ArchQuerySpec): Promise<ArchView>
 

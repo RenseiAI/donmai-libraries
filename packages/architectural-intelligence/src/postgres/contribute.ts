@@ -53,6 +53,17 @@ export async function contributeObservation(
   const orgId = observation.scope.orgId ?? ctx.orgId
   const projectId = observation.scope.projectId ?? ctx.projectId
   const agentId = ctx.agentId ?? 'arch-intel-sdk'
+  // Full repo-scoped synthesis: the optional repo tag is persisted to the
+  // `repo` column on both observations and graph_nodes so reads can filter by
+  // repo (see queries.ts). NULL when the observation is project/org-scoped
+  // only (backward-compatible).
+  //
+  // PREREQUISITE: the consumer's `observations` and `graph_nodes` tables MUST
+  // carry a nullable `repo TEXT` column. The SDK does not run DDL; consumers
+  // ship the column via their own migration tooling (mirrors the RLS DDL
+  // exemplar pattern). When repo is unset everywhere this column receives
+  // NULL on every write.
+  const repo = observation.scope.repo ?? null
 
   const payloadString =
     typeof observation.payload === 'string'
@@ -80,9 +91,9 @@ export async function contributeObservation(
       id, org_id, project_id, agent_id,
       content, content_hash,
       kind, payload,
-      source, weight, metadata
+      source, weight, metadata, repo
     )
-    VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11)
+    VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12)
     ON CONFLICT (org_id, project_id, agent_id, content_hash)
     DO UPDATE SET weight = observations.weight + 1, updated_at = NOW()
     `,
@@ -98,6 +109,7 @@ export async function contributeObservation(
       observation.source.authoredDoc ? 'explicit' : 'auto',
       '1.0',
       db.json(metadata),
+      repo,
     ],
   )
 
@@ -113,6 +125,7 @@ export async function contributeObservation(
       importance_weight, feedback_weight,
       org_id, project_id,
       source_observation_id, source_session_id,
+      repo,
       created_at, updated_at
     )
     VALUES (
@@ -120,6 +133,7 @@ export async function contributeObservation(
       $6, $7,
       $8, $9,
       $10, $11,
+      $12,
       NOW(), NOW()
     )
     `,
@@ -135,6 +149,7 @@ export async function contributeObservation(
       projectId,
       observationId,
       observation.source.sessionId ?? null,
+      repo,
     ],
   )
 }

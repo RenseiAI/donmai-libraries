@@ -48,7 +48,7 @@ import type {
   CitationConfidence,
   ChangeRef,
 } from './types.js'
-import { CITATION_CONFIDENCE_RANK } from './types.js'
+import { CITATION_CONFIDENCE_RANK, effectiveRepos } from './types.js'
 import type { ModelAdapter } from './eval.js'
 import { assessChange } from './drift.js'
 
@@ -80,6 +80,7 @@ CREATE TABLE IF NOT EXISTS observations (
   scope_level  TEXT NOT NULL,
   scope_json   TEXT NOT NULL,
   source_json  TEXT NOT NULL,
+  repo         TEXT,
   created_at   TEXT NOT NULL
 );
 
@@ -103,6 +104,7 @@ CREATE TABLE IF NOT EXISTS patterns (
   locations    TEXT NOT NULL,
   tags         TEXT NOT NULL,
   scope_json   TEXT NOT NULL,
+  repo         TEXT,
   created_at   TEXT NOT NULL,
   updated_at   TEXT NOT NULL
 );
@@ -114,6 +116,7 @@ CREATE TABLE IF NOT EXISTS conventions (
   examples     TEXT NOT NULL,
   authored     INTEGER NOT NULL DEFAULT 0,
   scope_json   TEXT NOT NULL,
+  repo         TEXT,
   created_at   TEXT NOT NULL,
   updated_at   TEXT NOT NULL
 );
@@ -127,6 +130,7 @@ CREATE TABLE IF NOT EXISTS decisions (
   status       TEXT NOT NULL DEFAULT 'active',
   supersedes   TEXT,
   scope_json   TEXT NOT NULL,
+  repo         TEXT,
   created_at   TEXT NOT NULL,
   updated_at   TEXT NOT NULL
 );
@@ -140,10 +144,28 @@ CREATE TABLE IF NOT EXISTS deviations (
   status           TEXT NOT NULL DEFAULT 'pending',
   severity         TEXT NOT NULL DEFAULT 'medium',
   scope_json       TEXT NOT NULL,
+  repo             TEXT,
   created_at       TEXT NOT NULL,
   updated_at       TEXT NOT NULL
 );
 `
+
+/**
+ * Additive, idempotent migration for databases created before the repo
+ * dimension shipped. node:sqlite has no IF NOT EXISTS for ADD COLUMN, so we
+ * probe the column list and only ALTER when the column is absent. Safe to run
+ * on every construction — a no-op once the column exists.
+ */
+function ensureRepoColumns(db: DatabaseSync): void {
+  for (const table of ['observations', 'patterns', 'conventions', 'decisions', 'deviations']) {
+    const cols = db.prepare(`PRAGMA table_info(${table})`).all() as unknown as Array<{
+      name: string
+    }>
+    if (!cols.some((c) => c.name === 'repo')) {
+      db.exec(`ALTER TABLE ${table} ADD COLUMN repo TEXT`)
+    }
+  }
+}
 
 // ---------------------------------------------------------------------------
 // Row types (internal)
@@ -234,6 +256,7 @@ export class SqliteArchitecturalIntelligence implements ArchitecturalIntelligenc
 
     this._db = new DatabaseSync(dbPath)
     this._db.exec(SCHEMA_DDL)
+    ensureRepoColumns(this._db)
 
     this._defaultScope = { level: 'project' }
   }
@@ -246,11 +269,21 @@ export class SqliteArchitecturalIntelligence implements ArchitecturalIntelligenc
     const scope = spec.scope
     const scopeLevel = scope.level
 
+    // Per-repo scoping (full repo-scoped synthesis). When the query names one
+    // or more repos, restrict the corpus to rows tagged with a matching repo.
+    // When no repos are named, the clause is empty and the whole project/org
+    // corpus is returned (backward-compatible).
+    const repos = effectiveRepos(spec)
+    const repoClause =
+      repos.length > 0
+        ? ` AND repo IN (${repos.map(() => '?').join(', ')})`
+        : ''
+
     // Retrieve patterns (text-search placeholder: all rows matching scope)
     // node:sqlite .all() returns Record<string, SQLOutputValue>[] — cast via unknown
     const patternRows = this._db.prepare(
-      `SELECT * FROM patterns WHERE JSON_EXTRACT(scope_json, '$.level') = ? ORDER BY updated_at DESC`,
-    ).all(scopeLevel) as unknown as PatternRow[]
+      `SELECT * FROM patterns WHERE JSON_EXTRACT(scope_json, '$.level') = ?${repoClause} ORDER BY updated_at DESC`,
+    ).all(scopeLevel, ...repos) as unknown as PatternRow[]
 
     // Optionally narrow to paths
     const filteredPatternRows = spec.paths && spec.paths.length > 0
@@ -268,8 +301,8 @@ export class SqliteArchitecturalIntelligence implements ArchitecturalIntelligenc
 
     // Retrieve conventions
     const conventionRows = this._db.prepare(
-      `SELECT * FROM conventions WHERE JSON_EXTRACT(scope_json, '$.level') = ? ORDER BY authored DESC, updated_at DESC`,
-    ).all(scopeLevel) as unknown as ConventionRow[]
+      `SELECT * FROM conventions WHERE JSON_EXTRACT(scope_json, '$.level') = ?${repoClause} ORDER BY authored DESC, updated_at DESC`,
+    ).all(scopeLevel, ...repos) as unknown as ConventionRow[]
 
     const conventions: Convention[] = conventionRows.map((r) =>
       this._rowToConvention(r),
@@ -277,8 +310,8 @@ export class SqliteArchitecturalIntelligence implements ArchitecturalIntelligenc
 
     // Retrieve decisions (active only)
     const decisionRows = this._db.prepare(
-      `SELECT * FROM decisions WHERE JSON_EXTRACT(scope_json, '$.level') = ? AND status = 'active' ORDER BY updated_at DESC`,
-    ).all(scopeLevel) as unknown as DecisionRow[]
+      `SELECT * FROM decisions WHERE JSON_EXTRACT(scope_json, '$.level') = ? AND status = 'active'${repoClause} ORDER BY updated_at DESC`,
+    ).all(scopeLevel, ...repos) as unknown as DecisionRow[]
 
     const decisions: Decision[] = decisionRows.map((r) =>
       this._rowToDecision(r),
@@ -328,8 +361,8 @@ export class SqliteArchitecturalIntelligence implements ArchitecturalIntelligenc
     const now = new Date().toISOString()
 
     this._db.prepare(
-      `INSERT INTO observations (id, kind, payload, confidence, scope_level, scope_json, source_json, created_at)
-       VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
+      `INSERT INTO observations (id, kind, payload, confidence, scope_level, scope_json, source_json, repo, created_at)
+       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`,
     ).run(
       id,
       observation.kind,
@@ -338,6 +371,7 @@ export class SqliteArchitecturalIntelligence implements ArchitecturalIntelligenc
       observation.scope.level,
       JSON.stringify(observation.scope),
       JSON.stringify(observation.source),
+      observation.scope.repo ?? null,
       now,
     )
 
@@ -509,9 +543,9 @@ export class SqliteArchitecturalIntelligence implements ArchitecturalIntelligenc
     const tags = JSON.stringify(payload['tags'] ?? [])
 
     this._db.prepare(
-      `INSERT INTO patterns (id, title, description, locations, tags, scope_json, created_at, updated_at)
-       VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
-    ).run(id, title, description, locations, tags, JSON.stringify(obs.scope), now, now)
+      `INSERT INTO patterns (id, title, description, locations, tags, scope_json, repo, created_at, updated_at)
+       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+    ).run(id, title, description, locations, tags, JSON.stringify(obs.scope), obs.scope.repo ?? null, now, now)
 
     this._insertCitation('pattern', id, obs, observationId, now)
   }
@@ -532,9 +566,9 @@ export class SqliteArchitecturalIntelligence implements ArchitecturalIntelligenc
     const authored = obs.source.authoredDoc ? 1 : 0
 
     this._db.prepare(
-      `INSERT INTO conventions (id, title, description, examples, authored, scope_json, created_at, updated_at)
-       VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
-    ).run(id, title, description, examples, authored, JSON.stringify(obs.scope), now, now)
+      `INSERT INTO conventions (id, title, description, examples, authored, scope_json, repo, created_at, updated_at)
+       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+    ).run(id, title, description, examples, authored, JSON.stringify(obs.scope), obs.scope.repo ?? null, now, now)
 
     this._insertCitation('convention', id, obs, observationId, now)
   }
@@ -556,9 +590,9 @@ export class SqliteArchitecturalIntelligence implements ArchitecturalIntelligenc
     const status = String(payload['status'] ?? 'active')
 
     this._db.prepare(
-      `INSERT INTO decisions (id, title, chosen, alternatives, rationale, status, scope_json, created_at, updated_at)
-       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`,
-    ).run(id, title, chosen, alternatives, rationale, status, JSON.stringify(obs.scope), now, now)
+      `INSERT INTO decisions (id, title, chosen, alternatives, rationale, status, scope_json, repo, created_at, updated_at)
+       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+    ).run(id, title, chosen, alternatives, rationale, status, JSON.stringify(obs.scope), obs.scope.repo ?? null, now, now)
 
     this._insertCitation('decision', id, obs, observationId, now)
   }
@@ -585,11 +619,11 @@ export class SqliteArchitecturalIntelligence implements ArchitecturalIntelligenc
     const severity = String(payload['severity'] ?? 'medium')
 
     this._db.prepare(
-      `INSERT INTO deviations (id, title, description, deviates_from, introduced_by, status, severity, scope_json, created_at, updated_at)
-       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+      `INSERT INTO deviations (id, title, description, deviates_from, introduced_by, status, severity, scope_json, repo, created_at, updated_at)
+       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
     ).run(
       id, title, description, deviatesFrom, introducedBy,
-      status, severity, JSON.stringify(obs.scope), now, now,
+      status, severity, JSON.stringify(obs.scope), obs.scope.repo ?? null, now, now,
     )
 
     this._insertCitation('deviation', id, obs, observationId, now)

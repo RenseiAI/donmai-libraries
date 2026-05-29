@@ -43,6 +43,8 @@ export interface GraphNodeRow {
   importanceWeight: number
   orgId: string
   projectId: string
+  /** Optional repo tag (full repo-scoped synthesis). Null when untagged. */
+  repo?: string | null
   sourceObservationId: string | null
   sourceSessionId: string | null
   createdAt: string | Date
@@ -145,6 +147,7 @@ function rowScope(row: GraphNodeRow): ArchScope {
     level: 'project',
     orgId: row.orgId,
     projectId: row.projectId,
+    ...(typeof row.repo === 'string' && row.repo.length > 0 ? { repo: row.repo } : {}),
   }
 }
 

@@ -56,7 +56,7 @@ export type {
   ChangeRef,
 } from './types.js'
 
-export { CITATION_CONFIDENCE_RANK } from './types.js'
+export { CITATION_CONFIDENCE_RANK, effectiveRepos } from './types.js'
 
 // Implementations
 export { SqliteArchitecturalIntelligence } from './sqlite-impl.js'

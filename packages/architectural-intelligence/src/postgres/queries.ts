@@ -20,7 +20,7 @@ import type {
   Decision,
   Citation,
 } from '../types.js'
-import { CITATION_CONFIDENCE_RANK } from '../types.js'
+import { CITATION_CONFIDENCE_RANK, effectiveRepos } from '../types.js'
 import type { PostgresDbAdapter } from './adapter.js'
 import {
   type GraphNodeRow,
@@ -49,6 +49,7 @@ const SELECT_GRAPH_NODE_COLUMNS = `
   importance_weight AS "importanceWeight",
   org_id AS "orgId",
   project_id AS "projectId",
+  repo,
   source_observation_id AS "sourceObservationId",
   source_session_id AS "sourceSessionId",
   created_at AS "createdAt",
@@ -72,7 +73,17 @@ export async function queryArchView(
   projectId: string | undefined,
   spec: ArchQuerySpec,
 ): Promise<ArchView> {
-  const rows = await fetchGraphNodes(db, orgId, projectId, ARCH_KINDS as readonly string[])
+  // Full repo-scoped synthesis: when the spec names repos, narrow the corpus
+  // to graph_nodes tagged with a matching `repo`. Empty → whole project/org
+  // corpus (backward-compatible).
+  const repos = effectiveRepos(spec)
+  const rows = await fetchGraphNodes(
+    db,
+    orgId,
+    projectId,
+    ARCH_KINDS as readonly string[],
+    repos,
+  )
 
   const patterns: ArchitecturalPattern[] = []
   const conventions: Convention[] = []
@@ -163,20 +174,30 @@ export async function fetchDeviationRows(
 
 /**
  * Core read primitive — scoped fetch of graph_nodes rows by kind set.
+ *
+ * @param repos Optional per-repo corpus filter (full repo-scoped synthesis).
+ *   When non-empty, restricts to rows whose `repo` column matches one of the
+ *   values. Empty / omitted → whole project/org corpus (backward-compatible);
+ *   repo-untagged rows are returned in that case.
  */
 export async function fetchGraphNodes(
   db: PostgresDbAdapter,
   orgId: string,
   projectId: string | undefined,
   kinds: readonly string[],
+  repos: readonly string[] = [],
 ): Promise<GraphNodeRow[]> {
   // Postgres ANY ($1::text[]) parameter for the kind set; org_id at $2;
-  // optional project_id at $3.
+  // optional project_id and repo filter follow as positional params.
   const params: unknown[] = [Array.from(kinds), orgId]
   let where = `WHERE type = ANY ($1::text[]) AND org_id = $2`
   if (projectId !== undefined) {
     params.push(projectId)
-    where += ` AND project_id = $3`
+    where += ` AND project_id = $${params.length}`
+  }
+  if (repos.length > 0) {
+    params.push(Array.from(repos))
+    where += ` AND repo = ANY ($${params.length}::text[])`
   }
 
   const text = `
