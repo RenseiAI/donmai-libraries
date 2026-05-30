@@ -30,6 +30,7 @@ import {
   isRedisConfigured,
 } from '@donmai/server'
 import { createProxyFileReservationDelegate } from '@donmai/core'
+import { withRoutingRecorder } from './routing-recorder.js'
 
 let codeIntelligencePlugin: ToolPlugin | undefined
 try {
@@ -203,13 +204,13 @@ export async function runOrchestrator(
 
   const orchestrator = createOrchestrator(
     orchestratorConfig as Parameters<typeof createOrchestrator>[0],
-    {
+    withRoutingRecorder({
       onIssueSelected: cb.onIssueSelected,
       onAgentStart: cb.onAgentStart,
       onAgentComplete: cb.onAgentComplete,
       onAgentError: cb.onAgentError,
       onAgentIncomplete: cb.onAgentIncomplete,
-    },
+    }),
   )
 
   const result: OrchestratorRunnerResult = {

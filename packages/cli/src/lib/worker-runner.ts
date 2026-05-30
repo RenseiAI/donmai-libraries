@@ -42,6 +42,7 @@ import {
   type SessionHeartbeatHandle,
 } from '@donmai/server'
 import { createProxyFileReservationDelegate } from '@donmai/core'
+import { withRoutingRecorder } from './routing-recorder.js'
 
 let codeIntelligencePlugin: ToolPlugin | undefined
 try {
@@ -824,7 +825,7 @@ export async function runWorker(
             workerId: workerId!,
           },
         },
-        {
+        withRoutingRecorder({
           onIssueSelected: (issue: OrchestratorIssue) => {
             agentLog.info('Issue fetched', {
               title: issue.title.slice(0, 50),
@@ -869,7 +870,7 @@ export async function runWorker(
               providerSessionId,
             })
           },
-        },
+        }),
       )
 
       // Store orchestrator for prompt forwarding
