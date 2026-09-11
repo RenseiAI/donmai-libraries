@@ -707,13 +707,32 @@ describe('session-storage', () => {
       }
     )
 
-    it('rejects a stale transfer against a newer owner without overwriting it', async () => {
+    it('rejects a stale transfer before any write, leaving bytes and TTL untouched', async () => {
       const observed = JSON.stringify(ownedRow('worker-newer'))
       const mockGet = vi.fn(() => Promise.resolve(observed))
       mockGetRedisClient.mockReturnValue({ get: mockGet } as never)
-      mockRedisEval.mockResolvedValue(1)
+
+      const result = await transferSessionOwnership(
+        'session-1',
+        'worker-new',
+        'worker-old'
+      )
+
+      expect(result.transferred).toBe(false)
+      expect(result.reason).toContain('worker-newer')
+      // Refusal aborts before the CAS: no write of any kind, not even a
+      // reserialized SETEX that would renew the TTL.
+      expect(mockRedisEval).not.toHaveBeenCalled()
+      expect(mockRedisSet).not.toHaveBeenCalled()
+    })
+
+    it('reports a lost race against the fresh owner, never the stale snapshot', async () => {
+      const observed = JSON.stringify(ownedRow('worker-old'))
+      const mockGet = vi.fn(() => Promise.resolve(observed))
+      mockGetRedisClient.mockReturnValue({ get: mockGet } as never)
+      mockRedisEval.mockResolvedValue(0)
       mockRedisGet.mockResolvedValue({
-        ...ownedRow('worker-newer'),
+        ...ownedRow('worker-racer'),
         trackerProvider: 'linear',
       })
 
@@ -724,11 +743,7 @@ describe('session-storage', () => {
       )
 
       expect(result.transferred).toBe(false)
-      expect(result.reason).toContain('worker-newer')
-      const [, , args] = mockRedisEval.mock.calls[0]!
-      expect(args[0]).toBe(observed)
-      // The rejected attempt is a byte-identical no-op, never a rebind.
-      expect(String(args[1])).toBe(observed)
+      expect(result.reason).toContain('worker-racer')
     })
 
     it('throws on a malformed row instead of rewriting it', async () => {

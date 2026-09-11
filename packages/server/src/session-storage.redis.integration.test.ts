@@ -469,6 +469,38 @@ describe('field-atomic metadata updates against Redis', () => {
     expect(await readRaw(key)).toMatchObject({ workerId: 'worker-newer' })
   })
 
+  it('a refused transfer writes nothing: bytes and TTL are unchanged', async () => {
+    const id = sessionId('transfer-refused-no-write')
+    const row = makeSession(id, { status: 'running', workerId: 'foreign' })
+    const key = await seedRaw(id, row, 60)
+    const beforeRaw = (await redis.get(key)) as string
+    const beforeTtl = await redis.ttl(key)
+
+    const result = await transferSessionOwnership(id, 'replacement', 'expected')
+
+    expect(result.transferred).toBe(false)
+    expect(result.reason).toContain('foreign')
+    expect(await redis.get(key)).toBe(beforeRaw)
+    expect(await redis.ttl(key)).toBe(beforeTtl)
+  })
+
+  it('a transfer that becomes eligible mid-flight commits the new owner and reports success', async () => {
+    const id = sessionId('transfer-race-eligible')
+    const row = makeSession(id, { status: 'running', workerId: 'foreign' })
+    const key = await seedRaw(id, row, 60)
+    // Simulate the race at the production CAS seam: the row is eligible by
+    // the time the single Lua guard runs (observed holder already matches).
+    await redis.set(
+      key,
+      JSON.stringify({ ...row, workerId: 'expected' }),
+      'EX',
+      60
+    )
+    const result = await transferSessionOwnership(id, 'replacement', 'expected')
+    expect(result).toEqual({ transferred: true })
+    expect(await readRaw(key)).toMatchObject({ workerId: 'replacement' })
+  })
+
   it('preserves newer provider and owner fields when heartbeat races a terminal commit', async () => {
     const id = sessionId('heartbeat-vs-terminal')
     const key = await seedRaw(

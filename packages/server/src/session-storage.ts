@@ -936,63 +936,66 @@ export async function transferSessionOwnership(
 
   // Null/undefined/empty means unowned: the transfer proceeds, preserving
   // the previous behavior for rows that never recorded an owner. A real
-  // mismatched owner still rejects. The predicate runs against the compared
-  // snapshot, so a newer owner committed after our read cannot be lost.
-  let mismatchOwner: unknown
-  let missing = false
-  let malformed = false
-  const committed = await casSessionRow(
-    key,
-    sessionId,
-    'ownership transfer',
-    (current, now) => {
-      const owner = current.workerId
-      const unowned = owner === null || owner === undefined || owner === ''
-      if (!unowned && owner !== oldWorkerId) {
-        mismatchOwner = owner
-        // Return the row unchanged; the CAS write is a byte-identical
-        // no-op, so either it commits harmlessly or a concurrent writer
-        // wins and we report the mismatch against the fresh row.
-        return current
-      }
-      const next: AgentSessionState = {
-        ...current,
-        workerId: newWorkerId,
-        updatedAt: now,
-      }
-      if (!next.trackerSessionId && next.linearSessionId) {
-        next.trackerSessionId = next.linearSessionId
-      }
-      if (!next.trackerProvider) {
-        next.trackerProvider = 'linear'
-      }
-      return next
+  // mismatched owner refuses BEFORE any write — not even a reserialized
+  // SETEX — so a rejection changes neither bytes nor TTL, and the reported
+  // reason always agrees with the snapshot this attempt observed.
+  const redis = getRedisClient()
+  const observed = await redis.get(key)
+  if (observed === null) {
+    return { transferred: false, reason: 'Session not found' }
+  }
+  let current: AgentSessionState
+  try {
+    const parsed: unknown = JSON.parse(observed)
+    if (typeof parsed !== 'object' || parsed === null || Array.isArray(parsed)) {
+      throw new Error('malformed')
     }
-  ).catch((err) => {
-    if (err instanceof Error && err.message.includes('is malformed')) {
-      malformed = true
-      return false
-    }
-    throw err
-  })
-  if (malformed) {
+    current = parsed as AgentSessionState
+  } catch {
     throw new Error(
       `Session row for ${sessionId} is malformed; refusing ownership transfer`
     )
   }
-  if (!committed) {
-    missing = true
+  const owner = current.workerId
+  const unowned = owner === null || owner === undefined || owner === ''
+  if (!unowned && owner !== oldWorkerId) {
+    log.warn('Session ownership transfer rejected - worker ID mismatch', {
+      sessionId,
+      expectedWorkerId: oldWorkerId,
+      actualWorkerId: owner,
+    })
+    return {
+      transferred: false,
+      reason: `Session owned by different worker: ${owner}`,
+    }
   }
-  if (missing) {
+  const now = Date.now()
+  const next: AgentSessionState = {
+    ...current,
+    workerId: newWorkerId,
+    updatedAt: now,
+  }
+  if (!next.trackerSessionId && next.linearSessionId) {
+    next.trackerSessionId = next.linearSessionId
+  }
+  if (!next.trackerProvider) {
+    next.trackerProvider = 'linear'
+  }
+  const desired = JSON.stringify(next)
+  const result = await redisEval(
+    ATOMIC_RAW_CAS_SCRIPT,
+    [key],
+    [observed, desired, SESSION_TTL_SECONDS]
+  )
+  if (result === -1) {
     return { transferred: false, reason: 'Session not found' }
   }
-  // Validate that the old worker ID matches (security check). The check
-  // and the write ran against the same compared snapshot, so a newer owner
-  // can never be overwritten by a stale transfer.
-  if (mismatchOwner !== undefined) {
-    const current = await getSessionState(sessionId)
-    const actual = current?.workerId ?? mismatchOwner
-    log.warn('Session ownership transfer rejected - worker ID mismatch', {
+  if (result !== 1) {
+    // Lost the race after observing an eligible owner: report the conflict
+    // against a fresh read rather than the stale snapshot.
+    const fresh = await getSessionState(sessionId)
+    const actual = fresh?.workerId ?? owner
+    log.warn('Session ownership transfer lost race', {
       sessionId,
       expectedWorkerId: oldWorkerId,
       actualWorkerId: actual,
