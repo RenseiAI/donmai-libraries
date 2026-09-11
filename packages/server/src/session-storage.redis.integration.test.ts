@@ -1,5 +1,5 @@
 import { randomUUID } from 'node:crypto'
-import { afterAll, afterEach, describe, expect, it } from 'vitest'
+import { afterAll, afterEach, describe, expect, it, vi } from 'vitest'
 import { disconnectRedis, getRedisClient } from './redis.js'
 import {
   claimSession,
@@ -336,7 +336,7 @@ describe('production atomic worker lifecycle Lua against Redis', () => {
 })
 
 describe('field-atomic metadata updates against Redis', () => {
-  it('holds a stale cost writer across a terminal commit: repaired code preserves completed and final cost', async () => {
+  it('holds the ACTUAL cost writer read across a terminal commit: completed survives and final cost lands', async () => {
     const id = sessionId('cost-vs-terminal')
     const key = await seedRaw(
       id,
@@ -349,10 +349,13 @@ describe('field-atomic metadata updates against Redis', () => {
       })
     )
 
-    // Barrier: a slow cost path snapshots the row, then waits while the
-    // status writer commits `completed` through the real code path. The
-    // repaired writer applies its patch to the CURRENT row, so the terminal
-    // status survives and the final cost fields still land.
+    // Barrier on the production writer's own read/write seam: pause the
+    // cost writer AFTER its internal row read (not a separate test-side
+    // snapshot), commit `completed` through the real status writer, then
+    // release the stale writer. The repaired writer retries from the fresh
+    // row, so the terminal status survives and the final cost still lands.
+    const client = getRedisClient()
+    const realGet = client.get.bind(client)
     let releaseCostWrite!: () => void
     const costWriteReleased = new Promise<void>((resolve) => {
       releaseCostWrite = resolve
@@ -361,26 +364,29 @@ describe('field-atomic metadata updates against Redis', () => {
     const costWriteHeld = new Promise<void>((resolve) => {
       holdCostWrite = resolve
     })
+    let heldOnce = false
+    const getSpy = vi.spyOn(client, 'get').mockImplementation((async (redisKey: Parameters<typeof client.get>[0]) => {
+        const value = await realGet(redisKey)
+        if (!heldOnce && String(redisKey) === key && value !== null) {
+          heldOnce = true
+          holdCostWrite()
+          await costWriteReleased
+        }
+        return value
+      }) as never)
 
-    const costPromise = (async () => {
-      const staleRaw = await redis.get(key)
-      expect(staleRaw).not.toBeNull()
-      const staleStatus = (JSON.parse(staleRaw!) as { status: string }).status
-      expect(staleStatus).toBe('running')
-      holdCostWrite()
-      await costWriteReleased
-      return updateSessionCostData(id, {
-        totalCostUsd: 9.99,
-        inputTokens: 999,
-        outputTokens: 999,
-      })
-    })()
+    const costPromise = updateSessionCostData(id, {
+      totalCostUsd: 9.99,
+      inputTokens: 999,
+      outputTokens: 999,
+    })
     await costWriteHeld
 
     // Concurrent terminal commit via the actual status writer.
     await expect(updateSessionStatus(id, 'completed')).resolves.toBe(true)
     releaseCostWrite()
     await expect(costPromise).resolves.toBe(true)
+    getSpy.mockRestore()
 
     // Repaired behavior: terminal status survives and final cost fields land.
     expect(await readRaw(key)).toMatchObject({
@@ -393,6 +399,74 @@ describe('field-atomic metadata updates against Redis', () => {
       status: 'completed',
       totalCostUsd: 9.99,
     })
+  })
+
+  it('provider-only writes preserve nested arrays and numeric precision byte-for-byte elsewhere', async () => {
+    const id = sessionId('lossless-provider')
+    const key = await seedRaw(
+      id,
+      makeSession(id, {
+        status: 'running',
+        workerId: 'worker-a',
+        providerSessionId: null,
+        totalCostUsd: 1.2345678901234567,
+        inputTokens: 9007199254740991,
+        outputTokens: 7,
+      })
+    )
+    // Untouched nested carrier data with an empty array.
+    const before = (await readRaw(key)) as Record<string, unknown>
+    const withCarrier = { ...before, extra: { tags: [] as unknown[] } }
+    await redis.set(key, JSON.stringify(withCarrier), 'EX', 60)
+    const beforeRaw = (await redis.get(key)) as string
+
+    await expect(
+      updateProviderSessionId(id, 'provider-keep')
+    ).resolves.toBe(true)
+
+    const afterRaw = (await redis.get(key)) as string
+    const after = JSON.parse(afterRaw) as Record<string, unknown>
+    expect(after.providerSessionId).toBe('provider-keep')
+    expect(after.extra).toEqual({ tags: [] })
+    expect(Array.isArray((after.extra as { tags: unknown }).tags)).toBe(true)
+    expect(after.totalCostUsd).toBe(1.2345678901234567)
+    expect(after.inputTokens).toBe(9007199254740991)
+    expect(after.outputTokens).toBe(7)
+    expect(after.status).toBe('running')
+    expect(after.workerId).toBe('worker-a')
+    // Only the patched field plus updatedAt differ from the seeded bytes.
+    const beforeParsed = JSON.parse(beforeRaw) as Record<string, unknown>
+    const afterParsed = JSON.parse(afterRaw) as Record<string, unknown>
+    expect({
+      ...afterParsed,
+      providerSessionId: beforeParsed.providerSessionId,
+      updatedAt: beforeParsed.updatedAt,
+    }).toEqual(beforeParsed)
+  })
+
+  it('null, undefined, and empty owners all accept a transfer', async () => {
+    for (const owner of [null, undefined, ''] as const) {
+      const id = sessionId(`transfer-unowned-${owner === '' ? 'empty' : String(owner)}-${Math.random().toString(36).slice(2, 6)}`)
+      const overrides: Partial<AgentSessionState> =
+        owner === undefined ? {} : { workerId: owner }
+      const key = await seedRaw(id, makeSession(id, overrides))
+      await expect(
+        transferSessionOwnership(id, 'worker-new', 'worker-old')
+      ).resolves.toEqual({ transferred: true })
+      expect(await readRaw(key)).toMatchObject({ workerId: 'worker-new' })
+    }
+  })
+
+  it('a stale transfer against a newer owner is rejected and keeps the newer owner', async () => {
+    const id = sessionId('transfer-stale')
+    const key = await seedRaw(
+      id,
+      makeSession(id, { status: 'claimed', workerId: 'worker-newer' })
+    )
+    await expect(
+      transferSessionOwnership(id, 'worker-stale', 'worker-old')
+    ).resolves.toMatchObject({ transferred: false })
+    expect(await readRaw(key)).toMatchObject({ workerId: 'worker-newer' })
   })
 
   it('preserves newer provider and owner fields when heartbeat races a terminal commit', async () => {

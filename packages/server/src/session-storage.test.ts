@@ -232,39 +232,73 @@ describe('session-storage', () => {
     })
 
     it('returns false when session is not found', async () => {
-      mockRedisEval.mockResolvedValue(-1)
+      const mockGet = vi.fn(() => Promise.resolve(null))
+      mockGetRedisClient.mockReturnValue({ get: mockGet } as never)
       const result = await updateSessionStatus('nonexistent', 'running')
       expect(result).toBe(false)
-      expect(mockRedisEval).toHaveBeenCalledWith(
-        expect.any(String),
-        ['agent:session:nonexistent'],
-        ['running', '', expect.any(Number), 86400]
-      )
+      expect(mockRedisEval).not.toHaveBeenCalled()
     })
 
-    it('applies the status patch atomically without rewriting other fields', async () => {
+    it('applies the status change losslessly through raw-string CAS', async () => {
+      const stored = {
+        trackerSessionId: 'session-1',
+        trackerProvider: 'linear',
+        issueId: 'issue-1',
+        providerSessionId: 'provider-keep',
+        worktreePath: '/tmp/worktree',
+        status: 'running',
+        workerId: 'worker-a',
+        createdAt: 1000000,
+        updatedAt: 1000001,
+        totalCostUsd: 1.2345678901234567,
+        inputTokens: 9007199254740991,
+        extra: { tags: [] as unknown[] },
+      }
+      const observed = JSON.stringify(stored)
+      const mockGet = vi.fn(() => Promise.resolve(observed))
+      mockGetRedisClient.mockReturnValue({ get: mockGet } as never)
       mockRedisEval.mockResolvedValue(1)
 
-      const result = await updateSessionStatus('session-1', 'running')
+      const result = await updateSessionStatus('session-1', 'completed')
 
       expect(result).toBe(true)
       expect(mockRedisGet).not.toHaveBeenCalled()
       expect(mockRedisSet).not.toHaveBeenCalled()
-      expect(mockRedisEval).toHaveBeenCalledWith(
-        expect.any(String),
-        ['agent:session:session-1'],
-        ['running', '', expect.any(Number), 86400]
-      )
+      const [, keys, args] = mockRedisEval.mock.calls[0]!
+      expect(keys).toEqual(['agent:session:session-1'])
+      expect(args[0]).toBe(observed)
+      const desired = JSON.parse(String(args[1])) as Record<string, unknown>
+      expect(desired.status).toBe('completed')
+      expect(desired.providerSessionId).toBe('provider-keep')
+      expect(desired.workerId).toBe('worker-a')
+      expect(desired.totalCostUsd).toBe(1.2345678901234567)
+      expect(desired.inputTokens).toBe(9007199254740991)
+      expect(desired.extra).toEqual({ tags: [] })
     })
 
     it('throws on a malformed row instead of rewriting it', async () => {
-      mockRedisEval.mockResolvedValue(-2)
+      const mockGet = vi.fn(() => Promise.resolve('{not-json'))
+      mockGetRedisClient.mockReturnValue({ get: mockGet } as never)
       await expect(updateSessionStatus('session-1', 'running')).rejects.toThrow(
         /malformed/
       )
+      expect(mockRedisEval).not.toHaveBeenCalled()
     })
 
     it('persists stoppedReason when provided', async () => {
+      const stored = {
+        trackerSessionId: 'dispatch-uuid-1',
+        trackerProvider: 'linear',
+        issueId: 'issue-1',
+        providerSessionId: null,
+        worktreePath: '/tmp/worktree',
+        status: 'pending',
+        createdAt: 1000000,
+        updatedAt: 1000001,
+      }
+      const observed = JSON.stringify(stored)
+      const mockGet = vi.fn(() => Promise.resolve(observed))
+      mockGetRedisClient.mockReturnValue({ get: mockGet } as never)
       mockRedisEval.mockResolvedValue(1)
 
       const result = await updateSessionStatus('dispatch-uuid-1', 'stopped', {
@@ -272,11 +306,11 @@ describe('session-storage', () => {
       })
 
       expect(result).toBe(true)
-      expect(mockRedisEval).toHaveBeenCalledWith(
-        expect.any(String),
-        ['agent:session:dispatch-uuid-1'],
-        ['stopped', 'Stranded per-dispatch row', expect.any(Number), 86400]
-      )
+      const [, , args] = mockRedisEval.mock.calls[0]!
+      expect(args[0]).toBe(observed)
+      const desired = JSON.parse(String(args[1])) as Record<string, unknown>
+      expect(desired.status).toBe('stopped')
+      expect(desired.stoppedReason).toBe('Stranded per-dispatch row')
     })
   })
 
@@ -372,18 +406,37 @@ describe('session-storage', () => {
 
   describe('updateSessionCostData', () => {
     it('returns false when session is not found', async () => {
-      mockRedisEval.mockResolvedValue(-1)
+      const mockGet = vi.fn(() => Promise.resolve(null))
+      mockGetRedisClient.mockReturnValue({ get: mockGet } as never)
       const result = await updateSessionCostData('nonexistent', {
         totalCostUsd: 1,
       })
       expect(result).toBe(false)
+      expect(mockRedisEval).not.toHaveBeenCalled()
+      expect(mockOnCostUpdated).not.toHaveBeenCalled()
     })
 
-    it('patches only cost fields atomically and reports the pre-patch total for quota', async () => {
+    it('patches only cost fields losslessly and reports the compared total for quota', async () => {
       mockOnCostUpdated.mockResolvedValue(undefined)
-      mockRedisEval.mockResolvedValue(
-        JSON.stringify({ prevTotalCostUsd: 1.5, projectName: 'demo' })
-      )
+      const stored = {
+        trackerSessionId: 'session-1',
+        trackerProvider: 'linear',
+        issueId: 'issue-1',
+        providerSessionId: null,
+        worktreePath: '/tmp/worktree',
+        status: 'running',
+        createdAt: 1000000,
+        updatedAt: 1000001,
+        totalCostUsd: 1.5,
+        projectName: 'demo',
+        extra: { tags: [] as unknown[] },
+        precise: 1.2345678901234567,
+        big: 9007199254740991,
+      }
+      const observed = JSON.stringify(stored)
+      const mockGet = vi.fn(() => Promise.resolve(observed))
+      mockGetRedisClient.mockReturnValue({ get: mockGet } as never)
+      mockRedisEval.mockResolvedValue(1)
 
       const result = await updateSessionCostData('session-1', {
         totalCostUsd: 2.5,
@@ -396,18 +449,26 @@ describe('session-storage', () => {
       expect(mockRedisSet).not.toHaveBeenCalled()
       const [, keys, args] = mockRedisEval.mock.calls[0]!
       expect(keys).toEqual(['agent:session:session-1'])
-      expect(JSON.parse(String(args[0]))).toEqual({
-        totalCostUsd: 2.5,
-        inputTokens: 100,
-        outputTokens: 50,
-      })
-      expect(mockOnCostUpdated).toHaveBeenCalledWith('demo', 1.5, 2.5)    })
+      expect(args[0]).toBe(observed)
+      const desired = JSON.parse(String(args[1])) as Record<string, unknown>
+      expect(desired.totalCostUsd).toBe(2.5)
+      expect(desired.inputTokens).toBe(100)
+      expect(desired.outputTokens).toBe(50)
+      expect(desired.extra).toEqual({ tags: [] })
+      expect(desired.precise).toBe(1.2345678901234567)
+      expect(desired.big).toBe(9007199254740991)
+      expect(desired.status).toBe('running')
+      expect(mockOnCostUpdated).toHaveBeenCalledWith('demo', 1.5, 2.5)
+    })
 
-    it('throws on a malformed row instead of rewriting it', async () => {
-      mockRedisEval.mockResolvedValue(-2)
+    it('throws on a malformed row without firing quota', async () => {
+      const mockGet = vi.fn(() => Promise.resolve('{not-json'))
+      mockGetRedisClient.mockReturnValue({ get: mockGet } as never)
       await expect(
         updateSessionCostData('session-1', { totalCostUsd: 1 })
       ).rejects.toThrow(/malformed/)
+      expect(mockRedisEval).not.toHaveBeenCalled()
+      expect(mockOnCostUpdated).not.toHaveBeenCalled()
     })
   })
 
@@ -444,12 +505,29 @@ describe('session-storage', () => {
     })
 
     it('returns false when no row exists under the id', async () => {
-      mockRedisEval.mockResolvedValue(-1)
+      const mockGet = vi.fn(() => Promise.resolve(null))
+      mockGetRedisClient.mockReturnValue({ get: mockGet } as never)
       const result = await touchSessionHeartbeat('missing')
       expect(result).toBe(false)
+      expect(mockRedisEval).not.toHaveBeenCalled()
     })
 
-    it('refreshes a live row with one atomic command', async () => {
+    it('refreshes a live row without touching other fields', async () => {
+      const stored = {
+        trackerSessionId: 'session-live',
+        trackerProvider: 'linear',
+        issueId: 'issue-1',
+        providerSessionId: null,
+        worktreePath: '/tmp/worktree',
+        status: 'running',
+        workerId: 'worker-a',
+        createdAt: 1000000,
+        updatedAt: 1000000,
+        totalCostUsd: 1.2345678901234567,
+      }
+      const observed = JSON.stringify(stored)
+      const mockGet = vi.fn(() => Promise.resolve(observed))
+      mockGetRedisClient.mockReturnValue({ get: mockGet } as never)
       mockRedisEval.mockResolvedValue(1)
 
       const result = await touchSessionHeartbeat('session-live')
@@ -457,69 +535,121 @@ describe('session-storage', () => {
       expect(result).toBe(true)
       expect(mockRedisGet).not.toHaveBeenCalled()
       expect(mockRedisSet).not.toHaveBeenCalled()
-      expect(mockRedisEval).toHaveBeenCalledWith(
-        expect.any(String),
-        ['agent:session:session-live'],
-        [expect.any(Number), 86400]
-      )
+      const [, keys, args] = mockRedisEval.mock.calls[0]!
+      expect(keys).toEqual(['agent:session:session-live'])
+      expect(args[0]).toBe(observed)
+      const desired = JSON.parse(String(args[1])) as Record<string, unknown>
+      expect(desired.status).toBe('running')
+      expect(desired.workerId).toBe('worker-a')
+      expect(desired.totalCostUsd).toBe(1.2345678901234567)
     })
 
     it('refuses to touch terminal rows (never resurrects a dead session)', async () => {
-      for (const scriptResult of [0]) {
+      for (const status of ['completed', 'failed', 'stopped', 'timed_out'] as const) {
         mockRedisEval.mockClear()
-        mockRedisEval.mockResolvedValue(scriptResult)
+        const mockGet = vi.fn(() =>
+          Promise.resolve(
+            JSON.stringify({
+              trackerSessionId: 'session-done',
+              trackerProvider: 'linear',
+              issueId: 'issue-1',
+              providerSessionId: null,
+              worktreePath: '/tmp/worktree',
+              status,
+              createdAt: 1,
+              updatedAt: 1,
+            })
+          )
+        )
+        mockGetRedisClient.mockReturnValue({ get: mockGet } as never)
 
         const result = await touchSessionHeartbeat('session-done')
 
         expect(result).toBe(false)
-        expect(mockRedisEval).toHaveBeenCalledTimes(1)
+        expect(mockRedisEval).not.toHaveBeenCalled()
       }
     })
 
     it('treats a malformed row as a non-refresh so the heartbeat loop survives', async () => {
-      mockRedisEval.mockResolvedValue(-2)
+      const mockGet = vi.fn(() => Promise.resolve('{not-json'))
+      mockGetRedisClient.mockReturnValue({ get: mockGet } as never)
       const result = await touchSessionHeartbeat('session-bad')
       expect(result).toBe(false)
+      expect(mockRedisEval).not.toHaveBeenCalled()
     })
   })
 
   describe('resetSessionForRequeue', () => {
     it('returns false when session is not found', async () => {
-      mockRedisGet.mockResolvedValue(null)
+      const mockGet = vi.fn(() => Promise.resolve(null))
+      mockGetRedisClient.mockReturnValue({ get: mockGet } as never)
       const result = await resetSessionForRequeue('nonexistent')
       expect(result).toBe(false)
       expect(mockRedisEval).not.toHaveBeenCalled()
     })
 
-    it('resets via one atomic command without reading other fields', async () => {
-      mockRedisGet.mockResolvedValue({
+    it('resets losslessly, clearing only the binding and preserving metadata', async () => {
+      const stored = {
         trackerSessionId: 'session-1',
         trackerProvider: 'linear',
         issueId: 'issue-1',
-        providerSessionId: null,
+        providerSessionId: 'provider-keep',
         worktreePath: '/tmp/worktree',
         status: 'running',
         workerId: 'worker-old',
+        claimedAt: 777,
+        totalCostUsd: 2.0,
         createdAt: 1000000,
         updatedAt: 1000001,
-      })
+      }
+      const observed = JSON.stringify(stored)
+      const mockGet = vi.fn(() => Promise.resolve(observed))
+      mockGetRedisClient.mockReturnValue({ get: mockGet } as never)
       mockRedisEval.mockResolvedValue(1)
 
       const result = await resetSessionForRequeue('session-1')
 
       expect(result).toBe(true)
       expect(mockRedisSet).not.toHaveBeenCalled()
-      expect(mockRedisEval).toHaveBeenCalledWith(
-        expect.any(String),
-        ['agent:session:session-1'],
-        [expect.any(Number), 86400]
+      const [, keys, args] = mockRedisEval.mock.calls[0]!
+      expect(keys).toEqual(['agent:session:session-1'])
+      expect(args[0]).toBe(observed)
+      const desired = JSON.parse(String(args[1])) as Record<string, unknown>
+      expect(desired.status).toBe('pending')
+      expect('workerId' in desired).toBe(false)
+      expect('claimedAt' in desired).toBe(false)
+      expect(desired.totalCostUsd).toBe(2.0)
+      expect(desired.providerSessionId).toBe('provider-keep')
+    })
+
+    it('throws on a malformed row instead of rewriting it', async () => {
+      const mockGet = vi.fn(() => Promise.resolve('{not-json'))
+      mockGetRedisClient.mockReturnValue({ get: mockGet } as never)
+      await expect(resetSessionForRequeue('session-1')).rejects.toThrow(
+        /malformed/
       )
+      expect(mockRedisEval).not.toHaveBeenCalled()
     })
   })
 
   describe('transferSessionOwnership', () => {
+    function ownedRow(owner: unknown) {
+      return {
+        trackerSessionId: 'session-1',
+        trackerProvider: 'linear',
+        issueId: 'issue-1',
+        providerSessionId: null,
+        worktreePath: '/tmp/worktree',
+        status: 'running',
+        workerId: owner,
+        createdAt: 1000000,
+        updatedAt: 1000001,
+      }
+    }
+
     it('returns false when session is not found', async () => {
-      mockRedisEval.mockResolvedValue(-1)
+      const mockGet = vi.fn(() => Promise.resolve(null))
+      mockGetRedisClient.mockReturnValue({ get: mockGet } as never)
       const result = await transferSessionOwnership(
         'nonexistent',
         'worker-new',
@@ -531,7 +661,10 @@ describe('session-storage', () => {
       })
     })
 
-    it('transfers with an atomic owner check', async () => {
+    it('transfers with the owner check against the compared snapshot', async () => {
+      const observed = JSON.stringify(ownedRow('worker-old'))
+      const mockGet = vi.fn(() => Promise.resolve(observed))
+      mockGetRedisClient.mockReturnValue({ get: mockGet } as never)
       mockRedisEval.mockResolvedValue(1)
 
       const result = await transferSessionOwnership(
@@ -542,25 +675,46 @@ describe('session-storage', () => {
 
       expect(result).toEqual({ transferred: true })
       expect(mockRedisSet).not.toHaveBeenCalled()
-      expect(mockRedisEval).toHaveBeenCalledWith(
-        expect.any(String),
-        ['agent:session:session-1'],
-        ['worker-new', 'worker-old', expect.any(Number), 86400]
-      )
+      const [, keys, args] = mockRedisEval.mock.calls[0]!
+      expect(keys).toEqual(['agent:session:session-1'])
+      expect(args[0]).toBe(observed)
+      expect(JSON.parse(String(args[1]))).toMatchObject({
+        workerId: 'worker-new',
+      })
     })
 
-    it('rejects a stale transfer against a newer owner', async () => {
-      mockRedisEval.mockResolvedValue(0)
+    it.each([{ owner: null }, { owner: undefined }, { owner: '' }])(
+      'treats owner $owner as unowned and transfers',
+      async ({ owner }) => {
+        const row = ownedRow(owner)
+        if (owner === undefined) delete (row as Record<string, unknown>).workerId
+        const observed = JSON.stringify(row)
+        const mockGet = vi.fn(() => Promise.resolve(observed))
+        mockGetRedisClient.mockReturnValue({ get: mockGet } as never)
+        mockRedisEval.mockResolvedValue(1)
+
+        const result = await transferSessionOwnership(
+          'session-1',
+          'worker-new',
+          'worker-old'
+        )
+
+        expect(result).toEqual({ transferred: true })
+        const [, , args] = mockRedisEval.mock.calls[0]!
+        expect(JSON.parse(String(args[1]))).toMatchObject({
+          workerId: 'worker-new',
+        })
+      }
+    )
+
+    it('rejects a stale transfer against a newer owner without overwriting it', async () => {
+      const observed = JSON.stringify(ownedRow('worker-newer'))
+      const mockGet = vi.fn(() => Promise.resolve(observed))
+      mockGetRedisClient.mockReturnValue({ get: mockGet } as never)
+      mockRedisEval.mockResolvedValue(1)
       mockRedisGet.mockResolvedValue({
-        trackerSessionId: 'session-1',
+        ...ownedRow('worker-newer'),
         trackerProvider: 'linear',
-        issueId: 'issue-1',
-        providerSessionId: null,
-        worktreePath: '/tmp/worktree',
-        status: 'running',
-        workerId: 'worker-newer',
-        createdAt: 1000000,
-        updatedAt: 1000001,
       })
 
       const result = await transferSessionOwnership(
@@ -571,6 +725,19 @@ describe('session-storage', () => {
 
       expect(result.transferred).toBe(false)
       expect(result.reason).toContain('worker-newer')
+      const [, , args] = mockRedisEval.mock.calls[0]!
+      expect(args[0]).toBe(observed)
+      // The rejected attempt is a byte-identical no-op, never a rebind.
+      expect(String(args[1])).toBe(observed)
+    })
+
+    it('throws on a malformed row instead of rewriting it', async () => {
+      const mockGet = vi.fn(() => Promise.resolve('{not-json'))
+      mockGetRedisClient.mockReturnValue({ get: mockGet } as never)
+      await expect(
+        transferSessionOwnership('session-1', 'worker-new', 'worker-old')
+      ).rejects.toThrow(/malformed/)
+      expect(mockRedisEval).not.toHaveBeenCalled()
     })
   })
 

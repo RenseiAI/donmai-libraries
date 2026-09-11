@@ -4,17 +4,18 @@
 
 ### Fixes
 
-- **Field-atomic session metadata updates** — `@donmai/server` now applies
+- **Lossless session metadata writes** — `@donmai/server` now applies
   cost, provider, status, heartbeat-touch, requeue-reset, and ownership-
-  transfer writes as single-command Lua mutations against the current row.
-  A slow metadata writer can no longer restore a stale whole-row snapshot
-  over a newer terminal status or worker binding: cost/provider patches
-  preserve status and owner, status patches preserve newer cost/provider
-  fields, the heartbeat touch refuses terminal rows atomically, the transfer
-  checks the expected owner in the same command that rebinds it, and the
-  reset clears only the worker binding while keeping cost/provider metadata.
-  Claim/start lifecycle authority is unchanged. Missing-row, idempotency,
-  TTL, legacy-field migration, and quota-delta behavior are preserved.
+  transfer writes through a lossless raw-string compare-and-set: the writer
+  reads the exact stored bytes, patches in JS (where nested empty arrays
+  and full numeric precision survive), and commits with a Lua guard that
+  writes only when the row still holds those exact bytes. A mismatch writes
+  nothing and the patch is rebuilt from the fresh row; terminal/owner
+  predicates run against the compared snapshot, not a preflight read.
+  Null/undefined/empty owners still count as unowned for transfer, missing
+  rows return false, malformed rows throw (touch reports a non-refresh),
+  TTL resets to the session TTL, and quota deltas fire only after a
+  confirmed cost commit. Claim/start lifecycle authority is unchanged.
 
 - **Atomic session claim/start transitions (target v0.9.14)** —
   `@donmai/server` now advances worker-owned session lifecycle rows with one
