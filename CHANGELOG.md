@@ -4,6 +4,18 @@
 
 ### Fixes
 
+- **Field-atomic session metadata updates** — `@donmai/server` now applies
+  cost, provider, status, heartbeat-touch, requeue-reset, and ownership-
+  transfer writes as single-command Lua mutations against the current row.
+  A slow metadata writer can no longer restore a stale whole-row snapshot
+  over a newer terminal status or worker binding: cost/provider patches
+  preserve status and owner, status patches preserve newer cost/provider
+  fields, the heartbeat touch refuses terminal rows atomically, the transfer
+  checks the expected owner in the same command that rebinds it, and the
+  reset clears only the worker binding while keeping cost/provider metadata.
+  Claim/start lifecycle authority is unchanged. Missing-row, idempotency,
+  TTL, legacy-field migration, and quota-delta behavior are preserved.
+
 - **Atomic session claim/start transitions (target v0.9.14)** —
   `@donmai/server` now advances worker-owned session lifecycle rows with one
   conditional Redis mutation. A claim can only bind a pending row, while start

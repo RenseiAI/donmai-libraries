@@ -3,7 +3,14 @@ import { afterAll, afterEach, describe, expect, it } from 'vitest'
 import { disconnectRedis, getRedisClient } from './redis.js'
 import {
   claimSession,
+  getSessionState,
+  resetSessionForRequeue,
   startSession,
+  touchSessionHeartbeat,
+  transferSessionOwnership,
+  updateProviderSessionId,
+  updateSessionCostData,
+  updateSessionStatus,
   type AgentSessionState,
 } from './session-storage.js'
 
@@ -26,7 +33,7 @@ if (pong !== 'PONG') {
 }
 
 function sessionId(label: string): string {
-  return `ren-2875:${RUN_ID}:${label}`
+  return `ren-3640:${RUN_ID}:${label}`
 }
 
 function sessionKey(id: string): string {
@@ -325,5 +332,255 @@ describe('production atomic worker lifecycle Lua against Redis', () => {
     await expect(
       startSession(id, 'worker-a', '/tmp/wrong-type')
     ).rejects.toThrow(/WRONGTYPE/)
+  })
+})
+
+describe('field-atomic metadata updates against Redis', () => {
+  it('holds a stale cost writer across a terminal commit: repaired code preserves completed and final cost', async () => {
+    const id = sessionId('cost-vs-terminal')
+    const key = await seedRaw(
+      id,
+      makeSession(id, {
+        status: 'running',
+        workerId: 'worker-a',
+        totalCostUsd: 1.0,
+        inputTokens: 100,
+        outputTokens: 50,
+      })
+    )
+
+    // Barrier: a slow cost path snapshots the row, then waits while the
+    // status writer commits `completed` through the real code path. The
+    // repaired writer applies its patch to the CURRENT row, so the terminal
+    // status survives and the final cost fields still land.
+    let releaseCostWrite!: () => void
+    const costWriteReleased = new Promise<void>((resolve) => {
+      releaseCostWrite = resolve
+    })
+    let holdCostWrite!: () => void
+    const costWriteHeld = new Promise<void>((resolve) => {
+      holdCostWrite = resolve
+    })
+
+    const costPromise = (async () => {
+      const staleRaw = await redis.get(key)
+      expect(staleRaw).not.toBeNull()
+      const staleStatus = (JSON.parse(staleRaw!) as { status: string }).status
+      expect(staleStatus).toBe('running')
+      holdCostWrite()
+      await costWriteReleased
+      return updateSessionCostData(id, {
+        totalCostUsd: 9.99,
+        inputTokens: 999,
+        outputTokens: 999,
+      })
+    })()
+    await costWriteHeld
+
+    // Concurrent terminal commit via the actual status writer.
+    await expect(updateSessionStatus(id, 'completed')).resolves.toBe(true)
+    releaseCostWrite()
+    await expect(costPromise).resolves.toBe(true)
+
+    // Repaired behavior: terminal status survives and final cost fields land.
+    expect(await readRaw(key)).toMatchObject({
+      status: 'completed',
+      totalCostUsd: 9.99,
+      inputTokens: 999,
+      outputTokens: 999,
+    })
+    await expect(getSessionState(id)).resolves.toMatchObject({
+      status: 'completed',
+      totalCostUsd: 9.99,
+    })
+  })
+
+  it('preserves newer provider and owner fields when heartbeat races a terminal commit', async () => {
+    const id = sessionId('heartbeat-vs-terminal')
+    const key = await seedRaw(
+      id,
+      makeSession(id, {
+        status: 'running',
+        workerId: 'worker-a',
+        providerSessionId: 'provider-first',
+      })
+    )
+    const before = await readRaw(key)
+
+    const [statusOk, touchOk, providerOk] = await Promise.all([
+      updateSessionStatus(id, 'failed'),
+      touchSessionHeartbeat(id),
+      updateProviderSessionId(id, 'provider-second'),
+    ])
+
+    expect(statusOk).toBe(true)
+    expect(providerOk).toBe(true)
+    // The terminal commit wins the predicate race against at least one
+    // ordering; the touch may still succeed when it runs first, but it must
+    // never change the status or clear the newer provider id.
+    void touchOk
+    expect(await readRaw(key)).toMatchObject({
+      status: 'failed',
+      providerSessionId: 'provider-second',
+      workerId: 'worker-a',
+      worktreePath: before.worktreePath,
+    })
+  })
+
+  it('heartbeat never refreshes a terminal row', async () => {
+    for (const status of [
+      'completed',
+      'failed',
+      'stopped',
+      'timed_out',
+    ] as const) {
+      const id = sessionId(`terminal-touch-${status}`)
+      const key = await seedRaw(id, makeSession(id, { status }))
+      const before = await redis.get(key)
+      const beforeTtl = await redis.ttl(key)
+
+      await expect(touchSessionHeartbeat(id)).resolves.toBe(false)
+      await expect(redis.get(key)).resolves.toBe(before)
+      expect(await redis.ttl(key)).toBeGreaterThanOrEqual(beforeTtl - 2)
+    }
+  })
+
+  it('provider and cost patches preserve untouched fields, TTL, and missing-row behavior', async () => {
+    const missingId = sessionId('metadata-missing')
+    const missingKey = sessionKey(missingId)
+    await expect(
+      updateProviderSessionId(missingId, 'provider-x')
+    ).resolves.toBe(false)
+    await expect(
+      updateSessionCostData(missingId, { totalCostUsd: 1 })
+    ).resolves.toBe(false)
+    await expect(updateSessionStatus(missingId, 'running')).resolves.toBe(false)
+    await expect(touchSessionHeartbeat(missingId)).resolves.toBe(false)
+    await expect(redis.exists(missingKey)).resolves.toBe(0)
+
+    const id = sessionId('metadata-ttl')
+    const key = await seedRaw(
+      id,
+      makeSession(id, {
+        status: 'running',
+        workerId: 'worker-a',
+        worktreePath: '/tmp/keep',
+        issueIdentifier: 'GEN-1',
+      }),
+      60
+    )
+    await expect(
+      updateProviderSessionId(id, 'provider-keep')
+    ).resolves.toBe(true)
+    expect(await redis.ttl(key)).toBeGreaterThanOrEqual(
+      SESSION_TTL_SECONDS - 2
+    )
+    await expect(
+      updateSessionCostData(id, { totalCostUsd: 3.25 })
+    ).resolves.toBe(true)
+    expect(await readRaw(key)).toMatchObject({
+      status: 'running',
+      workerId: 'worker-a',
+      worktreePath: '/tmp/keep',
+      issueIdentifier: 'GEN-1',
+      providerSessionId: 'provider-keep',
+      totalCostUsd: 3.25,
+    })
+  })
+
+  it('status patches preserve newer cost/provider fields and stay idempotent', async () => {
+    const id = sessionId('status-preserves-metadata')
+    const key = await seedRaw(
+      id,
+      makeSession(id, {
+        status: 'running',
+        workerId: 'worker-a',
+        providerSessionId: 'provider-new',
+        totalCostUsd: 4.5,
+        inputTokens: 40,
+        outputTokens: 5,
+      })
+    )
+
+    await expect(updateSessionStatus(id, 'completed')).resolves.toBe(true)
+    await expect(updateSessionStatus(id, 'completed')).resolves.toBe(true)
+    expect(await readRaw(key)).toMatchObject({
+      status: 'completed',
+      providerSessionId: 'provider-new',
+      totalCostUsd: 4.5,
+      inputTokens: 40,
+      outputTokens: 5,
+      workerId: 'worker-a',
+    })
+  })
+
+  it('transfer keeps the newer owner and reset preserves cost metadata', async () => {
+    const id = sessionId('transfer-vs-reset')
+    const key = await seedRaw(
+      id,
+      makeSession(id, {
+        status: 'claimed',
+        workerId: 'worker-first',
+        claimedAt: 777,
+        totalCostUsd: 2.0,
+        providerSessionId: 'provider-keep',
+      })
+    )
+
+    // A newer owner wins first; a stale transfer against the old owner fails.
+    await expect(
+      transferSessionOwnership(id, 'worker-second', 'worker-first')
+    ).resolves.toEqual({ transferred: true })
+    await expect(
+      transferSessionOwnership(id, 'worker-stale', 'worker-first')
+    ).resolves.toMatchObject({ transferred: false })
+    expect(await readRaw(key)).toMatchObject({
+      workerId: 'worker-second',
+      status: 'claimed',
+      totalCostUsd: 2.0,
+      providerSessionId: 'provider-keep',
+    })
+
+    // Concurrent transfer/reset: the reset clears the binding while
+    // preserving cost/provider metadata. An unowned row still accepts a
+    // transfer (preserving the previous behavior for rows that never
+    // recorded an owner); the atomic owner check only rejects a stale
+    // transfer while a NEWER owner is present, as covered above.
+    await expect(resetSessionForRequeue(id)).resolves.toBe(true)
+    expect(await readRaw(key)).toMatchObject({
+      status: 'pending',
+      totalCostUsd: 2.0,
+      providerSessionId: 'provider-keep',
+    })
+    expect((await readRaw(key)).workerId).toBeUndefined()
+    await expect(
+      transferSessionOwnership(id, 'worker-late', 'worker-second')
+    ).resolves.toEqual({ transferred: true })
+    expect(await readRaw(key)).toMatchObject({
+      status: 'pending',
+      workerId: 'worker-late',
+      totalCostUsd: 2.0,
+      providerSessionId: 'provider-keep',
+    })
+  })
+
+  it('malformed rows throw for writers and never refresh on touch', async () => {
+    const id = sessionId('malformed-metadata')
+    const key = sessionKey(id)
+    await redis.set(key, '{not-json', 'EX', 60)
+
+    await expect(updateSessionStatus(id, 'running')).rejects.toThrow()
+    await expect(
+      updateSessionCostData(id, { totalCostUsd: 1 })
+    ).rejects.toThrow()
+    await expect(
+      updateProviderSessionId(id, 'provider-x')
+    ).rejects.toThrow()
+    await expect(resetSessionForRequeue(id)).rejects.toThrow()
+    await expect(
+      transferSessionOwnership(id, 'worker-new', 'worker-old')
+    ).rejects.toThrow()
+    await expect(touchSessionHeartbeat(id)).resolves.toBe(false)
+    await expect(redis.get(key)).resolves.toBe('{not-json')
   })
 })

@@ -10,16 +10,23 @@ vi.mock('./redis.js', () => ({
   redisEval: vi.fn(() => 0),
 }))
 
+vi.mock('./fleet-quota-hooks.js', () => ({
+  onCostUpdated: vi.fn(() => Promise.resolve()),
+}))
+
 import {
   storeSessionState,
   getSessionState,
   getAllSessions,
   updateSessionStatus,
+  updateSessionCostData,
   updateProviderSessionId,
   deleteSessionState,
   touchSessionHeartbeat,
   claimSession,
   startSession,
+  resetSessionForRequeue,
+  transferSessionOwnership,
   type AgentSessionState,
 } from './session-storage.js'
 import {
@@ -30,6 +37,9 @@ import {
   redisKeys,
   redisEval,
 } from './redis.js'
+import { onCostUpdated } from './fleet-quota-hooks.js'
+
+const mockOnCostUpdated = vi.mocked(onCostUpdated)
 
 const mockIsRedisConfigured = vi.mocked(isRedisConfigured)
 const mockRedisSet = vi.mocked(redisSet)
@@ -218,64 +228,50 @@ describe('session-storage', () => {
     })
 
     it('returns false when session is not found', async () => {
-      mockRedisGet.mockResolvedValue(null)
+      mockRedisEval.mockResolvedValue(-1)
       const result = await updateSessionStatus('nonexistent', 'running')
       expect(result).toBe(false)
+      expect(mockRedisEval).toHaveBeenCalledWith(
+        expect.any(String),
+        ['agent:session:nonexistent'],
+        ['running', '', expect.any(Number), 86400]
+      )
     })
 
-    it('updates status and updatedAt timestamp', async () => {
-      const existing = {
-        trackerSessionId: 'session-1',
-        trackerProvider: 'linear',
-        issueId: 'issue-1',
-        providerSessionId: null,
-        worktreePath: '/tmp/worktree',
-        status: 'pending',
-        createdAt: 1000000,
-        updatedAt: 1000001,
-      }
-      mockRedisGet.mockResolvedValue(existing)
+    it('applies the status patch atomically without rewriting other fields', async () => {
+      mockRedisEval.mockResolvedValue(1)
 
       const result = await updateSessionStatus('session-1', 'running')
 
       expect(result).toBe(true)
-      expect(mockRedisSet).toHaveBeenCalledWith(
-        'agent:session:session-1',
-        expect.objectContaining({
-          status: 'running',
-          updatedAt: expect.any(Number),
-        }),
-        86400
+      expect(mockRedisGet).not.toHaveBeenCalled()
+      expect(mockRedisSet).not.toHaveBeenCalled()
+      expect(mockRedisEval).toHaveBeenCalledWith(
+        expect.any(String),
+        ['agent:session:session-1'],
+        ['running', '', expect.any(Number), 86400]
       )
-      // Verify updatedAt changed
-      const storedArg = mockRedisSet.mock.calls[0]![1] as Record<string, unknown>
-      expect(storedArg.updatedAt).not.toBe(existing.updatedAt)
+    })
+
+    it('throws on a malformed row instead of rewriting it', async () => {
+      mockRedisEval.mockResolvedValue(-2)
+      await expect(updateSessionStatus('session-1', 'running')).rejects.toThrow(
+        /malformed/
+      )
     })
 
     it('persists stoppedReason when provided', async () => {
-      mockRedisGet.mockResolvedValue({
-        trackerSessionId: 'tracker-shared',
-        trackerProvider: 'linear',
-        issueId: 'issue-1',
-        providerSessionId: null,
-        worktreePath: '/tmp/worktree',
-        status: 'pending',
-        createdAt: 1000000,
-        updatedAt: 1000001,
-      })
+      mockRedisEval.mockResolvedValue(1)
 
       const result = await updateSessionStatus('dispatch-uuid-1', 'stopped', {
         stoppedReason: 'Stranded per-dispatch row',
       })
 
       expect(result).toBe(true)
-      expect(mockRedisSet).toHaveBeenCalledWith(
-        'agent:session:dispatch-uuid-1',
-        expect.objectContaining({
-          status: 'stopped',
-          stoppedReason: 'Stranded per-dispatch row',
-        }),
-        86400
+      expect(mockRedisEval).toHaveBeenCalledWith(
+        expect.any(String),
+        ['agent:session:dispatch-uuid-1'],
+        ['stopped', 'Stranded per-dispatch row', expect.any(Number), 86400]
       )
     })
   })
@@ -314,34 +310,72 @@ describe('session-storage', () => {
 
   describe('updateProviderSessionId', () => {
     it('returns false when session is not found', async () => {
-      mockRedisGet.mockResolvedValue(null)
+      mockRedisEval.mockResolvedValue(-1)
       const result = await updateProviderSessionId('nonexistent', 'provider-1')
       expect(result).toBe(false)
     })
 
-    it('updates provider session ID', async () => {
-      const existing = {
-        trackerSessionId: 'session-1',
-        trackerProvider: 'linear',
-        issueId: 'issue-1',
-        providerSessionId: null,
-        worktreePath: '/tmp/worktree',
-        status: 'running',
-        createdAt: 1000000,
-        updatedAt: 1000001,
-      }
-      mockRedisGet.mockResolvedValue(existing)
+    it('patches only the provider field atomically', async () => {
+      mockRedisEval.mockResolvedValue(JSON.stringify({}))
 
       const result = await updateProviderSessionId('session-1', 'provider-abc')
 
       expect(result).toBe(true)
-      expect(mockRedisSet).toHaveBeenCalledWith(
-        'agent:session:session-1',
-        expect.objectContaining({
-          providerSessionId: 'provider-abc',
-        }),
-        86400
+      expect(mockRedisGet).not.toHaveBeenCalled()
+      expect(mockRedisSet).not.toHaveBeenCalled()
+      const [, keys, args] = mockRedisEval.mock.calls[0]!
+      expect(keys).toEqual(['agent:session:session-1'])
+      expect(JSON.parse(String(args[0]))).toEqual({
+        providerSessionId: 'provider-abc',
+      })
+    })
+
+    it('throws on a malformed row instead of rewriting it', async () => {
+      mockRedisEval.mockResolvedValue(-2)
+      await expect(
+        updateProviderSessionId('session-1', 'provider-abc')
+      ).rejects.toThrow(/malformed/)
+    })
+  })
+
+  describe('updateSessionCostData', () => {
+    it('returns false when session is not found', async () => {
+      mockRedisEval.mockResolvedValue(-1)
+      const result = await updateSessionCostData('nonexistent', {
+        totalCostUsd: 1,
+      })
+      expect(result).toBe(false)
+    })
+
+    it('patches only cost fields atomically and reports the pre-patch total for quota', async () => {
+      mockOnCostUpdated.mockResolvedValue(undefined)
+      mockRedisEval.mockResolvedValue(
+        JSON.stringify({ prevTotalCostUsd: 1.5, projectName: 'demo' })
       )
+
+      const result = await updateSessionCostData('session-1', {
+        totalCostUsd: 2.5,
+        inputTokens: 100,
+        outputTokens: 50,
+      })
+
+      expect(result).toBe(true)
+      expect(mockRedisGet).not.toHaveBeenCalled()
+      expect(mockRedisSet).not.toHaveBeenCalled()
+      const [, keys, args] = mockRedisEval.mock.calls[0]!
+      expect(keys).toEqual(['agent:session:session-1'])
+      expect(JSON.parse(String(args[0]))).toEqual({
+        totalCostUsd: 2.5,
+        inputTokens: 100,
+        outputTokens: 50,
+      })
+      expect(mockOnCostUpdated).toHaveBeenCalledWith('demo', 1.5, 2.5)    })
+
+    it('throws on a malformed row instead of rewriting it', async () => {
+      mockRedisEval.mockResolvedValue(-2)
+      await expect(
+        updateSessionCostData('session-1', { totalCostUsd: 1 })
+      ).rejects.toThrow(/malformed/)
     })
   })
 
@@ -374,60 +408,137 @@ describe('session-storage', () => {
       mockIsRedisConfigured.mockReturnValue(false)
       const result = await touchSessionHeartbeat('session-1')
       expect(result).toBe(false)
-      expect(mockRedisSet).not.toHaveBeenCalled()
+      expect(mockRedisEval).not.toHaveBeenCalled()
     })
 
     it('returns false when no row exists under the id', async () => {
-      mockRedisGet.mockResolvedValue(null)
+      mockRedisEval.mockResolvedValue(-1)
       const result = await touchSessionHeartbeat('missing')
       expect(result).toBe(false)
-      expect(mockRedisSet).not.toHaveBeenCalled()
     })
 
-    it('bumps updatedAt for a live row without changing status', async () => {
-      const before = 1_000_000
+    it('refreshes a live row with one atomic command', async () => {
+      mockRedisEval.mockResolvedValue(1)
+
+      const result = await touchSessionHeartbeat('session-live')
+
+      expect(result).toBe(true)
+      expect(mockRedisGet).not.toHaveBeenCalled()
+      expect(mockRedisSet).not.toHaveBeenCalled()
+      expect(mockRedisEval).toHaveBeenCalledWith(
+        expect.any(String),
+        ['agent:session:session-live'],
+        [expect.any(Number), 86400]
+      )
+    })
+
+    it('refuses to touch terminal rows (never resurrects a dead session)', async () => {
+      for (const scriptResult of [0]) {
+        mockRedisEval.mockClear()
+        mockRedisEval.mockResolvedValue(scriptResult)
+
+        const result = await touchSessionHeartbeat('session-done')
+
+        expect(result).toBe(false)
+        expect(mockRedisEval).toHaveBeenCalledTimes(1)
+      }
+    })
+
+    it('treats a malformed row as a non-refresh so the heartbeat loop survives', async () => {
+      mockRedisEval.mockResolvedValue(-2)
+      const result = await touchSessionHeartbeat('session-bad')
+      expect(result).toBe(false)
+    })
+  })
+
+  describe('resetSessionForRequeue', () => {
+    it('returns false when session is not found', async () => {
+      mockRedisGet.mockResolvedValue(null)
+      const result = await resetSessionForRequeue('nonexistent')
+      expect(result).toBe(false)
+      expect(mockRedisEval).not.toHaveBeenCalled()
+    })
+
+    it('resets via one atomic command without reading other fields', async () => {
       mockRedisGet.mockResolvedValue({
-        trackerSessionId: 'session-live',
+        trackerSessionId: 'session-1',
         trackerProvider: 'linear',
         issueId: 'issue-1',
         providerSessionId: null,
         worktreePath: '/tmp/worktree',
         status: 'running',
-        createdAt: before,
-        updatedAt: before,
+        workerId: 'worker-old',
+        createdAt: 1000000,
+        updatedAt: 1000001,
       })
+      mockRedisEval.mockResolvedValue(1)
 
-      const result = await touchSessionHeartbeat('session-live')
+      const result = await resetSessionForRequeue('session-1')
 
       expect(result).toBe(true)
-      expect(mockRedisSet).toHaveBeenCalledWith(
-        'agent:session:session-live',
-        expect.objectContaining({ status: 'running' }),
-        86400
+      expect(mockRedisSet).not.toHaveBeenCalled()
+      expect(mockRedisEval).toHaveBeenCalledWith(
+        expect.any(String),
+        ['agent:session:session-1'],
+        [expect.any(Number), 86400]
       )
-      const written = mockRedisSet.mock.calls[0][1] as { updatedAt: number }
-      expect(written.updatedAt).toBeGreaterThan(before)
+    })
+  })
+
+  describe('transferSessionOwnership', () => {
+    it('returns false when session is not found', async () => {
+      mockRedisEval.mockResolvedValue(-1)
+      const result = await transferSessionOwnership(
+        'nonexistent',
+        'worker-new',
+        'worker-old'
+      )
+      expect(result).toEqual({
+        transferred: false,
+        reason: 'Session not found',
+      })
     })
 
-    it('refuses to touch a terminal row (never resurrects a dead session)', async () => {
-      for (const status of ['completed', 'failed', 'stopped'] as const) {
-        mockRedisSet.mockClear()
-        mockRedisGet.mockResolvedValue({
-          trackerSessionId: 'session-done',
-          trackerProvider: 'linear',
-          issueId: 'issue-1',
-          providerSessionId: null,
-          worktreePath: '/tmp/worktree',
-          status,
-          createdAt: 1,
-          updatedAt: 1,
-        })
+    it('transfers with an atomic owner check', async () => {
+      mockRedisEval.mockResolvedValue(1)
 
-        const result = await touchSessionHeartbeat('session-done')
+      const result = await transferSessionOwnership(
+        'session-1',
+        'worker-new',
+        'worker-old'
+      )
 
-        expect(result).toBe(false)
-        expect(mockRedisSet).not.toHaveBeenCalled()
-      }
+      expect(result).toEqual({ transferred: true })
+      expect(mockRedisSet).not.toHaveBeenCalled()
+      expect(mockRedisEval).toHaveBeenCalledWith(
+        expect.any(String),
+        ['agent:session:session-1'],
+        ['worker-new', 'worker-old', expect.any(Number), 86400]
+      )
+    })
+
+    it('rejects a stale transfer against a newer owner', async () => {
+      mockRedisEval.mockResolvedValue(0)
+      mockRedisGet.mockResolvedValue({
+        trackerSessionId: 'session-1',
+        trackerProvider: 'linear',
+        issueId: 'issue-1',
+        providerSessionId: null,
+        worktreePath: '/tmp/worktree',
+        status: 'running',
+        workerId: 'worker-newer',
+        createdAt: 1000000,
+        updatedAt: 1000001,
+      })
+
+      const result = await transferSessionOwnership(
+        'session-1',
+        'worker-new',
+        'worker-old'
+      )
+
+      expect(result.transferred).toBe(false)
+      expect(result.reason).toContain('worker-newer')
     })
   })
 
