@@ -4,6 +4,19 @@
 
 ### Fixes
 
+- **Lossless session metadata writes** — `@donmai/server` now applies
+  cost, provider, status, heartbeat-touch, requeue-reset, and ownership-
+  transfer writes through a lossless raw-string compare-and-set: the writer
+  reads the exact stored bytes, patches in JS (where nested empty arrays
+  and full numeric precision survive), and commits with a Lua guard that
+  writes only when the row still holds those exact bytes. A mismatch writes
+  nothing and the patch is rebuilt from the fresh row; terminal/owner
+  predicates run against the compared snapshot, not a preflight read.
+  Null/undefined/empty owners still count as unowned for transfer, missing
+  rows return false, malformed rows throw (touch reports a non-refresh),
+  TTL resets to the session TTL, and quota deltas fire only after a
+  confirmed cost commit. Claim/start lifecycle authority is unchanged.
+
 - **Atomic session claim/start transitions (target v0.9.14)** —
   `@donmai/server` now advances worker-owned session lifecycle rows with one
   conditional Redis mutation. A claim can only bind a pending row, while start
