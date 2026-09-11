@@ -2,6 +2,7 @@ import { describe, it, expect, vi, beforeEach } from 'vitest'
 
 // Mock redis before importing module under test
 vi.mock('./redis.js', () => ({
+  getRedisClient: vi.fn(() => ({ get: vi.fn(() => null) })),
   isRedisConfigured: vi.fn(() => true),
   redisSet: vi.fn(),
   redisGet: vi.fn(() => null),
@@ -30,6 +31,7 @@ import {
   type AgentSessionState,
 } from './session-storage.js'
 import {
+  getRedisClient,
   isRedisConfigured,
   redisSet,
   redisGet,
@@ -41,6 +43,7 @@ import { onCostUpdated } from './fleet-quota-hooks.js'
 
 const mockOnCostUpdated = vi.mocked(onCostUpdated)
 
+const mockGetRedisClient = vi.mocked(getRedisClient)
 const mockIsRedisConfigured = vi.mocked(isRedisConfigured)
 const mockRedisSet = vi.mocked(redisSet)
 const mockRedisGet = vi.mocked(redisGet)
@@ -64,6 +67,7 @@ describe('session-storage', () => {
     vi.clearAllMocks()
     mockIsRedisConfigured.mockReturnValue(true)
     mockRedisGet.mockResolvedValue(null)
+    mockGetRedisClient.mockReturnValue({ get: vi.fn(() => Promise.resolve(null)) } as never)
   })
 
   describe('storeSessionState', () => {
@@ -310,13 +314,31 @@ describe('session-storage', () => {
 
   describe('updateProviderSessionId', () => {
     it('returns false when session is not found', async () => {
-      mockRedisEval.mockResolvedValue(-1)
+      const mockGet = vi.fn(() => Promise.resolve(null))
+      mockGetRedisClient.mockReturnValue({ get: mockGet } as never)
       const result = await updateProviderSessionId('nonexistent', 'provider-1')
       expect(result).toBe(false)
+      expect(mockRedisEval).not.toHaveBeenCalled()
     })
 
-    it('patches only the provider field atomically', async () => {
-      mockRedisEval.mockResolvedValue(JSON.stringify({}))
+    it('patches only the provider field losslessly through raw-string CAS', async () => {
+      const stored = {
+        trackerSessionId: 'session-1',
+        trackerProvider: 'linear',
+        issueId: 'issue-1',
+        providerSessionId: null,
+        worktreePath: '/tmp/worktree',
+        status: 'running',
+        createdAt: 1000000,
+        updatedAt: 1000001,
+        extra: { tags: [] as unknown[] },
+        totalCostUsd: 1.2345678901234567,
+        inputTokens: 9007199254740991,
+      }
+      const observed = JSON.stringify(stored)
+      const mockGet = vi.fn(() => Promise.resolve(observed))
+      mockGetRedisClient.mockReturnValue({ get: mockGet } as never)
+      mockRedisEval.mockResolvedValue(1)
 
       const result = await updateProviderSessionId('session-1', 'provider-abc')
 
@@ -325,16 +347,26 @@ describe('session-storage', () => {
       expect(mockRedisSet).not.toHaveBeenCalled()
       const [, keys, args] = mockRedisEval.mock.calls[0]!
       expect(keys).toEqual(['agent:session:session-1'])
-      expect(JSON.parse(String(args[0]))).toEqual({
-        providerSessionId: 'provider-abc',
-      })
+      // First arg is the exact observed bytes the Lua guard compares.
+      expect(args[0]).toBe(observed)
+      const desired = JSON.parse(String(args[1])) as Record<string, unknown>
+      expect(desired.providerSessionId).toBe('provider-abc')
+      // Untouched data keeps JS JSON semantics: nested [] stays an array,
+      // full numeric precision survives, unrelated fields are untouched.
+      expect(desired.extra).toEqual({ tags: [] })
+      expect(desired.totalCostUsd).toBe(1.2345678901234567)
+      expect(desired.inputTokens).toBe(9007199254740991)
+      expect(desired.status).toBe('running')
+      expect(desired.worktreePath).toBe('/tmp/worktree')
     })
 
     it('throws on a malformed row instead of rewriting it', async () => {
-      mockRedisEval.mockResolvedValue(-2)
+      const mockGet = vi.fn(() => Promise.resolve('{not-json'))
+      mockGetRedisClient.mockReturnValue({ get: mockGet } as never)
       await expect(
         updateProviderSessionId('session-1', 'provider-abc')
       ).rejects.toThrow(/malformed/)
+      expect(mockRedisEval).not.toHaveBeenCalled()
     })
   })
 

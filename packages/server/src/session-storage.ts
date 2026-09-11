@@ -1,4 +1,5 @@
 import {
+  getRedisClient,
   isRedisConfigured,
   redisSet,
   redisGet,
@@ -216,6 +217,76 @@ session.updatedAt = now
 redis.call('SETEX', KEYS[1], ttlSeconds, cjson.encode(session))
 return 1
 `
+
+/**
+ * Lossless raw-string compare-and-set for one session row.
+ *
+ * Reads the exact stored bytes, applies the patch in JS (where JSON keeps
+ * nested empty arrays and full numeric precision), then commits with a Lua
+ * guard that writes only when the row still holds those exact bytes. A
+ * mismatch means a concurrent writer won: nothing is written and the patch
+ * is rebuilt from the fresh row, bounded by CAS_MAX_ATTEMPTS. A transport
+ * failure is never silently retried here — the caller sees the error rather
+ * than risking a duplicate commit of a non-idempotent write.
+ *
+ * Returns true on commit, false when the row is missing (before or during
+ * the write). Throws on malformed rows instead of rewriting them.
+ */
+const ATOMIC_RAW_CAS_SCRIPT = `
+local raw = redis.call('GET', KEYS[1])
+if not raw then return -1 end
+if raw ~= ARGV[1] then return 0 end
+redis.call('SETEX', KEYS[1], tonumber(ARGV[3]), ARGV[2])
+return 1
+`
+
+const CAS_MAX_ATTEMPTS = 8
+
+async function casSessionRow(
+  key: string,
+  sessionId: string,
+  verb: string,
+  mutate: (current: AgentSessionState, now: number) => AgentSessionState
+): Promise<boolean> {
+  const redis = getRedisClient()
+  for (let attempt = 1; attempt <= CAS_MAX_ATTEMPTS; attempt += 1) {
+    const observed = await redis.get(key)
+    if (observed === null) {
+      return false
+    }
+    let current: unknown
+    try {
+      current = JSON.parse(observed)
+    } catch {
+      throw new Error(
+        `Session row for ${sessionId} is malformed; refusing ${verb}`
+      )
+    }
+    if (typeof current !== 'object' || current === null || Array.isArray(current)) {
+      throw new Error(
+        `Session row for ${sessionId} is malformed; refusing ${verb}`
+      )
+    }
+    const now = Date.now()
+    const desired = JSON.stringify(mutate(current as AgentSessionState, now))
+    const result = await redisEval(
+      ATOMIC_RAW_CAS_SCRIPT,
+      [key],
+      [observed, desired, SESSION_TTL_SECONDS]
+    )
+    if (result === 1) {
+      return true
+    }
+    if (result === -1) {
+      return false
+    }
+    // result === 0: a concurrent writer replaced the row after our read and
+    // this attempt wrote nothing — rebuild the patch from a fresh read.
+  }
+  throw new Error(
+    `Session row for ${sessionId} changed under concurrent writers; refusing ${verb} after ${CAS_MAX_ATTEMPTS} attempts`
+  )
+}
 
 /**
  * Atomically patch non-lifecycle metadata fields on a session row.
@@ -564,21 +635,29 @@ export async function updateProviderSessionId(
   }
 
   const key = buildSessionKey(sessionId)
-  const now = Date.now()
 
-  const result = await redisEval(
-    ATOMIC_SESSION_PATCH_SCRIPT,
-    [key],
-    [JSON.stringify({ providerSessionId }), now, SESSION_TTL_SECONDS]
+  const committed = await casSessionRow(
+    key,
+    sessionId,
+    'provider session ID update',
+    (current, now) => {
+      const next: AgentSessionState = {
+        ...current,
+        providerSessionId,
+        updatedAt: now,
+      }
+      if (!next.trackerSessionId && next.linearSessionId) {
+        next.trackerSessionId = next.linearSessionId
+      }
+      if (!next.trackerProvider) {
+        next.trackerProvider = 'linear'
+      }
+      return next
+    }
   )
-  if (result === -1) {
+  if (!committed) {
     log.warn('Session not found for provider session ID update', { sessionId })
     return false
-  }
-  if (result === -2) {
-    throw new Error(
-      `Session row for ${sessionId} is malformed; refusing provider session ID update`
-    )
   }
 
   log.info('Updated provider session ID', { sessionId, providerSessionId })
