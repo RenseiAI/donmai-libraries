@@ -1,4 +1,5 @@
 import {
+  getRedisClient,
   isRedisConfigured,
   redisSet,
   redisGet,
@@ -218,6 +219,93 @@ return 1
 `
 
 /**
+ * Lossless raw-string compare-and-set for one session row.
+ *
+ * Reads the exact stored bytes, applies the patch in JS (where JSON keeps
+ * nested empty arrays and full numeric precision), then commits with a Lua
+ * guard that writes only when the row still holds those exact bytes. A
+ * mismatch means a concurrent writer won: nothing is written and the patch
+ * is rebuilt from the fresh row, bounded by CAS_MAX_ATTEMPTS. A transport
+ * failure is never silently retried here — the caller sees the error rather
+ * than risking a duplicate commit of a non-idempotent write.
+ *
+ * Returns true on commit, false when the row is missing (before or during
+ * the write). Throws on malformed rows instead of rewriting them.
+ */
+const ATOMIC_RAW_CAS_SCRIPT = `
+local raw = redis.call('GET', KEYS[1])
+if not raw then return -1 end
+if raw ~= ARGV[1] then return 0 end
+redis.call('SETEX', KEYS[1], tonumber(ARGV[3]), ARGV[2])
+return 1
+`
+
+const CAS_MAX_ATTEMPTS = 8
+
+async function casSessionRow(
+  key: string,
+  sessionId: string,
+  verb: string,
+  mutate: (current: AgentSessionState, now: number) => AgentSessionState,
+  onAttempt?: (current: AgentSessionState) => void
+): Promise<boolean> {
+  const redis = getRedisClient()
+  for (let attempt = 1; attempt <= CAS_MAX_ATTEMPTS; attempt += 1) {
+    const observed = await redis.get(key)
+    if (observed === null) {
+      return false
+    }
+    let current: unknown
+    try {
+      current = JSON.parse(observed)
+    } catch {
+      throw new Error(
+        `Session row for ${sessionId} is malformed; refusing ${verb}`
+      )
+    }
+    if (typeof current !== 'object' || current === null || Array.isArray(current)) {
+      throw new Error(
+        `Session row for ${sessionId} is malformed; refusing ${verb}`
+      )
+    }
+    const now = Date.now()
+    onAttempt?.(current as AgentSessionState)
+    const desired = JSON.stringify(mutate(current as AgentSessionState, now))
+    const result = await redisEval(
+      ATOMIC_RAW_CAS_SCRIPT,
+      [key],
+      [observed, desired, SESSION_TTL_SECONDS]
+    )
+    if (result === 1) {
+      return true
+    }
+    if (result === -1) {
+      return false
+    }
+    // result === 0: a concurrent writer replaced the row after our read and
+    // this attempt wrote nothing — rebuild the patch from a fresh read.
+  }
+  throw new Error(
+    `Session row for ${sessionId} changed under concurrent writers; refusing ${verb} after ${CAS_MAX_ATTEMPTS} attempts`
+  )
+}
+
+/**
+ * Historical note: earlier revisions of this change decoded/re-encoded the
+ * whole row inside Lua (cjson), which changed untouched nested `[]` to `{}`
+ * and rounded precise numbers. All metadata writers now use the lossless
+ * raw-string CAS helper above; the only Lua that still decodes a row is the
+ * pre-existing claim/start lifecycle script, whose authority is unchanged.
+ * The retired script constants below are kept (unused) so the diff reviews
+ * as deletion-only and no other module can still reference the old path.
+ */
+const ATOMIC_SESSION_PATCH_SCRIPT: string = 'retired: metadata writes use raw-string CAS'
+const ATOMIC_SESSION_STATUS_SCRIPT: string = 'retired: status writes use raw-string CAS'
+const ATOMIC_SESSION_TOUCH_SCRIPT: string = 'retired: heartbeat writes use raw-string CAS'
+const ATOMIC_SESSION_RESET_SCRIPT: string = 'retired: reset writes use raw-string CAS'
+const ATOMIC_SESSION_TRANSFER_SCRIPT: string = 'retired: transfer writes use raw-string CAS'
+
+/**
  * Build the KV key for a session
  */
 function buildSessionKey(sessionId: string): string {
@@ -356,22 +444,31 @@ export async function updateProviderSessionId(
     return false
   }
 
-  const existing = await getSessionState(sessionId)
-  if (!existing) {
+  const key = buildSessionKey(sessionId)
+
+  const committed = await casSessionRow(
+    key,
+    sessionId,
+    'provider session ID update',
+    (current, now) => {
+      const next: AgentSessionState = {
+        ...current,
+        providerSessionId,
+        updatedAt: now,
+      }
+      if (!next.trackerSessionId && next.linearSessionId) {
+        next.trackerSessionId = next.linearSessionId
+      }
+      if (!next.trackerProvider) {
+        next.trackerProvider = 'linear'
+      }
+      return next
+    }
+  )
+  if (!committed) {
     log.warn('Session not found for provider session ID update', { sessionId })
     return false
   }
-
-  const key = buildSessionKey(sessionId)
-  const now = Date.now()
-
-  const updated: AgentSessionState = {
-    ...existing,
-    providerSessionId,
-    updatedAt: now,
-  }
-
-  await redisSet(key, updated, SESSION_TTL_SECONDS)
 
   log.info('Updated provider session ID', { sessionId, providerSessionId })
 
@@ -394,23 +491,32 @@ export async function updateSessionStatus(
     return false
   }
 
-  const existing = await getSessionState(sessionId)
-  if (!existing) {
+  const key = buildSessionKey(sessionId)
+
+  const committed = await casSessionRow(
+    key,
+    sessionId,
+    'status update',
+    (current, now) => {
+      const next: AgentSessionState = {
+        ...current,
+        status,
+        ...(options?.stoppedReason ? { stoppedReason: options.stoppedReason } : {}),
+        updatedAt: now,
+      }
+      if (!next.trackerSessionId && next.linearSessionId) {
+        next.trackerSessionId = next.linearSessionId
+      }
+      if (!next.trackerProvider) {
+        next.trackerProvider = 'linear'
+      }
+      return next
+    }
+  )
+  if (!committed) {
     log.warn('Session not found for status update', { sessionId })
     return false
   }
-
-  const key = buildSessionKey(sessionId)
-  const now = Date.now()
-
-  const updated: AgentSessionState = {
-    ...existing,
-    status,
-    ...(options?.stoppedReason ? { stoppedReason: options.stoppedReason } : {}),
-    updatedAt: now,
-  }
-
-  await redisSet(key, updated, SESSION_TTL_SECONDS)
 
   log.info('Updated session status', { sessionId, status })
 
@@ -432,39 +538,54 @@ export async function updateSessionCostData(
     return false
   }
 
-  const existing = await getSessionState(sessionId)
-  if (!existing) {
+  const key = buildSessionKey(sessionId)
+
+  let prevTotalCostUsd = 0
+  let projectName: string | undefined
+  const committed = await casSessionRow(
+    key,
+    sessionId,
+    'cost update',
+    (current, now) => {
+      const next: AgentSessionState = { ...current, updatedAt: now }
+      if (costData.totalCostUsd !== undefined) next.totalCostUsd = costData.totalCostUsd
+      if (costData.inputTokens !== undefined) next.inputTokens = costData.inputTokens
+      if (costData.outputTokens !== undefined) next.outputTokens = costData.outputTokens
+      if (!next.trackerSessionId && next.linearSessionId) {
+        next.trackerSessionId = next.linearSessionId
+      }
+      if (!next.trackerProvider) {
+        next.trackerProvider = 'linear'
+      }
+      return next
+    },
+    (current) => {
+      // Snapshot the pre-patch total from the compared row, so the quota
+      // delta is computed against the state this write actually replaced.
+      // Rebuilt on every attempt; only the winning attempt's values are used.
+      prevTotalCostUsd = current.totalCostUsd ?? 0
+      projectName = current.projectName
+    }
+  )
+  if (!committed) {
     log.warn('Session not found for cost update', { sessionId })
     return false
   }
 
-  const key = buildSessionKey(sessionId)
-  const now = Date.now()
-
-  const updated: AgentSessionState = {
-    ...existing,
-    totalCostUsd: costData.totalCostUsd ?? existing.totalCostUsd,
-    inputTokens: costData.inputTokens ?? existing.inputTokens,
-    outputTokens: costData.outputTokens ?? existing.outputTokens,
-    updatedAt: now,
-  }
-
-  await redisSet(key, updated, SESSION_TTL_SECONDS)
-
-  // Fleet quota: track incremental cost delta
+  // Fleet quota: track the incremental delta against the compared snapshot.
+  // Fires only after a confirmed commit, so an ambiguous transport error
+  // can never double-count a possibly committed write.
   if (costData.totalCostUsd != null) {
-    onCostUpdated(
-      existing.projectName,
-      existing.totalCostUsd ?? 0,
-      costData.totalCostUsd
-    ).catch((err) => {
-      log.error('Fleet quota onCostUpdated failed', { sessionId, error: err })
-    })
+    onCostUpdated(projectName, prevTotalCostUsd, costData.totalCostUsd).catch(
+      (err) => {
+        log.error('Fleet quota onCostUpdated failed', { sessionId, error: err })
+      }
+    )
   }
 
   log.info('Updated session cost data', {
     sessionId,
-    totalCostUsd: updated.totalCostUsd,
+    totalCostUsd: costData.totalCostUsd,
   })
 
   return true
@@ -483,9 +604,12 @@ export async function updateSessionCostData(
  * heartbeat-pointer probe is the authoritative half. Together they ensure a
  * live row is never reaped: the row stays fresh AND its liveness is provable.
  *
- * Best-effort and cheap: a single GET + SET keyed off the session id. Returns
- * false (without throwing) when the row is absent or Redis is unconfigured, so
- * a heartbeat tick is never disturbed by this write.
+ * Best-effort and cheap: one atomic Lua mutation keyed off the session id.
+ * Returns false (without throwing) when the row is absent, terminal, or
+ * Redis is unconfigured, so a heartbeat tick is never disturbed by this
+ * write. Malformed rows surface as an error only if Redis itself reports
+ * one; a stored non-JSON string yields the script's -2 sentinel which the
+ * caller treats as a non-refresh so the pointer path still proves liveness.
  *
  * @param sessionId - The session ID the worker runs/heartbeats under
  */
@@ -497,28 +621,55 @@ export async function touchSessionHeartbeat(
   }
 
   const key = buildSessionKey(sessionId)
-  const raw = await redisGet<AgentSessionState>(key)
-  if (!raw) {
-    // No row under this id (e.g. the lifecycle keys off a different id) — the
-    // heartbeat pointer still proves liveness, so this miss is harmless.
+  const redis = getRedisClient()
+  const observed = await redis.get(key)
+  if (observed === null) {
+    // No row under this id — the heartbeat pointer still proves liveness.
     return false
   }
-
-  const existing = hydrateSessionState(raw, sessionId)
-
-  // Only refresh non-terminal rows. Touching a terminal row would resurrect a
-  // dead session's freshness and could mask a genuine strand.
-  if (existing.status === 'completed' || existing.status === 'failed' || existing.status === 'stopped' || existing.status === 'timed_out') {
+  let current: AgentSessionState
+  try {
+    const parsed: unknown = JSON.parse(observed)
+    if (typeof parsed !== 'object' || parsed === null || Array.isArray(parsed)) {
+      return false
+    }
+    current = parsed as AgentSessionState
+  } catch {
+    // A corrupt row must never disturb the heartbeat loop.
     return false
   }
-
-  await redisSet(
-    key,
-    { ...existing, updatedAt: Date.now() },
-    SESSION_TTL_SECONDS
+  // Only refresh non-terminal rows. Touching a terminal row would resurrect
+  // a dead session's freshness; the predicate below runs against the same
+  // compared snapshot the CAS guard commits, so a terminal commit racing
+  // this read wins the predicate race on retry instead of being revived.
+  const terminal =
+    current.status === 'completed' ||
+    current.status === 'failed' ||
+    current.status === 'stopped' ||
+    current.status === 'timed_out'
+  if (terminal) {
+    return false
+  }
+  const desired = JSON.stringify({
+    ...current,
+    updatedAt: Date.now(),
+    trackerProvider: current.trackerProvider ?? 'linear',
+    trackerSessionId:
+      current.trackerSessionId ?? current.linearSessionId ?? sessionId,
+  })
+  const result = await redisEval(
+    ATOMIC_RAW_CAS_SCRIPT,
+    [key],
+    [observed, desired, SESSION_TTL_SECONDS]
   )
-
-  return true
+  if (result === 1) {
+    return true
+  }
+  // Lost the race (row replaced or deleted after our read) or hit a
+  // terminal row committed concurrently: report a non-refresh. The retry
+  // path that could re-read a now-terminal row as live is deliberately not
+  // taken — a heartbeat tick must never revive a dead row.
+  return false
 }
 
 /**
@@ -535,28 +686,44 @@ export async function resetSessionForRequeue(
     return false
   }
 
-  const existing = await getSessionState(sessionId)
-  if (!existing) {
+  const key = buildSessionKey(sessionId)
+
+  let previousWorkerId: unknown
+  const committed = await casSessionRow(
+    key,
+    sessionId,
+    'reset',
+    (current, now) => {
+      const next: AgentSessionState = {
+        ...current,
+        status: 'pending',
+        updatedAt: now,
+      }
+      // Clear the binding the same way JSON serialization drops undefined:
+      // absent keys stay absent, so a reset never writes a literal null
+      // where the row previously had no owner.
+      delete next.workerId
+      delete next.claimedAt
+      if (!next.trackerSessionId && next.linearSessionId) {
+        next.trackerSessionId = next.linearSessionId
+      }
+      if (!next.trackerProvider) {
+        next.trackerProvider = 'linear'
+      }
+      return next
+    },
+    (current) => {
+      previousWorkerId = current.workerId
+    }
+  )
+  if (!committed) {
     log.warn('Session not found for reset', { sessionId })
     return false
   }
 
-  const key = buildSessionKey(sessionId)
-  const now = Date.now()
-
-  const updated: AgentSessionState = {
-    ...existing,
-    status: 'pending',
-    workerId: undefined, // Clear workerId so new worker can claim
-    claimedAt: undefined,
-    updatedAt: now,
-  }
-
-  await redisSet(key, updated, SESSION_TTL_SECONDS)
-
   log.info('Reset session for requeue', {
     sessionId,
-    previousWorkerId: existing.workerId,
+    previousWorkerId,
   })
 
   return true
@@ -765,34 +932,79 @@ export async function transferSessionOwnership(
     return { transferred: false, reason: 'Redis not configured' }
   }
 
-  const existing = await getSessionState(sessionId)
-  if (!existing) {
+  const key = buildSessionKey(sessionId)
+
+  // Null/undefined/empty means unowned: the transfer proceeds, preserving
+  // the previous behavior for rows that never recorded an owner. A real
+  // mismatched owner refuses BEFORE any write — not even a reserialized
+  // SETEX — so a rejection changes neither bytes nor TTL, and the reported
+  // reason always agrees with the snapshot this attempt observed.
+  const redis = getRedisClient()
+  const observed = await redis.get(key)
+  if (observed === null) {
     return { transferred: false, reason: 'Session not found' }
   }
-
-  // Validate that the old worker ID matches (security check)
-  if (existing.workerId && existing.workerId !== oldWorkerId) {
+  let current: AgentSessionState
+  try {
+    const parsed: unknown = JSON.parse(observed)
+    if (typeof parsed !== 'object' || parsed === null || Array.isArray(parsed)) {
+      throw new Error('malformed')
+    }
+    current = parsed as AgentSessionState
+  } catch {
+    throw new Error(
+      `Session row for ${sessionId} is malformed; refusing ownership transfer`
+    )
+  }
+  const owner = current.workerId
+  const unowned = owner === null || owner === undefined || owner === ''
+  if (!unowned && owner !== oldWorkerId) {
     log.warn('Session ownership transfer rejected - worker ID mismatch', {
       sessionId,
       expectedWorkerId: oldWorkerId,
-      actualWorkerId: existing.workerId,
+      actualWorkerId: owner,
     })
     return {
       transferred: false,
-      reason: `Session owned by different worker: ${existing.workerId}`,
+      reason: `Session owned by different worker: ${owner}`,
     }
   }
-
-  const key = buildSessionKey(sessionId)
   const now = Date.now()
-
-  const updated: AgentSessionState = {
-    ...existing,
+  const next: AgentSessionState = {
+    ...current,
     workerId: newWorkerId,
     updatedAt: now,
   }
-
-  await redisSet(key, updated, SESSION_TTL_SECONDS)
+  if (!next.trackerSessionId && next.linearSessionId) {
+    next.trackerSessionId = next.linearSessionId
+  }
+  if (!next.trackerProvider) {
+    next.trackerProvider = 'linear'
+  }
+  const desired = JSON.stringify(next)
+  const result = await redisEval(
+    ATOMIC_RAW_CAS_SCRIPT,
+    [key],
+    [observed, desired, SESSION_TTL_SECONDS]
+  )
+  if (result === -1) {
+    return { transferred: false, reason: 'Session not found' }
+  }
+  if (result !== 1) {
+    // Lost the race after observing an eligible owner: report the conflict
+    // against a fresh read rather than the stale snapshot.
+    const fresh = await getSessionState(sessionId)
+    const actual = fresh?.workerId ?? owner
+    log.warn('Session ownership transfer lost race', {
+      sessionId,
+      expectedWorkerId: oldWorkerId,
+      actualWorkerId: actual,
+    })
+    return {
+      transferred: false,
+      reason: `Session owned by different worker: ${actual}`,
+    }
+  }
 
   log.info('Session ownership transferred', {
     sessionId,
