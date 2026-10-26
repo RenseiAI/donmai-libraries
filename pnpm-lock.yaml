@@ -265,8 +265,8 @@ importers:
         specifier: workspace:*
         version: link:../core
       '@linear/sdk':
-        specifier: ^90.0.0
-        version: 90.0.0(graphql@16.12.0)
+        specifier: ^96.0.0
+        version: 96.0.0(graphql@16.12.0)
       zod:
         specifier: ^4.3.6
         version: 4.3.6
@@ -458,8 +458,8 @@ packages:
     engines: {node: '>=6.0.0'}
     hasBin: true
 
-  '@babel/runtime@7.29.7':
-    resolution: {integrity: sha512-Nq8OhGWiZIZGV6hLHoyAKLLcJihP/xFeBMGJoUrxTX2psI8dCifzLhZISFb+VWS3wFMRDmCGw5R+dOySCqPLhw==}
+  '@babel/runtime@7.29.10':
+    resolution: {integrity: sha512-NpugTzbKgGrNe45Ui32cN8vCFFMxVtP/9rtfwv0nP5FRDAjvYBxJcLVpYA9mr1jxP6cnIT7x9LUzuDTbWYYNRA==}
     engines: {node: '>=6.9.0'}
 
   '@babel/types@7.29.7':
@@ -935,8 +935,8 @@ packages:
   '@jridgewell/trace-mapping@0.3.31':
     resolution: {integrity: sha512-zzNR+SdQSDJzc8joaeP8QQoCQr8NuYx2dIIytl1QeBEZHJ9uW6hebsrYgbz8hJwUQao3TWCMtmfV8Nu1twOLAw==}
 
-  '@linear/sdk@90.0.0':
-    resolution: {integrity: sha512-sSM5V7m2ukm4eZn0qU5jjp3IASmuPis0GPpHKbN1aPrCWJojQUvIP8NeehQiWFizWGCBaHDC+3kpuyDG1rDbnQ==}
+  '@linear/sdk@96.0.0':
+    resolution: {integrity: sha512-fkap/239ynKpOat9tzZyOQHBdQbupMCZuqXaCsx747JbBv6duwp4UxZ+p/+Qxr89FTj+xnjocDAv3yHmzsFgfg==}
     engines: {node: '>=18.x'}
 
   '@modelcontextprotocol/sdk@1.29.0':
@@ -3109,7 +3109,7 @@ snapshots:
     dependencies:
       '@babel/types': 7.29.7
 
-  '@babel/runtime@7.29.7': {}
+  '@babel/runtime@7.29.10': {}
 
   '@babel/types@7.29.7':
     dependencies:
@@ -3427,7 +3427,7 @@ snapshots:
       '@jridgewell/resolve-uri': 3.1.2
       '@jridgewell/sourcemap-codec': 1.5.5
 
-  '@linear/sdk@90.0.0(graphql@16.12.0)':
+  '@linear/sdk@96.0.0(graphql@16.12.0)':
     dependencies:
       '@graphql-typed-document-node/core': 3.2.0(graphql@16.12.0)
     transitivePeerDependencies:
@@ -4582,7 +4582,7 @@ snapshots:
 
   json-schema-to-ts@3.1.1:
     dependencies:
-      '@babel/runtime': 7.29.7
+      '@babel/runtime': 7.29.10
       ts-algebra: 2.0.0
 
   json-schema-traverse@1.0.0: {}
