@@ -49,7 +49,7 @@
     "@donmai/architectural-intelligence": "workspace:*",
     "@modelcontextprotocol/sdk": "^1.29.0",
     "@sigstore/verify": "4.1.2",
-    "dotenv": "^17.4.2",
+    "dotenv": "^18.0.4",
     "handlebars": "^4.7.9",
     "yaml": "^2.9.0",
     "zod": "^4.4.3"
@@ -57,9 +57,9 @@
   "devDependencies": {
     "@donmai/create-app": "workspace:*",
     "@types/json-schema": "^7.0.15",
-    "@types/node": "^22.5.4",
-    "typescript": "^5.7.3",
-    "vitest": "^3.2.7"
+    "@types/node": "^26.6.3",
+    "typescript": "^7.0.2",
+    "vitest": "^5.0.2"
   },
   "scripts": {
     "build": "tsc -p tsconfig.build.json && node scripts/copy-assets.mjs",
