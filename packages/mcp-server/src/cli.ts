@@ -3,9 +3,9 @@
 import { createFleetMcpServer } from './server.js'
 import { startStdioTransport, startHttpTransport } from './transport.js'
 import { stopResourceNotificationPoller } from './resources.js'
+import { parseCliArgs } from './cli-args.js'
 
-const args = process.argv.slice(2)
-const transportType = args.includes('--stdio') ? 'stdio' : 'http'
+const { transport: transportType, port, host, allowUnauthenticatedRemote } = parseCliArgs(process.argv.slice(2))
 
 const server = createFleetMcpServer()
 
@@ -22,12 +22,7 @@ if (transportType === 'stdio') {
   process.on('SIGINT', shutdown)
   process.on('SIGTERM', shutdown)
 } else {
-  const portIdx = args.indexOf('--port')
-  const port = portIdx !== -1 ? parseInt(args[portIdx + 1], 10) : undefined
-  const hostIdx = args.indexOf('--host')
-  const host = hostIdx !== -1 ? args[hostIdx + 1] : undefined
-
-  const httpServer = await startHttpTransport(server, { port, host })
+  const httpServer = await startHttpTransport(server, { port, host, allowUnauthenticatedRemote })
 
   // Graceful shutdown for HTTP mode — close server before exiting
   const shutdown = () => {

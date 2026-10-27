@@ -7,8 +7,21 @@ import { verifyMcpAuth, isMcpAuthConfigured } from './auth.js'
 export interface HttpTransportOptions {
   port?: number
   host?: string
+  /**
+   * Allow binding a non-loopback host without an API key. Off by default; also
+   * enabled by MCP_ALLOW_UNAUTHENTICATED_REMOTE=1. Anyone who can reach the
+   * port can then call every MCP tool.
+   */
+  allowUnauthenticatedRemote?: boolean
   /** Maximum accepted request body size in bytes for /mcp. Defaults to 4 MiB. */
   maxBodyBytes?: number
+}
+
+const LOOPBACK_HOST = '127.0.0.1'
+
+export function isLoopbackHost(host: string): boolean {
+  const h = host.trim().toLowerCase().replace(/^\[|\]$/g, '')
+  return h === 'localhost' || h === '::1' || h === LOOPBACK_HOST || /^127\.\d+\.\d+\.\d+$/.test(h)
 }
 
 export const DEFAULT_MAX_BODY_BYTES = 4 * 1024 * 1024
@@ -40,7 +53,25 @@ export async function startHttpTransport(
   options: HttpTransportOptions = {}
 ): Promise<http.Server> {
   const port = options.port ?? parseInt(process.env.MCP_PORT ?? '3100', 10)
-  const host = options.host ?? process.env.MCP_HOST ?? '0.0.0.0'
+  const authConfigured = isMcpAuthConfigured()
+  // Without an API key the server is loopback-only by default.
+  const host = options.host ?? process.env.MCP_HOST ?? (authConfigured ? '0.0.0.0' : LOOPBACK_HOST)
+  const allowRemote =
+    options.allowUnauthenticatedRemote ?? process.env.MCP_ALLOW_UNAUTHENTICATED_REMOTE === '1'
+
+  if (!authConfigured && !isLoopbackHost(host)) {
+    if (!allowRemote) {
+      throw new Error(
+        `Refusing to listen on non-loopback host "${host}" without an API key. ` +
+          'Set MCP_API_KEY (or WORKER_API_KEY), bind to 127.0.0.1, or explicitly opt in with ' +
+          'MCP_ALLOW_UNAUTHENTICATED_REMOTE=1 / allowUnauthenticatedRemote.'
+      )
+    }
+    console.warn(
+      `[mcp-server] WARNING: listening on ${host} with NO API key (unauthenticated remote access explicitly allowed). ` +
+        'Anyone who can reach this port can call every MCP tool.'
+    )
+  }
 
   const maxBodyBytes = options.maxBodyBytes ?? DEFAULT_MAX_BODY_BYTES
 

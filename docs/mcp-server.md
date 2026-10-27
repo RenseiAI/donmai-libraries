@@ -45,7 +45,8 @@ Client ──HTTP POST──► http://host:port/mcp ──► MCP Server ──
 
 Environment variables:
 - `MCP_PORT` — Server port (default: `3100`)
-- `MCP_HOST` — Server bind address (default: `0.0.0.0`)
+- `MCP_HOST` — Server bind address (default: `127.0.0.1` without an API key, `0.0.0.0` when one is configured)
+- `MCP_ALLOW_UNAUTHENTICATED_REMOTE` — set to `1` to allow a non-loopback host without an API key (see Network exposure)
 
 ### STDIO
 
@@ -57,7 +58,7 @@ Client ──stdin──► MCP Server ──stdout──► Client
 
 ## Authentication
 
-Authentication is optional in development and required in production.
+Authentication is optional on loopback and required to listen on any other address.
 
 ### API Key Authentication
 
@@ -67,6 +68,17 @@ Set one of these environment variables to enable auth:
 |----------|-------------|
 | `MCP_API_KEY` | MCP-specific API key (checked first) |
 | `WORKER_API_KEY` | Shared worker API key (fallback) |
+
+### Network exposure
+
+Without an API key the HTTP server binds loopback (`127.0.0.1`) only. Starting it
+on a non-loopback host (for example `--host 0.0.0.0`) without a key fails at
+startup with an error. To serve remote clients, set `MCP_API_KEY`. As an explicit,
+not-recommended escape hatch, set `MCP_ALLOW_UNAUTHENTICATED_REMOTE=1` (or pass
+`--allow-unauthenticated-remote` / `allowUnauthenticatedRemote: true`), which logs a
+warning: anyone who can reach the port can then call every tool. An empty key counts
+as no key, and IPv4-mapped IPv6 addresses such as `::ffff:127.0.0.1` are not treated
+as loopback.
 
 When configured, clients must include the key in the `Authorization` header:
 
@@ -169,8 +181,9 @@ import { startHttpTransport, startStdioTransport } from '@donmai/mcp-server'
 
 const server = createFleetMcpServer()
 
-// HTTP mode
-await startHttpTransport(server, { port: 3100, host: '0.0.0.0' })
+// HTTP mode: loopback by default. Set MCP_API_KEY before binding another host,
+// otherwise startHttpTransport() throws (unless allowUnauthenticatedRemote is set).
+await startHttpTransport(server, { port: 3100 })
 
 // Or STDIO mode
 await startStdioTransport(server)
@@ -181,7 +194,8 @@ await startStdioTransport(server)
 | Variable | Default | Description |
 |----------|---------|-------------|
 | `MCP_PORT` | `3100` | HTTP server port |
-| `MCP_HOST` | `0.0.0.0` | HTTP server bind address |
+| `MCP_HOST` | `127.0.0.1` (no key) / `0.0.0.0` (key set) | HTTP server bind address |
+| `MCP_ALLOW_UNAUTHENTICATED_REMOTE` | — | `1` allows a non-loopback host without an API key (warns) |
 | `MCP_API_KEY` | — | MCP-specific authentication key |
 | `WORKER_API_KEY` | — | Shared worker authentication key (fallback) |
 | `REDIS_URL` | — | Redis connection URL (required for fleet operations) |

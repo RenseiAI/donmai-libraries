@@ -54,14 +54,23 @@ af-mcp-server --port 3100
 |------|-------------|
 | `--stdio` | Use STDIO transport (for IDE integration) |
 | `--port <number>` | Start HTTP transport on the given port |
-| `--host <address>` | Bind HTTP server to a specific address |
+| `--host <address>` | Bind HTTP server to a specific address. Defaults to `127.0.0.1` when no API key is configured, `0.0.0.0` when one is |
+| `--allow-unauthenticated-remote` | Allow a non-loopback `--host` without an API key (not recommended) |
 
 ## Environment Variables
 
 | Variable | Required | Description |
 |----------|----------|-------------|
 | `REDIS_URL` | Yes | Redis connection URL (e.g., `redis://localhost:6379`) |
-| `MCP_AUTH_SECRET` | No | API key for MCP authentication |
+| `MCP_API_KEY` | No | API key for MCP authentication (`WORKER_API_KEY` is also accepted). Required to bind a non-loopback host |
+| `MCP_HOST` | No | Bind address for HTTP mode (same default as `--host`) |
+| `MCP_ALLOW_UNAUTHENTICATED_REMOTE` | No | Set to `1` to allow a non-loopback host without an API key. Logs a warning; anyone who can reach the port can call every tool |
+
+### Network exposure
+
+Without an API key the HTTP server listens on loopback (`127.0.0.1`) only, and
+starting it on any non-loopback host fails with an error unless
+`MCP_ALLOW_UNAUTHENTICATED_REMOTE=1` is set. Set `MCP_API_KEY` to serve remote clients.
 
 ## Related Packages
 
