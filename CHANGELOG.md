@@ -2,6 +2,16 @@
 
 ## Unreleased
 
+### Security
+
+- **`@donmai/mcp-server` is loopback-only without an API key (behaviour change)** —
+  the HTTP server now binds `127.0.0.1` by default when no `MCP_API_KEY` /
+  `WORKER_API_KEY` is configured, and refuses to start on a non-loopback host
+  without a key unless `MCP_ALLOW_UNAUTHENTICATED_REMOTE=1` (or
+  `--allow-unauthenticated-remote`) is set, which logs a warning. Anyone relying
+  on remote unauthenticated access must set an API key or opt in explicitly.
+  With a key set, the host default (`0.0.0.0`) is unchanged.
+
 ### Fixes
 
 - **Lossless session metadata writes** — `@donmai/server` now applies

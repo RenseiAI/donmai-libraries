@@ -27,7 +27,11 @@ if (transportType === 'stdio') {
   const hostIdx = args.indexOf('--host')
   const host = hostIdx !== -1 ? args[hostIdx + 1] : undefined
 
-  const httpServer = await startHttpTransport(server, { port, host })
+  const httpServer = await startHttpTransport(server, {
+    port,
+    host,
+    allowUnauthenticatedRemote: args.includes('--allow-unauthenticated-remote') ? true : undefined,
+  })
 
   // Graceful shutdown for HTTP mode — close server before exiting
   const shutdown = () => {
