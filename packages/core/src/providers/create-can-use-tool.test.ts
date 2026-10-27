@@ -7,7 +7,9 @@ async function callTool(
   toolName: string,
   input: Record<string, unknown> = {},
 ) {
-  return canUseTool(toolName, input, undefined as never)
+  const result = await canUseTool(toolName, input, undefined as never)
+  if (result === null) throw new Error('canUseTool returned null')
+  return result
 }
 
 // ---------------------------------------------------------------------------

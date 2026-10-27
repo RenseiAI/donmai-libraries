@@ -5,7 +5,7 @@
   "author": "Rensei AI (https://rensei.ai)",
   "license": "MIT",
   "engines": {
-    "node": ">=22.0.0"
+    "node": ">=22.23.4"
   },
   "repository": {
     "type": "git",
@@ -66,13 +66,13 @@
     "@types/node": "^22",
     "@types/react": "^19",
     "autoprefixer": "^10",
-    "next": "15.5.18",
+    "next": "15.5.28",
     "postcss": "^8",
     "react": "^19.2.7",
     "react-dom": "^19.2.7",
     "tailwindcss": "^3.4.0",
     "typescript": "^5",
-    "vitest": "^3.2.7"
+    "vitest": "^4.1.0"
   },
   "scripts": {
     "dev": "cd dev && next dev",
