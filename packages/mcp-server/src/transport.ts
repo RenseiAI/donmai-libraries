@@ -7,6 +7,39 @@ import { verifyMcpAuth, isMcpAuthConfigured } from './auth.js'
 export interface HttpTransportOptions {
   port?: number
   host?: string
+  /** Maximum accepted request body size in bytes for /mcp. Defaults to 4 MiB. */
+  maxBodyBytes?: number
+}
+
+export const DEFAULT_MAX_BODY_BYTES = 4 * 1024 * 1024
+
+function rejectTooLarge(res: http.ServerResponse): void {
+  if (res.headersSent) return
+  res.writeHead(413, { 'Content-Type': 'application/json', Connection: 'close' })
+  res.end(JSON.stringify({ error: 'Request body too large' }))
+}
+
+/**
+ * Bound the request body. Returns false (after responding 413) when the declared
+ * Content-Length is already over the limit; otherwise watches streamed bytes so
+ * chunked bodies without a Content-Length are cut off at the limit too.
+ */
+function enforceBodyLimit(req: http.IncomingMessage, res: http.ServerResponse, maxBytes: number): boolean {
+  const declared = Number(req.headers['content-length'])
+  if (Number.isFinite(declared) && declared > maxBytes) {
+    rejectTooLarge(res)
+    req.destroy()
+    return false
+  }
+  let received = 0
+  req.on('data', (chunk: Buffer) => {
+    received += chunk.length
+    if (received > maxBytes) {
+      rejectTooLarge(res)
+      req.destroy()
+    }
+  })
+  return true
 }
 
 export async function startStdioTransport(server: McpServer): Promise<void> {
@@ -20,6 +53,8 @@ export async function startHttpTransport(
 ): Promise<http.Server> {
   const port = options.port ?? parseInt(process.env.MCP_PORT ?? '3100', 10)
   const host = options.host ?? process.env.MCP_HOST ?? '0.0.0.0'
+
+  const maxBodyBytes = options.maxBodyBytes ?? DEFAULT_MAX_BODY_BYTES
 
   const transport = new StreamableHTTPServerTransport({ sessionIdGenerator: () => crypto.randomUUID() })
 
@@ -39,6 +74,8 @@ export async function startHttpTransport(
         res.end(JSON.stringify({ error: authResult.error }))
         return
       }
+
+      if (!enforceBodyLimit(req, res, maxBodyBytes)) return
 
       await transport.handleRequest(req, res)
       return
