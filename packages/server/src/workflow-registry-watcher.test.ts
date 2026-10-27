@@ -1,4 +1,4 @@
-import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest'
+import { describe, it, expect, vi, beforeEach, afterEach, type Mock } from 'vitest'
 
 // ---------------------------------------------------------------------------
 // Mocks — must be set up before importing the module under test
@@ -57,12 +57,12 @@ function flushMicrotasks(): Promise<void> {
 
 describe('workflow-registry-watcher', () => {
   let capturedListener: ((event: { action: string; id: string; version?: number }) => void) | null = null
-  let mockUnsubscribe: ReturnType<typeof vi.fn>
+  let mockUnsubscribe: Mock<() => Promise<void>>
 
   beforeEach(() => {
     vi.clearAllMocks()
     capturedListener = null
-    mockUnsubscribe = vi.fn().mockResolvedValue(undefined)
+    mockUnsubscribe = vi.fn<() => Promise<void>>().mockResolvedValue(undefined)
 
     // Default: subscription succeeds and captures the listener
     mockSubscribe.mockImplementation(async (listener) => {

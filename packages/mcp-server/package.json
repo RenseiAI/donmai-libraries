@@ -6,7 +6,7 @@
   "author": "Rensei AI (https://rensei.ai)",
   "license": "MIT",
   "engines": {
-    "node": ">=22.0.0"
+    "node": ">=22.23.4"
   },
   "repository": {
     "type": "git",
@@ -36,13 +36,13 @@
   ],
   "dependencies": {
     "@donmai/server": "workspace:*",
-    "@modelcontextprotocol/sdk": "^1.29.0",
-    "zod": "^4.4.3"
+    "@modelcontextprotocol/sdk": "^1.32.0",
+    "zod": "^4.6.6"
   },
   "devDependencies": {
     "@types/node": "^22.5.4",
     "typescript": "^5.7.3",
-    "vitest": "^3.2.7"
+    "vitest": "^4.1.0"
   },
   "scripts": {
     "build": "tsc -p tsconfig.build.json",

@@ -6,7 +6,7 @@
   "author": "Rensei AI (https://rensei.ai)",
   "license": "MIT",
   "engines": {
-    "node": ">=22.0.0"
+    "node": ">=22.23.4"
   },
   "repository": {
     "type": "git",
@@ -52,7 +52,7 @@
   "devDependencies": {
     "@types/node": "^22.5.4",
     "typescript": "^5.7.3",
-    "vitest": "^3.2.7"
+    "vitest": "^4.1.0"
   },
   "scripts": {
     "build": "tsc",
