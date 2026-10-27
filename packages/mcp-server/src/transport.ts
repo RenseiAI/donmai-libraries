@@ -20,26 +20,14 @@ function rejectTooLarge(res: http.ServerResponse): void {
 }
 
 /**
- * Bound the request body. Returns false (after responding 413) when the declared
- * Content-Length is already over the limit; otherwise watches streamed bytes so
- * chunked bodies without a Content-Length are cut off at the limit too.
+ * Cheap pre-check: refuse a declared Content-Length over the limit before any
+ * body byte is read. Streamed/chunked bodies are bounded by the SDK transport
+ * (maxRequestBodySize). Never attach a 'data' listener here: it would drain the
+ * body before the SDK reads it.
  */
-function enforceBodyLimit(req: http.IncomingMessage, res: http.ServerResponse, maxBytes: number): boolean {
+function declaredLengthExceeds(req: http.IncomingMessage, maxBytes: number): boolean {
   const declared = Number(req.headers['content-length'])
-  if (Number.isFinite(declared) && declared > maxBytes) {
-    rejectTooLarge(res)
-    req.destroy()
-    return false
-  }
-  let received = 0
-  req.on('data', (chunk: Buffer) => {
-    received += chunk.length
-    if (received > maxBytes) {
-      rejectTooLarge(res)
-      req.destroy()
-    }
-  })
-  return true
+  return Number.isFinite(declared) && declared > maxBytes
 }
 
 export async function startStdioTransport(server: McpServer): Promise<void> {
@@ -56,7 +44,10 @@ export async function startHttpTransport(
 
   const maxBodyBytes = options.maxBodyBytes ?? DEFAULT_MAX_BODY_BYTES
 
-  const transport = new StreamableHTTPServerTransport({ sessionIdGenerator: () => crypto.randomUUID() })
+  const transport = new StreamableHTTPServerTransport({
+    sessionIdGenerator: () => crypto.randomUUID(),
+    maxRequestBodySize: maxBodyBytes,
+  })
 
   const httpServer = http.createServer(async (req, res) => {
     // Health check endpoint
@@ -70,12 +61,15 @@ export async function startHttpTransport(
     if (req.url === '/mcp') {
       const authResult = verifyMcpAuth(req.headers.authorization)
       if (!authResult.authorized) {
-        res.writeHead(401, { 'Content-Type': 'application/json' })
+        res.writeHead(401, { 'Content-Type': 'application/json', Connection: 'close' })
         res.end(JSON.stringify({ error: authResult.error }))
         return
       }
 
-      if (!enforceBodyLimit(req, res, maxBodyBytes)) return
+      if (declaredLengthExceeds(req, maxBodyBytes)) {
+        rejectTooLarge(res)
+        return
+      }
 
       await transport.handleRequest(req, res)
       return

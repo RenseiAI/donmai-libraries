@@ -1,5 +1,5 @@
 import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest'
-import type http from 'node:http'
+import http from 'node:http'
 import type { AddressInfo } from 'node:net'
 import { createFleetMcpServer } from './server.js'
 import { startHttpTransport } from './transport.js'
@@ -15,9 +15,9 @@ describe('MCP HTTP transport (security regression)', () => {
   let httpServer: http.Server
   let baseUrl: string
 
-  async function start(): Promise<void> {
+  async function start(maxBodyBytes?: number): Promise<void> {
     vi.spyOn(console, 'log').mockImplementation(() => {})
-    httpServer = await startHttpTransport(createFleetMcpServer(), { port: 0, host: '127.0.0.1' })
+    httpServer = await startHttpTransport(createFleetMcpServer(), { port: 0, host: '127.0.0.1', maxBodyBytes })
     baseUrl = `http://127.0.0.1:${(httpServer.address() as AddressInfo).port}`
   }
 
@@ -89,5 +89,63 @@ describe('MCP HTTP transport (security regression)', () => {
       authorization: 'Bearer wrong-key',
     })
     expect(res.status).toBe(401)
+  })
+
+  const initialize = JSON.stringify({
+    jsonrpc: '2.0',
+    id: 1,
+    method: 'initialize',
+    params: {
+      protocolVersion: '2025-03-26',
+      capabilities: {},
+      clientInfo: { name: 'regression-test', version: '0.0.0' },
+    },
+  })
+
+  it('serves a legitimate small JSON-RPC initialize with 200 when no key is configured', async () => {
+    await start()
+    const res = await post(initialize)
+    expect(res.status).toBe(200)
+  })
+
+  it('serves a legitimate authenticated initialize with 200 when a key is configured', async () => {
+    process.env.MCP_API_KEY = 'test-key-for-regression'
+    await start()
+    const res = await post(initialize, { authorization: 'Bearer test-key-for-regression' })
+    expect(res.status).toBe(200)
+  })
+
+  it('refuses a Content-Length over the configured limit with 413 before any body is sent', async () => {
+    await start(1024)
+    const { port } = httpServer.address() as AddressInfo
+    // Limit is 1 KiB; declare 100 KiB (well under the SDK's own default cap, so only
+    // this server's configured bound can refuse it). Send headers only, never the body.
+    // The server must answer 413 immediately instead of waiting to read it.
+    const status = await new Promise<number>((resolve, reject) => {
+      const req = http.request(
+        {
+          host: '127.0.0.1',
+          port,
+          path: '/mcp',
+          method: 'POST',
+          headers: {
+            'content-type': 'application/json',
+            accept: 'application/json, text/event-stream',
+            'content-length': String(100 * 1024),
+          },
+        },
+        (r) => {
+          r.resume()
+          resolve(r.statusCode ?? 0)
+        },
+      )
+      req.on('error', reject)
+      req.flushHeaders()
+      setTimeout(() => {
+        req.destroy()
+        reject(new Error('server did not respond before body was sent'))
+      }, 2000).unref()
+    })
+    expect(status).toBe(413)
   })
 })
