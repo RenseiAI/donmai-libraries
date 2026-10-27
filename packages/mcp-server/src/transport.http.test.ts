@@ -148,4 +148,49 @@ describe('MCP HTTP transport (security regression)', () => {
     })
     expect(status).toBe(413)
   })
+
+  // Send a body with Transfer-Encoding: chunked and no Content-Length.
+  const postChunked = (body: string, chunkSize = 256) =>
+    new Promise<number>((resolve, reject) => {
+      const { port } = httpServer.address() as AddressInfo
+      const req = http.request(
+        {
+          host: '127.0.0.1',
+          port,
+          path: '/mcp',
+          method: 'POST',
+          headers: {
+            'content-type': 'application/json',
+            accept: 'application/json, text/event-stream',
+            'transfer-encoding': 'chunked',
+          },
+        },
+        (r) => {
+          r.resume()
+          resolve(r.statusCode ?? 0)
+        },
+      )
+      // The server may cut the connection after a 413 while we are still writing.
+      req.on('error', () => resolve(0))
+      for (let i = 0; i < body.length; i += chunkSize) req.write(body.slice(i, i + chunkSize))
+      req.end()
+    })
+
+  it('refuses a chunked body (no Content-Length) over the configured limit with 413', async () => {
+    await start(1024)
+    const status = await postChunked('a'.repeat(2048))
+    expect(status).toBe(413)
+  })
+
+  it('serves a legitimate ~500 byte chunked JSON-RPC request with 200', async () => {
+    await start(1024)
+    const padded = JSON.stringify({
+      ...JSON.parse(initialize),
+      params: { ...JSON.parse(initialize).params, _meta: { pad: 'x'.repeat(250) } },
+    })
+    expect(padded.length).toBeGreaterThan(400)
+    expect(padded.length).toBeLessThan(1024)
+    const status = await postChunked(padded, 100)
+    expect(status).toBe(200)
+  })
 })
