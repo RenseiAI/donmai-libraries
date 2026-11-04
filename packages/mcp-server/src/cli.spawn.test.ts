@@ -17,5 +17,5 @@ describe.skipIf(!existsSync(cli))('cli bind policy (spawned)', () => {
     })
     expect(r.status).not.toBe(0)
     expect(`${r.stderr}${r.stdout}`).toMatch(/Refusing/)
-  })
+  }, 20000) // the spawn alone may take up to 15 s on a cold hosted runner; vitest's 5 s default cut it off
 })
