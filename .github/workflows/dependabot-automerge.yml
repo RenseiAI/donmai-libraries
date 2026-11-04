@@ -8,7 +8,7 @@ permissions:
 
 jobs:
   automerge:
-    runs-on: blacksmith-4vcpu-ubuntu-2404
+    runs-on: ubuntu-24.04
     if: ${{ github.actor == 'dependabot[bot]' }}
     steps:
       - name: Fetch Dependabot metadata

@@ -19,7 +19,7 @@ permissions:
 jobs:
   gitleaks:
     name: Secret Scan
-    runs-on: blacksmith-4vcpu-ubuntu-2404
+    runs-on: ubuntu-24.04
     permissions:
       contents: read
       pull-requests: write # gitleaks-action posts PR comments on findings
@@ -45,7 +45,7 @@ jobs:
 
   license-check:
     name: License Compliance
-    runs-on: blacksmith-4vcpu-ubuntu-2404
+    runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v7
 
@@ -67,7 +67,7 @@ jobs:
 
   fossa-analyze:
     name: FOSSA Analyze
-    runs-on: blacksmith-4vcpu-ubuntu-2404
+    runs-on: ubuntu-24.04
     env:
       FOSSA_API_KEY: ${{ secrets.FOSSA_API_KEY }}
     steps:
@@ -81,7 +81,7 @@ jobs:
 
   fossa-test:
     name: FOSSA Test
-    runs-on: blacksmith-4vcpu-ubuntu-2404
+    runs-on: ubuntu-24.04
     needs: [fossa-analyze]
     env:
       FOSSA_API_KEY: ${{ secrets.FOSSA_API_KEY }}
@@ -97,7 +97,7 @@ jobs:
 
   fossa-sbom:
     name: FOSSA SBOM Generation
-    runs-on: blacksmith-4vcpu-ubuntu-2404
+    runs-on: ubuntu-24.04
     needs: [fossa-analyze]
     env:
       FOSSA_API_KEY: ${{ secrets.FOSSA_API_KEY }}
@@ -134,7 +134,7 @@ jobs:
 
   typecheck:
     name: Typecheck
-    runs-on: blacksmith-4vcpu-ubuntu-2404
+    runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v7
 
@@ -150,7 +150,7 @@ jobs:
 
   build:
     name: Build
-    runs-on: blacksmith-4vcpu-ubuntu-2404
+    runs-on: ubuntu-24.04
     needs: [typecheck]
     steps:
       - uses: actions/checkout@v7
@@ -172,7 +172,7 @@ jobs:
 
   test:
     name: Test
-    runs-on: blacksmith-4vcpu-ubuntu-2404
+    runs-on: ubuntu-24.04
     needs: [build]
     services:
       redis:
@@ -208,7 +208,7 @@ jobs:
 
   quality-ratchet:
     name: Quality Ratchet
-    runs-on: blacksmith-4vcpu-ubuntu-2404
+    runs-on: ubuntu-24.04
     needs: [build]
     services:
       redis:
