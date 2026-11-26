@@ -25,12 +25,12 @@
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4",
-    "@types/node": "^22",
+    "@types/node": "^26",
     "@types/react": "^19",
-    "dotenv": "^16",
+    "dotenv": "^18",
     "tailwindcss": "^4",
     "tsx": "^4",
-    "typescript": "^5"
+    "typescript": "^7"
   },
   "engines": {
     "node": ">=22.0.0"
