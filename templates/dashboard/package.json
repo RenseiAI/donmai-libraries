@@ -13,13 +13,13 @@
     "cleanup": "tsx cli/cleanup.ts"
   },
   "dependencies": {
-    "@donmai/core": "^0.9.4",
+    "@donmai/core": "^0.10.0",
     "@donmai/cli": "^0.9.4",
-    "@donmai/dashboard": "^0.9.4",
-    "@donmai/plugin-linear": "^0.9.4",
+    "@donmai/dashboard": "^0.10.0",
+    "@donmai/plugin-linear": "^0.10.0",
     "@donmai/nextjs": "^0.9.4",
-    "@donmai/server": "^0.9.4",
-    "next": "16.2.7",
+    "@donmai/server": "^0.10.0",
+    "next": "16.4.4",
     "react": "^19.0.0",
     "react-dom": "^19.0.0"
   },
